@@ -1,0 +1,12 @@
+{
+  "PAGES": {
+      "HOME": {
+          "TITLE": "L'app fonctionne !",
+          "GO_TO_DETAIL": "Aller aux Détails"
+      },
+      "DETAIL": {
+        "TITLE": "Page des Détails !",
+        "BACK_TO_HOME": "Retour à l'Accueil"
+    }
+  }
+}
