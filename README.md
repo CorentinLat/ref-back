@@ -96,7 +96,6 @@ Please check `providers/electron.service.ts` to watch how conditional import of 
 ## Add a dependency with ng-add
 
 You may encounter some difficulties with `ng-add` because this project doesn't use the defaults `@angular-builders`. \
-For example you can find [here](HOW_TO.md) how to install Angular-Material with `ng-add`.
 
 ## Browser mode
 

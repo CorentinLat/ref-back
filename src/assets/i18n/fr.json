@@ -1,12 +1,9 @@
 {
   "PAGES": {
-      "HOME": {
-          "TITLE": "L'app fonctionne !",
-          "GO_TO_DETAIL": "Aller aux Détails"
-      },
-      "DETAIL": {
-        "TITLE": "Page des Détails !",
-        "BACK_TO_HOME": "Retour à l'Accueil"
+    "HOME": {
+      "TITLE": "Perf'Arbitres++",
+      "IMPORT": "Importez votre vidéo",
+      "MULTI_VIDEO_EXPLANATION": "Si votre vidéo est découpée en plusieurs clips, vous pouvez tous les importer."
     }
   }
 }
