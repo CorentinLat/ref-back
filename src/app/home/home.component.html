@@ -1,7 +1,34 @@
-<div class="container">
-  <h1 class="title">{{ 'PAGES.HOME.TITLE' | translate }}</h1>
-  <h3>{{ 'PAGES.HOME.IMPORT' | translate }}</h3>
-  <p>{{ 'PAGES.HOME.MULTI_VIDEO_EXPLANATION' | translate }}</p>
+<section class="home-component container text-center">
+  <section>
+    <h1 class="title my-3">{{ 'PAGES.HOME.TITLE' | translate }}</h1>
+    <h3>{{ 'PAGES.HOME.IMPORT' | translate }}</h3>
+    <p>{{ 'PAGES.HOME.MULTI_VIDEO_EXPLANATION' | translate }}</p>
+  </section>
 
-  <input type="file" name="" id="">
-</div>
+  <form class="row col-8 offset-2 mt-5 pt-5" [formGroup]="import" (ngSubmit)="submit()" novalidate>
+    <article class="mb-3">
+      <input
+        [className]="exposeClassNameForVideoInput()"
+        formControlName="video"
+        type="file"
+        multiple
+      >
+      <div class="invalid-feedback">
+        <span><strong>{{ 'PAGES.HOME.VIDEO_IMPORT_INVALID' | translate }}</strong></span><br>
+
+        <span *ngFor="let fileName of exposeErrorFileNames()">
+          {{ fileName }} <br>
+        </span>
+      </div>
+    </article>
+
+    <article>
+      <button
+        class="btn btn-primary btn-lg"
+        [disabled]="import.invalid"
+      >
+        {{ 'PAGES.HOME.IMPORT_BUTTON' | translate }}
+      </button>
+    </article>
+  </form>
+</section>
