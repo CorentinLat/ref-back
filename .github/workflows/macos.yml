@@ -52,4 +52,4 @@ jobs:
       run: npm i && npm i -D cli-truncate iconv-corefoundation
 
     - name: Build the app
-      run: npm run electron:build
+      run: npm run package
