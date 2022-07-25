@@ -1,0 +1,17 @@
+<ngb-toast
+    *ngFor="let toast of toastService.toasts"
+    [class]="toast.classname"
+    [autohide]="true"
+    [delay]="toast.delay || 5000"
+    (hidden)="toastService.remove(toast)"
+>
+    <section class="d-flex">
+        {{ toast.text | translate }}
+
+        <button
+            (click)="toastService.remove(toast)"
+            class="btn-close text-white me-0 m-auto"
+            aria-label="Close"
+        ></button>
+    </section>
+</ngb-toast>

@@ -18,7 +18,7 @@
     ]
   },
   "files": [
-    "app/main.ts"
+    "src/angular/main.ts"
   ],
   "exclude": [
     "node_modules",

@@ -1,0 +1,47 @@
+<section class="home-component container text-center">
+    <section>
+        <h1 class="title my-3">{{ 'PAGE.HOME.TITLE' | translate }}</h1>
+        <h3>{{ 'PAGE.HOME.IMPORT' | translate }}</h3>
+        <p>{{ 'PAGE.HOME.MULTI_VIDEO_EXPLANATION' | translate }}</p>
+    </section>
+
+    <form class="row col-8 offset-2 mt-5 pt-5" [formGroup]="import" (ngSubmit)="submit()" novalidate>
+        <article class="mb-3">
+            <input
+                [className]="exposeClassNameForVideoInput()"
+                formControlName="video"
+                type="file"
+                multiple
+            >
+            <div class="invalid-feedback">
+                <span><strong>{{ 'PAGE.HOME.VIDEO_IMPORT_INVALID' | translate }}</strong></span><br>
+
+                <span *ngFor="let fileName of exposeErrorFileNames()">
+                  {{ fileName }} <br>
+                </span>
+            </div>
+        </article>
+
+        <article class="mb-3">
+            <button
+                class="btn btn-primary btn-lg"
+                [disabled]="import.invalid || isProcessingVideos"
+            >
+                {{ 'PAGE.HOME.IMPORT_BUTTON' | translate }}
+            </button>
+        </article>
+
+        <article class="d-flex flex-column align-items-center" *ngIf="isProcessingVideos">
+            <ngb-progressbar
+                class="w-100"
+                type="success"
+                height="20px"
+                [value]="progress"
+                [striped]="true"
+                [animated]="true"
+            >
+                <i>{{ progress }}%</i>
+            </ngb-progressbar>
+        </article>
+    </form>
+</section>

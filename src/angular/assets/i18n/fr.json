@@ -1,0 +1,19 @@
+{
+  "PAGE": {
+    "HOME": {
+      "IMPORT": "Importez votre vidéo",
+      "IMPORT_BUTTON": "Démarrer",
+      "MULTI_VIDEO_EXPLANATION": "Si votre vidéo est découpée en plusieurs clips, vous pouvez tous les importer.",
+      "TITLE": "Perf'Arbitres++",
+      "VIDEO_IMPORT_INVALID": "Les fichiers suivants ne sont pas supportés :"
+    },
+    "TITLE": {
+      "HOME": "Accueil"
+    }
+  },
+  "TOAST": {
+    "ERROR": {
+      "PROCESS_VIDEO_FAILED": "Impossible de traiter les vidéos..."
+    }
+  }
+}

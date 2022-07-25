@@ -1,43 +1,64 @@
 {
-  "asar": false,
-  "directories": {
-    "output": "release/"
-  },
+  "productName": "PerfArbitresPlusPlus",
+  "appId": "fr.slayerac4dc.PerfArbitresPlusPlus",
+  "asar": true,
+  "asarUnpack": "**\\*.{node,dll}",
   "files": [
-    "**/*",
-    "!**/*.ts",
-    "!*.map",
-    "!package.json",
-    "!package-lock.json"
+    "dist",
+    "node_modules",
+    "package.json"
   ],
-  "extraResources": [
-    {
-      "from": "dist",
-      "to": "app",
-      "filter": [
-        "**/*"
+  "afterSign": ".erb/scripts/notarize.js",
+  "mac": {
+    "target": {
+      "target": "default",
+      "arch": [
+        "arm64",
+        "x64"
       ]
-    }
-  ],
-  "win": {
-    "icon": "dist/assets/icons",
-    "target": [
-      "portable"
+    },
+    "type": "distribution",
+    "hardenedRuntime": true,
+    "entitlements": "assets/entitlements.mac.plist",
+    "entitlementsInherit": "assets/entitlements.mac.plist",
+    "gatekeeperAssess": false
+  },
+  "dmg": {
+    "contents": [
+      {
+        "x": 130,
+        "y": 220
+      },
+      {
+        "x": 410,
+        "y": 220,
+        "type": "link",
+        "path": "/Applications"
+      }
     ]
   },
-  "portable": {
-    "splashImage": "dist/assets/icons/electron.bmp"
-  },
-  "mac": {
-    "icon": "dist/assets/icons",
+  "win": {
     "target": [
-      "dmg"
+      "nsis"
     ]
   },
   "linux": {
-    "icon": "dist/assets/icons",
     "target": [
       "AppImage"
-    ]
+    ],
+    "category": "Development"
+  },
+  "directories": {
+    "app": "release/app",
+    "buildResources": "assets",
+    "output": "release/build"
+  },
+  "extraResources": [
+    "./assets/**"
+  ],
+  "publish": {
+    "provider": "github",
+    "owner": "corentin.latappy",
+    "repo": "perf-arbitres-plus-plus"
   }
 }

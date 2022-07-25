@@ -9,7 +9,7 @@
   "projects": {
     "angular-electron": {
       "root": "",
-      "sourceRoot": "src",
+      "sourceRoot": "src/angular",
       "projectType": "application",
       "schematics": {
         "@schematics/angular:application": {
@@ -24,18 +24,18 @@
         "build": {
           "builder": "@angular-builders/custom-webpack:browser",
           "options": {
-            "outputPath": "dist",
-            "index": "src/index.html",
-            "main": "src/main.ts",
-            "tsConfig": "src/tsconfig.app.json",
-            "polyfills": "src/polyfills.ts",
+            "outputPath": "release/app/dist/angular",
+            "index": "src/angular/index.html",
+            "main": "src/angular/main.ts",
+            "tsConfig": "src/angular/tsconfig.app.json",
+            "polyfills": "src/angular/polyfills.ts",
             "inlineStyleLanguage": "scss",
             "assets": [
-              "src/favicon.ico",
-              "src/assets"
+              "src/angular/favicon.ico",
+              "src/angular/assets"
             ],
             "styles": [
-              "src/styles.scss"
+              "src/angular/styles.scss"
             ],
             "scripts": [],
             "customWebpackConfig": {
@@ -55,8 +55,8 @@
               "buildOptimizer": false,
               "fileReplacements": [
                 {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.dev.ts"
+                  "replace": "src/angular/environments/environment.ts",
+                  "with": "src/angular/environments/environment.dev.ts"
                 }
               ]
             },
@@ -71,8 +71,8 @@
               "buildOptimizer": true,
               "fileReplacements": [
                 {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.prod.ts"
+                  "replace": "src/angular/environments/environment.ts",
+                  "with": "src/angular/environments/environment.prod.ts"
                 }
               ]
             },
@@ -87,8 +87,8 @@
               "buildOptimizer": false,
               "fileReplacements": [
                 {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.web.ts"
+                  "replace": "src/angular/environments/environment.ts",
+                  "with": "src/angular/environments/environment.web.ts"
                 }
               ]
             },
@@ -103,8 +103,8 @@
               "buildOptimizer": true,
               "fileReplacements": [
                 {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.web.prod.ts"
+                  "replace": "src/angular/environments/environment.ts",
+                  "with": "src/angular/environments/environment.web.prod.ts"
                 }
               ]
             }
@@ -136,34 +136,12 @@
             "browserTarget": "angular-electron:build"
           }
         },
-        "test": {
-          "builder": "@angular-builders/custom-webpack:karma",
-          "options": {
-            "main": "src/test.ts",
-            "polyfills": "src/polyfills-test.ts",
-            "tsConfig": "src/tsconfig.spec.json",
-            "karmaConfig": "src/karma.conf.js",
-            "inlineStyleLanguage": "scss",
-            "scripts": [],
-            "styles": [
-              "src/styles.scss"
-            ],
-            "assets": [
-              "src/favicon.ico",
-              "src/assets"
-            ],
-            "customWebpackConfig": {
-              "path": "./angular.webpack.js",
-              "replaceDuplicatePlugins": true
-            }
-          }
-        },
         "lint": {
           "builder": "@angular-eslint/builder:lint",
           "options": {
             "lintFilePatterns": [
-              "src/**/*.ts",
-              "src/**/*.html"
+              "src/angular/**/*.ts",
+              "src/angular/**/*.html"
             ]
           }
         }

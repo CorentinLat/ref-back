@@ -13,7 +13,7 @@
       "parserOptions": {
         "project": [
           "./tsconfig.serve.json",
-          "./src/tsconfig.app.json"
+          "./src/angular/tsconfig.app.json"
         ],
         "createDefaultProgram": true
       },
