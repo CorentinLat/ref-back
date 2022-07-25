@@ -6,12 +6,15 @@ import path from 'path';
 
 import IpcMainEvent = Electron.IpcMainEvent;
 
+import logger from './logger';
 import { workPath } from './path';
 
 FluentFFMPEG.setFfmpegPath(ffmpegElectron.path);
 FluentFFMPEG.setFfprobePath(ffprobeElectron.path);
 
 export async function concatVideos(videoPaths: string[], event: IpcMainEvent): Promise<string> {
+    logger.info(`Concat videos: ${videoPaths.join(', ')}`);
+
     const videoName: string = generateVideoName();
     const outputFileName = path.join(workPath, videoName);
 
@@ -26,8 +29,14 @@ export async function concatVideos(videoPaths: string[], event: IpcMainEvent): P
                 const percentageDone = Math.min(currentSeconds / totalDuration * 100, 100);
                 event.reply('process_videos_progress', percentageDone);
             })
-            .on('error', (err: Error) => reject(err))
-            .on('end', () => resolve(outputFileName))
+            .on('error', (err: Error) => {
+                logger.error(err);
+                reject(err);
+            })
+            .on('end', () => {
+                logger.info(`Concat videos succeeded: ${outputFileName}`);
+                resolve(outputFileName);
+            })
             .mergeToFile(outputFileName, workPath);
     });
 }
@@ -38,6 +47,7 @@ export function copyVideoToUserDataPath(videoPath: string): string {
 
     fs.copyFileSync(videoPath, outputFileName);
 
+    logger.info(`Copy video succeeded: ${outputFileName}`);
     return outputFileName;
 }
 

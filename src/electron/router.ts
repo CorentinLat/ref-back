@@ -1,6 +1,7 @@
 import IpcMain = Electron.IpcMain;
 import IpcMainEvent = Electron.IpcMainEvent;
 
+import logger from './utils/logger';
 import { concatVideos, copyVideoToUserDataPath } from './utils/video';
 
 export default function(ipcMain: IpcMain) {
@@ -8,7 +9,10 @@ export default function(ipcMain: IpcMain) {
 }
 
 const onConcatVideosListener = async (event: IpcMainEvent, videoPaths: string[]) => {
+    logger.debug('OnConcatVideosListener');
+
     if (!videoPaths.length) {
+        logger.error('No video to handle');
         event.reply('process_videos_failed');
     }
 
@@ -21,7 +25,8 @@ const onConcatVideosListener = async (event: IpcMainEvent, videoPaths: string[])
         }
 
         event.reply('process_videos_succeeded', matchVideoPath);
-    } catch (_) {
+    } catch (error) {
+        logger.error(error);
         event.reply('process_videos_failed');
     }
 };

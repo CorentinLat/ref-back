@@ -1,10 +1,11 @@
 import { BrowserWindow, app, ipcMain, protocol } from 'electron';
 
+import logger from './utils/logger';
 import { checkMandatoryFolderExists } from './utils/path';
 import router from './router';
 import createWindow from './window';
 
-checkMandatoryFolderExists();
+checkMandatoryFolderExists(logger);
 router(ipcMain);
 
 app.on('window-all-closed', () => {

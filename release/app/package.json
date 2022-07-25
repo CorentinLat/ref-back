@@ -11,6 +11,7 @@
   "dependencies": {
     "ffmpeg-static-electron": "^2.0.3",
     "ffprobe-static-electron": "^2.0.2",
-    "fluent-ffmpeg": "^2.1.2"
+    "fluent-ffmpeg": "^2.1.2",
+    "winston": "^3.8.1"
   }
 }
