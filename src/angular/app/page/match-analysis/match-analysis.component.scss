@@ -1,0 +1,29 @@
+.match-analysis-component {
+    height: 100vh;
+    overflow: clip;
+
+    .match-analysis-body {
+        display: flex;
+        gap: 20px;
+
+        height: 100%;
+        margin: 10px;
+
+        .video-and-controls {
+            flex-basis: 0;
+            flex-grow: 2;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+
+            height: calc(100vh - 150px);
+        }
+
+        .actions {
+            flex-basis: 0;
+            flex-grow: 1;
+
+            overflow: auto;
+        }
+    }
+}

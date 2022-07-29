@@ -1,7 +1,70 @@
 <section class="match-analysis-component">
-    <p><a [routerLink]="['/']">{{ 'PAGE.TITLE.HOME' | translate }}</a></p>
+    <header>
+        <p><a [routerLink]="['/']">{{ 'PAGE.TITLE.HOME' | translate }}</a></p>
+    </header>
 
-    <video controls height="500">
-        <source [src]="videoPath">
-    </video>
+    <section class="match-analysis-body">
+        <section class="video-and-controls">
+            <vg-player>
+                <vg-overlay-play></vg-overlay-play>
+
+                <vg-scrub-bar>
+                    <vg-scrub-bar-current-time></vg-scrub-bar-current-time>
+                </vg-scrub-bar>
+
+                <vg-controls>
+                    <vg-play-pause></vg-play-pause>
+                    <vg-playback-button></vg-playback-button>
+
+                    <vg-time-display vgProperty="current" vgFormat="hh:mm:ss"></vg-time-display>
+
+                    <vg-scrub-bar style="pointer-events: none;"></vg-scrub-bar>
+
+                    <vg-time-display vgProperty="total" vgFormat="hh:mm:ss"></vg-time-display>
+
+                    <vg-mute></vg-mute>
+                    <vg-volume></vg-volume>
+
+                    <vg-fullscreen></vg-fullscreen>
+                </vg-controls>
+
+                <video [vgMedia]="media" #media preload="auto" crossorigin>
+                    <source [src]="videoPath">
+                </video>
+            </vg-player>
+
+            <section class="controls">
+                <button>Hello</button>
+            </section>
+        </section>
+
+        <section class="actions">
+            <p>Incroyable</p>
+            <p>Incroyable</p>
+            <p>Incroyable</p>
+            <p>Incroyable</p>
+            <p>Incroyable</p>
+            <p>Incroyable</p>
+            <p>Incroyable</p>
+            <p>Incroyable</p>
+            <p>Incroyable</p>
+            <p>Incroyable</p>
+            <p>Incroyable</p>
+            <p>Incroyable</p>
+            <p>Incroyable</p>
+            <p>Incroyable</p>
+            <p>Incroyable</p>
+            <p>Incroyable</p>
+            <p>Incroyable</p>
+            <p>Incroyable</p>
+            <p>Incroyable</p>
+            <p>Incroyable</p>
+            <p>Incroyable</p>
+            <p>Incroyable</p>
+            <p>Incroyable</p>
+            <p>Incroyable</p>
+            <p>Incroyable</p>
+            <p>Incroyable</p>
+        </section>
+    </section>
 </section>

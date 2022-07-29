@@ -30,7 +30,7 @@ export async function concatVideos(videoPaths: string[], event: IpcMainEvent): P
                 event.reply('process_videos_progress', percentageDone);
             })
             .on('error', (err: Error) => {
-                logger.error(err);
+                logger.error(`error concatVideos: ${err}`);
                 reject(err);
             })
             .on('end', () => {
@@ -42,7 +42,8 @@ export async function concatVideos(videoPaths: string[], event: IpcMainEvent): P
 }
 
 export function copyVideoToUserDataPath(videoPath: string): string {
-    const videoName: string = generateVideoName();
+    const currentVideoExtension = path.extname(videoPath);
+    const videoName: string = generateVideoName(currentVideoExtension);
     const outputFileName = path.join(workPath, videoName);
 
     fs.copyFileSync(videoPath, outputFileName);
@@ -51,8 +52,8 @@ export function copyVideoToUserDataPath(videoPath: string): string {
     return outputFileName;
 }
 
-function generateVideoName(): string {
-    return `${Date.now().toString(10)}.mp4`;
+function generateVideoName(extension: string = '.mp4'): string {
+    return `${Date.now().toString(10)}${extension}`;
 }
 
 async function computeTotalDurationOfVideos(videoPaths: string[]): Promise<number> {

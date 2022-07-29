@@ -26,7 +26,7 @@ const onConcatVideosListener = async (event: IpcMainEvent, videoPaths: string[])
 
         event.reply('process_videos_succeeded', matchVideoPath);
     } catch (error) {
-        logger.error(error);
+        logger.error(`error onConcatVideosListener: ${error}`);
         event.reply('process_videos_failed');
     }
 };

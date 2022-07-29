@@ -5,6 +5,9 @@ import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { VgCoreModule } from '@videogular/ngx-videogular/core';
+import { VgControlsModule } from '@videogular/ngx-videogular/controls';
+import { VgOverlayPlayModule } from '@videogular/ngx-videogular/overlay-play';
 
 import { AppRoutingModule } from './app-routing.module';
 
@@ -38,6 +41,9 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader => new Transla
                 deps: [HttpClient],
             },
         }),
+        VgCoreModule,
+        VgControlsModule,
+        VgOverlayPlayModule,
     ],
     providers: [],
     bootstrap: [AppComponent],
