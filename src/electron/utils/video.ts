@@ -1,19 +1,27 @@
 import ffmpegElectron from 'ffmpeg-static-electron';
 import ffprobeElectron from 'ffprobe-static-electron';
 import FluentFFMPEG from 'fluent-ffmpeg';
-import fs from 'fs';
 import path from 'path';
 
 import IpcMainEvent = Electron.IpcMainEvent;
 
 import logger from './logger';
+import { copyFileToPath, extractFileExtension } from './file';
 import { workPath } from './path';
 
 FluentFFMPEG.setFfmpegPath(ffmpegElectron.path);
 FluentFFMPEG.setFfprobePath(ffprobeElectron.path);
 
+const SUPPORTED_HTML_VIDEO_EXTENSIONS = ['mp4', 'webm', 'ogg'];
+
 export async function concatVideos(videoPaths: string[], event: IpcMainEvent): Promise<string> {
     logger.info(`Concat videos: ${videoPaths.join(', ')}`);
+
+    const videoExtensions = new Set<string>();
+    videoPaths.forEach(videoPath => videoExtensions.add(extractFileExtension(videoPath)));
+    if (videoExtensions.size > 1) {
+        throw new Error();
+    }
 
     const videoName: string = generateVideoName();
     const outputFileName = path.join(workPath, videoName);
@@ -41,19 +49,24 @@ export async function concatVideos(videoPaths: string[], event: IpcMainEvent): P
     });
 }
 
-export function copyVideoToUserDataPath(videoPath: string): string {
-    const currentVideoExtension = path.extname(videoPath);
-    const videoName: string = generateVideoName(currentVideoExtension);
-    const outputFileName = path.join(workPath, videoName);
+export async function copyVideoToUserDataPath(videoPath: string, event: IpcMainEvent): Promise<string> {
+    const currentVideoExtension = extractFileExtension(videoPath);
 
-    fs.copyFileSync(videoPath, outputFileName);
+    if (SUPPORTED_HTML_VIDEO_EXTENSIONS.includes(currentVideoExtension)) {
+        const videoName: string = generateVideoName(currentVideoExtension);
+        const outputFileName = path.join(workPath, videoName);
 
-    logger.info(`Copy video succeeded: ${outputFileName}`);
-    return outputFileName;
+        copyFileToPath(videoPath, outputFileName);
+        logger.info(`Copy video succeeded: ${outputFileName}`);
+        return Promise.resolve(outputFileName);
+    } else {
+        logger.info(`Format not supported: ${currentVideoExtension}. Converting to mp4...`);
+        return await concatVideos([videoPath], event);
+    }
 }
 
-function generateVideoName(extension: string = '.mp4'): string {
-    return `${Date.now().toString(10)}${extension}`;
+function generateVideoName(extension: string = 'mp4'): string {
+    return `${Date.now().toString(10)}.${extension}`;
 }
 
 async function computeTotalDurationOfVideos(videoPaths: string[]): Promise<number> {

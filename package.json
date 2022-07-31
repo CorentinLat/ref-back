@@ -95,7 +95,7 @@
   "electronmon": {
     "patterns": [
       "!**/**",
-      "src/electron/*"
+      "src/electron/**"
     ],
     "logLevel": "quiet"
   },

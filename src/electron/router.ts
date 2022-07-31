@@ -21,12 +21,12 @@ const onConcatVideosListener = async (event: IpcMainEvent, videoPaths: string[])
         if (videoPaths.length > 1) {
             matchVideoPath = await concatVideos(videoPaths, event);
         } else {
-            matchVideoPath = copyVideoToUserDataPath(videoPaths[0]);
+            matchVideoPath = await copyVideoToUserDataPath(videoPaths[0], event);
         }
 
         event.reply('process_videos_succeeded', matchVideoPath);
     } catch (error) {
         logger.error(`error onConcatVideosListener: ${error}`);
-        event.reply('process_videos_failed');
+        event.reply('process_videos_failed', error);
     }
 };

@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
+import path from 'path';
 
 @Injectable({ providedIn: 'root' })
 export class FileService {
-    private readonly supportedVideoExtensions: string[] = ['mp4', 'mkv', 'mov', 'avi'];
+    private readonly supportedVideoExtensions: string[] = ['mp4', 'mkv', 'mov', 'avi', 'webm', 'ogg'];
 
     isFileSupported({ name }: File) {
         const regexResult = /\.(?<extension>[a-zA-Z\d]+)$/.exec(name);
@@ -13,5 +14,9 @@ export class FileService {
         }
 
         return false;
+    }
+
+    extractFileExtension({ name }: File) {
+        return path.extname(name).slice(1).toLowerCase();
     }
 }

@@ -14,11 +14,21 @@
                 multiple
             >
             <div class="invalid-feedback">
-                <span><strong>{{ 'PAGE.HOME.VIDEO_IMPORT_INVALID' | translate }}</strong></span><br>
+                <article *ngIf="videoControl.errors?.invalidType">
+                    <p><strong>{{ 'PAGE.HOME.ERROR.VIDEO_IMPORT_INVALID' | translate }}</strong></p>
 
-                <span *ngFor="let fileName of exposeErrorFileNames()">
-                  {{ fileName }} <br>
-                </span>
+                    <span *ngFor="let fileName of exposeErrorFileNames()">
+                      {{ fileName }}<br>
+                    </span>
+                </article>
+
+                <article *ngIf="videoControl.errors?.multipleVideoFormat">
+                    <p><strong>{{ 'PAGE.HOME.ERROR.MULTIPLE_VIDEO_FORMAT' | translate }}</strong></p>
+                </article>
+
+                <article *ngIf="videoControl.errors?.processVideoFailed">
+                    <p><strong>{{ 'PAGE.HOME.ERROR.PROCESS_VIDEO_FAILED' | translate }}</strong></p>
+                </article>
             </div>
         </article>
 

@@ -19,7 +19,7 @@ export class HomeComponent {
     });
 
     files: File[] = [];
-    errorFiles: File[] = [];
+    notSupportedFiles: File[] = [];
 
     isProcessingVideos = false;
     progress = 0;
@@ -39,8 +39,9 @@ export class HomeComponent {
     @HostListener('change', ['$event.target.files'])
     emitFiles(event: FileList) {
         this.files = [];
-        this.errorFiles = [];
+        this.notSupportedFiles = [];
 
+        const fileExtensions = new Set<string>();
         for (let i = 0; i < event.length; i++) {
             const file = event.item(i);
             if (!file) { continue; }
@@ -48,12 +49,15 @@ export class HomeComponent {
             if (this.fileService.isFileSupported(file)) {
                 this.files.push(file);
             } else {
-                this.errorFiles.push(file);
+                this.notSupportedFiles.push(file);
             }
+            fileExtensions.add(this.fileService.extractFileExtension(file));
         }
 
-        if (this.errorFiles.length) {
+        if (this.notSupportedFiles.length) {
             this.videoControl.setErrors({ invalidType: true });
+        } else if (fileExtensions.size > 1) {
+            this.videoControl.setErrors({ multipleVideoFormat: true });
         }
     }
 
@@ -65,7 +69,7 @@ export class HomeComponent {
     }
 
     exposeErrorFileNames(): string[] {
-        return this.errorFiles.map(({ name }) => name);
+        return this.notSupportedFiles.map(({ name }) => name);
     }
 
     submit() {
@@ -98,6 +102,7 @@ export class HomeComponent {
     private handleProcessVideosFailed = (_: IpcRendererEvent) => {
         this.zone.run(() => {
             this.isProcessingVideos = false;
+            this.videoControl.setErrors({ processVideoFailed: true });
             this.toastService.showError('TOAST.ERROR.PROCESS_VIDEO_FAILED');
         });
     };
