@@ -15,7 +15,9 @@ import { AppComponent } from './app.component';
 import { HomeComponent } from './page/home/home.component';
 import { MatchAnalysisComponent } from './page/match-analysis/match-analysis.component';
 import { PageNotFoundComponent } from './page/page-not-found/page-not-found.component';
+
 import { ToastsComponent } from './component/toasts/toasts.component';
+import { GameNumberExistingModalComponent } from './component/modal/game-number-existing-modal/game-number-existing-modal.component';
 
 import DirectivesModule from './directive/directives.module';
 
@@ -24,6 +26,7 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader => new Transla
 @NgModule({
     declarations: [
         AppComponent,
+        GameNumberExistingModalComponent,
         HomeComponent,
         MatchAnalysisComponent,
         PageNotFoundComponent,

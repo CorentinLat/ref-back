@@ -1,8 +1,11 @@
 import { Component, HostListener, NgZone } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import IpcRendererEvent = Electron.IpcRendererEvent;
+
+import { GameNumberExistingModalComponent } from '../../component/modal/game-number-existing-modal/game-number-existing-modal.component';
 
 import { ElectronService } from '../../service/ElectronService';
 import { FileService } from '../../service/FileService';
@@ -32,13 +35,18 @@ export class HomeComponent {
     isProcessingVideos = false;
     progress = 0;
 
+    modalsCount = 0;
+
     constructor(
         private electron: ElectronService,
         private fileService: FileService,
+        private modalService: NgbModal,
         private router: Router,
         private toastService: ToastService,
         private zone: NgZone,
-    ) {}
+    ) {
+        this.modalService.activeInstances.subscribe(list => this.modalsCount = list.length);
+    }
 
     get gameNumberControl(): FormControl { return this.gameForm.get('gameNumber') as FormControl; }
     get videoControl(): FormControl { return this.gameForm.get('video') as FormControl; }
@@ -88,12 +96,11 @@ export class HomeComponent {
         return this.notSupportedFiles.map(({ name }) => name);
     }
 
-    submit() {
+    submit(force: boolean = false) {
         if (this.gameForm.invalid) {
             return;
         }
 
-        const gameNumber = `${this.gameNumberPrefix} ${this.gameNumberControl.value} ${this.gameNumberSuffix}`;
         const videoPaths = this.files.map(({ path }) => path);
 
         this.electron.ipcRenderer?.on('process_videos_progress', this.handleProcessVideosProgress);
@@ -101,7 +108,11 @@ export class HomeComponent {
         this.electron.ipcRenderer?.once('process_videos_failed', this.handleProcessVideosFailed);
 
         this.isProcessingVideos = true;
-        this.electron.ipcRenderer?.send('process_videos_imported', { gameNumber, videoPaths });
+        this.electron.ipcRenderer?.send('process_videos_imported', {
+            force,
+            gameNumber: this.getGameNumber(),
+            videoPaths,
+        });
     }
 
     private isGameNumberControlValid(): boolean {
@@ -117,11 +128,9 @@ export class HomeComponent {
     };
 
     private handleProcessVideosSucceeded = (_: IpcRendererEvent, videoPath: string) => {
-        const gameNumber = `${this.gameNumberPrefix} ${this.gameNumberControl.value} ${this.gameNumberSuffix}`;
-
         this.zone.run(() => this.router.navigate(
             ['/match-analysis'],
-            { queryParams: { gameNumber, videoPath } }
+            { queryParams: { gameNumber: this.getGameNumber(), videoPath } }
         ));
     };
 
@@ -130,12 +139,22 @@ export class HomeComponent {
             this.isProcessingVideos = false;
 
             if (error?.alreadyExisting) {
-                this.toastService.showError('ALREADY_EXISTING');
-                // TODO: Display modal to ask if overwrite
+                if (this.modalsCount > 0) { return; }
+
+                const modal = this.modalService.open(GameNumberExistingModalComponent, { centered: true, size: 'lg' });
+                modal.componentInstance.gameNumber = this.getGameNumber();
+                modal.result.then(
+                    () => this.submit(true),
+                    () => this.gameNumberControl.setErrors({ alreadyExisting: true }),
+                );
             } else {
                 this.videoControl.setErrors({ processVideoFailed: true });
                 this.toastService.showError('TOAST.ERROR.PROCESS_VIDEO_FAILED');
             }
         });
     };
+
+    private getGameNumber(): string {
+        return `${this.gameNumberPrefix} ${this.gameNumberControl.value} ${this.gameNumberSuffix}`;
+    }
 }

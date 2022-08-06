@@ -1,0 +1,25 @@
+<section>
+    <article class="modal-header">
+        <h5 class="modal-title">{{ 'MODAL.GAME_NUMBER_EXISTING.TITLE' | translate }}</h5>
+        <button type="button" class="btn-close" (click)="modal.dismiss()"></button>
+    </article>
+
+    <article class="modal-body text-center">
+        <p><strong>
+            {{ 'MODAL.GAME_NUMBER_EXISTING.MESSAGE_1' | translate }}
+            <span class="text-primary">{{ gameNumber }}</span>
+            {{ 'MODAL.GAME_NUMBER_EXISTING.MESSAGE_2' | translate }}
+        </strong></p>
+        <p class="m-0">{{ 'MODAL.GAME_NUMBER_EXISTING.QUESTION' | translate }}</p>
+        <p class="text-danger m-0">{{ 'MODAL.GAME_NUMBER_EXISTING.INFORMATION' | translate }}</p>
+    </article>
+
+    <article class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" (click)="modal.dismiss()">
+            {{ 'MODAL.GAME_NUMBER_EXISTING.CANCEL' | translate }}
+        </button>
+        <button type="button" class="btn btn-danger" (click)="modal.close()">
+            {{ 'MODAL.GAME_NUMBER_EXISTING.OVERWRITE' | translate }}
+        </button>
+    </article>
+</section>

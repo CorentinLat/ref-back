@@ -19,15 +19,20 @@ export function checkMandatoryFolderExists(logger: winston.Logger) {
     });
 }
 
-export function checkGameFolderExists(gameNumber: string, logger: winston.Logger) {
+export function checkGameFolderExists(gameNumber: string, logger: winston.Logger, force?: boolean) {
     const gameFolderPath = path.join(workPath, gameNumber);
 
     if (fs.existsSync(gameFolderPath)) {
-        logger.info(`Game folder already exists: ${gameFolderPath}`);
-        return true;
-    } else {
-        fs.mkdirSync(gameFolderPath, { recursive: true });
-        logger.info(`Game folder created: ${gameFolderPath}`);
-        return false;
+        if (!force) {
+            logger.info(`Game folder already exists: ${gameFolderPath}`);
+            return true;
+        }
+
+        fs.rmdirSync(gameFolderPath, { recursive: true });
+        logger.info(`Game folder forced removed: ${gameFolderPath}`);
     }
+
+    fs.mkdirSync(gameFolderPath, { recursive: true });
+    logger.info(`Game folder created: ${gameFolderPath}`);
+    return false;
 }

@@ -1,4 +1,15 @@
 {
+  "MODAL": {
+    "GAME_NUMBER_EXISTING": {
+      "TITLE": "Rencontre existante",
+      "MESSAGE_1": "Le numéro de rencontre",
+      "MESSAGE_2": "a déjà été utilisé.",
+      "QUESTION": "Voulez-vous écraser cette rencontre existante ?",
+      "INFORMATION": "Toute donnée précédemment créée (vidéos, actions, ...) sera perdue.",
+      "CANCEL": "Annuler",
+      "OVERWRITE": "Écraser"
+    }
+  },
   "PAGE": {
     "HOME": {
       "IMPORT": "Importez votre vidéo",

@@ -9,8 +9,8 @@ export default function(ipcMain: IpcMain) {
     ipcMain.on('process_videos_imported', onConcatVideosListener);
 }
 
-type OnConcatVideosListenerArgs = { gameNumber: string; videoPaths: string[] };
-const onConcatVideosListener = async (event: IpcMainEvent, { gameNumber, videoPaths }: OnConcatVideosListenerArgs) => {
+type OnConcatVideosListenerArgs = { force?: boolean; gameNumber: string; videoPaths: string[] };
+const onConcatVideosListener = async (event: IpcMainEvent, { force, gameNumber, videoPaths }: OnConcatVideosListenerArgs) => {
     logger.debug('OnConcatVideosListener');
 
     if (!videoPaths.length) {
@@ -19,7 +19,7 @@ const onConcatVideosListener = async (event: IpcMainEvent, { gameNumber, videoPa
     }
 
     try {
-        const alreadyExisting = checkGameFolderExists(gameNumber, logger);
+        const alreadyExisting = checkGameFolderExists(gameNumber, logger, force);
         if (alreadyExisting) {
             event.reply('process_videos_failed', { alreadyExisting: true });
             return;
