@@ -14,7 +14,7 @@ FluentFFMPEG.setFfprobePath(ffprobeElectron.path);
 
 const SUPPORTED_HTML_VIDEO_EXTENSIONS = ['mp4', 'webm', 'ogg'];
 
-export async function concatVideos(videoPaths: string[], event: IpcMainEvent): Promise<string> {
+export async function concatVideos(gameNumber: string, videoPaths: string[], event: IpcMainEvent): Promise<string> {
     logger.info(`Concat videos: ${videoPaths.join(', ')}`);
 
     const videoExtensions = new Set<string>();
@@ -24,7 +24,7 @@ export async function concatVideos(videoPaths: string[], event: IpcMainEvent): P
     }
 
     const videoName: string = generateVideoName();
-    const outputFileName = path.join(workPath, videoName);
+    const outputFileName = path.join(workPath, gameNumber, videoName);
 
     const totalDuration = await computeTotalDurationOfVideos(videoPaths);
 
@@ -49,19 +49,19 @@ export async function concatVideos(videoPaths: string[], event: IpcMainEvent): P
     });
 }
 
-export async function copyVideoToUserDataPath(videoPath: string, event: IpcMainEvent): Promise<string> {
+export async function copyVideoToUserDataPath(gameNumber: string, videoPath: string, event: IpcMainEvent): Promise<string> {
     const currentVideoExtension = extractFileExtension(videoPath);
 
     if (SUPPORTED_HTML_VIDEO_EXTENSIONS.includes(currentVideoExtension)) {
         const videoName: string = generateVideoName(currentVideoExtension);
-        const outputFileName = path.join(workPath, videoName);
+        const outputFileName = path.join(workPath, gameNumber, videoName);
 
         copyFileToPath(videoPath, outputFileName);
         logger.info(`Copy video succeeded: ${outputFileName}`);
         return Promise.resolve(outputFileName);
     } else {
         logger.info(`Format not supported: ${currentVideoExtension}. Converting to mp4...`);
-        return await concatVideos([videoPath], event);
+        return await concatVideos(gameNumber, [videoPath], event);
     }
 }
 

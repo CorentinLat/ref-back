@@ -13,6 +13,7 @@ import { ToastService } from '../../service/ToastService';
     templateUrl: './home.component.html',
     styleUrls: ['./home.component.scss'],
 })
+// Todo: Check at onInit if games are already existing
 export class HomeComponent {
     gameForm = new FormGroup({
         gameNumber: new FormControl(
@@ -92,6 +93,7 @@ export class HomeComponent {
             return;
         }
 
+        const gameNumber = `${this.gameNumberPrefix} ${this.gameNumberControl.value} ${this.gameNumberSuffix}`;
         const videoPaths = this.files.map(({ path }) => path);
 
         this.electron.ipcRenderer?.on('process_videos_progress', this.handleProcessVideosProgress);
@@ -99,7 +101,7 @@ export class HomeComponent {
         this.electron.ipcRenderer?.once('process_videos_failed', this.handleProcessVideosFailed);
 
         this.isProcessingVideos = true;
-        this.electron.ipcRenderer?.send('process_videos_imported', videoPaths);
+        this.electron.ipcRenderer?.send('process_videos_imported', { gameNumber, videoPaths });
     }
 
     private isGameNumberControlValid(): boolean {
@@ -118,11 +120,17 @@ export class HomeComponent {
         this.zone.run(() => this.router.navigate(['/match-analysis'], { queryParams: { videoPath } }));
     };
 
-    private handleProcessVideosFailed = (_: IpcRendererEvent) => {
+    private handleProcessVideosFailed = (_: IpcRendererEvent, error: any) => {
         this.zone.run(() => {
             this.isProcessingVideos = false;
-            this.videoControl.setErrors({ processVideoFailed: true });
-            this.toastService.showError('TOAST.ERROR.PROCESS_VIDEO_FAILED');
+
+            if (error?.alreadyExisting) {
+                this.toastService.showError('ALREADY_EXISTING');
+                // TODO: Display modal to ask if overwrite
+            } else {
+                this.videoControl.setErrors({ processVideoFailed: true });
+                this.toastService.showError('TOAST.ERROR.PROCESS_VIDEO_FAILED');
+            }
         });
     };
 }

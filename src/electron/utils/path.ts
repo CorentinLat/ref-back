@@ -18,3 +18,16 @@ export function checkMandatoryFolderExists(logger: winston.Logger) {
         }
     });
 }
+
+export function checkGameFolderExists(gameNumber: string, logger: winston.Logger) {
+    const gameFolderPath = path.join(workPath, gameNumber);
+
+    if (fs.existsSync(gameFolderPath)) {
+        logger.info(`Game folder already exists: ${gameFolderPath}`);
+        return true;
+    } else {
+        fs.mkdirSync(gameFolderPath, { recursive: true });
+        logger.info(`Game folder created: ${gameFolderPath}`);
+        return false;
+    }
+}

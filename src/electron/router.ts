@@ -2,13 +2,15 @@ import IpcMain = Electron.IpcMain;
 import IpcMainEvent = Electron.IpcMainEvent;
 
 import logger from './utils/logger';
+import { checkGameFolderExists } from './utils/path';
 import { concatVideos, copyVideoToUserDataPath } from './utils/video';
 
 export default function(ipcMain: IpcMain) {
     ipcMain.on('process_videos_imported', onConcatVideosListener);
 }
 
-const onConcatVideosListener = async (event: IpcMainEvent, videoPaths: string[]) => {
+type OnConcatVideosListenerArgs = { gameNumber: string; videoPaths: string[] };
+const onConcatVideosListener = async (event: IpcMainEvent, { gameNumber, videoPaths }: OnConcatVideosListenerArgs) => {
     logger.debug('OnConcatVideosListener');
 
     if (!videoPaths.length) {
@@ -17,11 +19,17 @@ const onConcatVideosListener = async (event: IpcMainEvent, videoPaths: string[])
     }
 
     try {
+        const alreadyExisting = checkGameFolderExists(gameNumber, logger);
+        if (alreadyExisting) {
+            event.reply('process_videos_failed', { alreadyExisting: true });
+            return;
+        }
+
         let matchVideoPath;
         if (videoPaths.length > 1) {
-            matchVideoPath = await concatVideos(videoPaths, event);
+            matchVideoPath = await concatVideos(gameNumber, videoPaths, event);
         } else {
-            matchVideoPath = await copyVideoToUserDataPath(videoPaths[0], event);
+            matchVideoPath = await copyVideoToUserDataPath(gameNumber, videoPaths[0], event);
         }
 
         event.reply('process_videos_succeeded', matchVideoPath);
