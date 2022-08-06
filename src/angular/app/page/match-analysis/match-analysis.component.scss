@@ -1,17 +1,39 @@
 .match-analysis-component {
     height: 100vh;
+    padding: 10px;
     overflow: clip;
+
+    .match-analysis-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+
+        .back-button-container {
+            flex-basis: 0;
+            flex-grow: 1;
+            margin: 0;
+
+            .back-button {
+                text-decoration: none;
+            }
+        }
+
+        .title {
+            flex-basis: 0;
+            flex-grow: 3;
+            margin: 0;
+        }
+    }
 
     .match-analysis-body {
         display: flex;
         gap: 20px;
 
         height: 100%;
-        margin: 10px;
 
         .video-and-controls {
             flex-basis: 0;
-            flex-grow: 2;
+            flex-grow: 3;
             display: flex;
             flex-direction: column;
             gap: 20px;
@@ -21,7 +43,7 @@
 
         .actions {
             flex-basis: 0;
-            flex-grow: 1;
+            flex-grow: 2;
 
             overflow: auto;
         }

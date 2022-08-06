@@ -22,8 +22,8 @@
         }
       }
     },
-    "TITLE": {
-      "HOME": "Accueil"
+    "MATCH_ANALYSIS": {
+      "BACK_HOME": "Retour à l'Accueil"
     }
   },
   "TOAST": {

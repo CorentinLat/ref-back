@@ -117,7 +117,12 @@ export class HomeComponent {
     };
 
     private handleProcessVideosSucceeded = (_: IpcRendererEvent, videoPath: string) => {
-        this.zone.run(() => this.router.navigate(['/match-analysis'], { queryParams: { videoPath } }));
+        const gameNumber = `${this.gameNumberPrefix} ${this.gameNumberControl.value} ${this.gameNumberSuffix}`;
+
+        this.zone.run(() => this.router.navigate(
+            ['/match-analysis'],
+            { queryParams: { gameNumber, videoPath } }
+        ));
     };
 
     private handleProcessVideosFailed = (_: IpcRendererEvent, error: any) => {
