@@ -5,37 +5,62 @@
         <p>{{ 'PAGE.HOME.MULTI_VIDEO_EXPLANATION' | translate }}</p>
     </section>
 
-    <form class="row col-8 offset-2 mt-5 pt-5" [formGroup]="import" (ngSubmit)="submit()" novalidate>
-        <article class="mb-3">
+    <form class="row col-8 offset-2 mt-5 pt-5" [formGroup]="gameForm" (ngSubmit)="submit()" novalidate>
+        <section class="text-start">
+            <article class="col-6 offset-3">
+                <label for="game-number" class="form-label">
+                    {{ 'PAGE.HOME.FORM.LABEL.GAME_NUMBER' | translate }} :
+                </label>
+                <div class="input-group">
+                    <span class="input-group-text">{{ gameNumberPrefix }}</span>
+                    <input
+                        [className]="exposeClassNameForGameNumberInput()"
+                        id="game-number"
+                        formControlName="gameNumber"
+                        type="text"
+                        game-number
+                    >
+                    <span class="input-group-text">{{ gameNumberSuffix }}</span>
+                </div>
+            </article>
+
+            <article class="errors-container">
+                <p class="error" *ngIf="gameNumberControl.touched && gameNumberControl.errors?.pattern">
+                    {{ 'PAGE.HOME.ERROR.GAME_NUMBER.PATTERN' | translate }}
+                </p>
+                <p class="error" *ngIf="gameNumberControl.touched && gameNumberControl.errors?.required">
+                    {{ 'PAGE.HOME.ERROR.GAME_NUMBER.REQUIRED' | translate }}
+                </p>
+            </article>
+        </section>
+
+        <section class="mt-3">
             <input
                 [className]="exposeClassNameForVideoInput()"
                 formControlName="video"
                 type="file"
                 multiple
             >
-            <div class="invalid-feedback">
-                <article *ngIf="videoControl.errors?.invalidType">
-                    <p><strong>{{ 'PAGE.HOME.ERROR.VIDEO_IMPORT_INVALID' | translate }}</strong></p>
-
+            <article class="errors-container">
+                <p class="error" *ngIf="videoControl.errors?.invalidType">
+                    {{ 'PAGE.HOME.ERROR.VIDEO.IMPORT_INVALID' | translate }}
                     <span *ngFor="let fileName of exposeErrorFileNames()">
-                      {{ fileName }}<br>
+                        <br>{{ fileName }}
                     </span>
-                </article>
+                </p>
+                <p class="error" *ngIf="videoControl.errors?.multipleVideoFormat">
+                    {{ 'PAGE.HOME.ERROR.VIDEO.MULTIPLE_FORMAT' | translate }}
+                </p>
+                <p class="error" *ngIf="videoControl.errors?.processVideoFailed">
+                    {{ 'PAGE.HOME.ERROR.VIDEO.PROCESS_FAILED' | translate }}
+                </p>
+            </article>
+        </section>
 
-                <article *ngIf="videoControl.errors?.multipleVideoFormat">
-                    <p><strong>{{ 'PAGE.HOME.ERROR.MULTIPLE_VIDEO_FORMAT' | translate }}</strong></p>
-                </article>
-
-                <article *ngIf="videoControl.errors?.processVideoFailed">
-                    <p><strong>{{ 'PAGE.HOME.ERROR.PROCESS_VIDEO_FAILED' | translate }}</strong></p>
-                </article>
-            </div>
-        </article>
-
-        <article class="mb-3">
+        <article>
             <button
                 class="btn btn-primary btn-lg"
-                [disabled]="import.invalid || isProcessingVideos"
+                [disabled]="gameForm.invalid || isProcessingVideos"
             >
                 {{ 'PAGE.HOME.IMPORT_BUTTON' | translate }}
             </button>

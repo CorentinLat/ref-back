@@ -5,10 +5,21 @@
       "IMPORT_BUTTON": "Démarrer",
       "MULTI_VIDEO_EXPLANATION": "Si votre vidéo est découpée en plusieurs clips, vous pouvez tous les importer.",
       "TITLE": "Perf'Arbitres++",
+      "FORM": {
+        "LABEL": {
+          "GAME_NUMBER": "Numéro de rencontre"
+        }
+      },
       "ERROR" : {
-        "VIDEO_IMPORT_INVALID": "Les fichiers suivants ne sont pas supportés :",
-        "MULTIPLE_VIDEO_FORMAT": "Les vidéos doivent être au même format.",
-        "PROCESS_VIDEO_FAILED": "Une erreur est survenue lors du traitement."
+        "GAME_NUMBER": {
+          "PATTERN": "Le numéro de rencontre n'est pas au bon format.",
+          "REQUIRED": "Le numéro de rencontre doit être saisi."
+        },
+        "VIDEO": {
+          "IMPORT_INVALID": "Les fichiers suivants ne sont pas supportés :",
+          "MULTIPLE_FORMAT": "Les vidéos doivent être au même format.",
+          "PROCESS_FAILED": "Une erreur est survenue lors du traitement."
+        }
       }
     },
     "TITLE": {

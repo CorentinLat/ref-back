@@ -17,6 +17,8 @@ import { MatchAnalysisComponent } from './page/match-analysis/match-analysis.com
 import { PageNotFoundComponent } from './page/page-not-found/page-not-found.component';
 import { ToastsComponent } from './component/toasts/toasts.component';
 
+import DirectivesModule from './directive/directives.module';
+
 const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader => new TranslateHttpLoader(http, './assets/i18n/', '.json');
 
 @NgModule({
@@ -30,6 +32,7 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader => new Transla
     imports: [
         AppRoutingModule,
         BrowserModule,
+        DirectivesModule,
         FormsModule,
         HttpClientModule,
         NgbModule,

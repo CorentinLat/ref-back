@@ -14,9 +14,16 @@ import { ToastService } from '../../service/ToastService';
     styleUrls: ['./home.component.scss'],
 })
 export class HomeComponent {
-    import = new FormGroup({
+    gameForm = new FormGroup({
+        gameNumber: new FormControl(
+            '',
+            [Validators.required, Validators.pattern('^\\d{2}\\s\\d{4}\\s\\d{4}$')]
+        ),
         video: new FormControl(null, [Validators.required]),
     });
+
+    readonly gameNumberPrefix = '202223';
+    readonly gameNumberSuffix = 'RCT';
 
     files: File[] = [];
     notSupportedFiles: File[] = [];
@@ -32,18 +39,19 @@ export class HomeComponent {
         private zone: NgZone,
     ) {}
 
-    get videoControl(): FormControl {
-        return this.import.get('video') as FormControl;
-    }
+    get gameNumberControl(): FormControl { return this.gameForm.get('gameNumber') as FormControl; }
+    get videoControl(): FormControl { return this.gameForm.get('video') as FormControl; }
 
     @HostListener('change', ['$event.target.files'])
-    emitFiles(event: FileList) {
+    emitFiles(files: FileList) {
+        if (!files) { return; }
+
         this.files = [];
         this.notSupportedFiles = [];
 
         const fileExtensions = new Set<string>();
-        for (let i = 0; i < event.length; i++) {
-            const file = event.item(i);
+        for (let i = 0; i < files.length; i++) {
+            const file = files.item(i);
             if (!file) { continue; }
 
             if (this.fileService.isFileSupported(file)) {
@@ -61,8 +69,15 @@ export class HomeComponent {
         }
     }
 
+    exposeClassNameForGameNumberInput(): string {
+        if (this.gameNumberControl.pristine || this.gameNumberControl.untouched) {
+            return 'form-control';
+        }
+        return this.isGameNumberControlValid() ? 'form-control is-valid' : 'form-control is-invalid';
+    }
+
     exposeClassNameForVideoInput(): string {
-        if (!this.videoControl.dirty) {
+        if (this.videoControl.pristine) {
             return 'form-control';
         }
         return this.isVideoControlValid() ? 'form-control is-valid' : 'form-control is-invalid';
@@ -73,7 +88,7 @@ export class HomeComponent {
     }
 
     submit() {
-        if (this.import.invalid) {
+        if (this.gameForm.invalid) {
             return;
         }
 
@@ -85,6 +100,10 @@ export class HomeComponent {
 
         this.isProcessingVideos = true;
         this.electron.ipcRenderer?.send('process_videos_imported', videoPaths);
+    }
+
+    private isGameNumberControlValid(): boolean {
+        return this.gameNumberControl.valid;
     }
 
     private isVideoControlValid(): boolean {
