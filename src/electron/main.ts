@@ -32,5 +32,5 @@ try {
                 }
             });
         })
-        .catch(console.log);
+        .catch(logger.error);
 } catch (e) {}

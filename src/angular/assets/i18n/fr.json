@@ -4,10 +4,12 @@
       "TITLE": "Rencontre existante",
       "MESSAGE_1": "Le numéro de rencontre",
       "MESSAGE_2": "a déjà été utilisé.",
-      "QUESTION": "Voulez-vous écraser cette rencontre existante ?",
+      "OVERWRITE_QUESTION": "Voulez-vous écraser cette rencontre existante ?",
       "INFORMATION": "Toute donnée précédemment créée (vidéos, actions, ...) sera perdue.",
+      "LOAD_QUESTION": "Ou voulez-vous charger les données de cette rencontre ?",
       "CANCEL": "Annuler",
-      "OVERWRITE": "Écraser"
+      "OVERWRITE": "Écraser",
+      "LOAD": "Charger"
     }
   },
   "PAGE": {

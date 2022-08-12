@@ -144,7 +144,13 @@ export class HomeComponent {
                 const modal = this.modalService.open(GameNumberExistingModalComponent, { centered: true, size: 'lg' });
                 modal.componentInstance.gameNumber = this.getGameNumber();
                 modal.result.then(
-                    () => this.submit(true),
+                    ({ overwrite }: { overwrite: boolean }) => {
+                        if (overwrite) {
+                            this.submit(true);
+                        } else {
+                            this.loadExistingGame();
+                        }
+                    },
                     () => this.gameNumberControl.setErrors({ alreadyExisting: true }),
                 );
             } else {
@@ -153,6 +159,14 @@ export class HomeComponent {
             }
         });
     };
+
+    private loadExistingGame() {
+        this.electron.ipcRenderer?.once('process_videos_succeeded', this.handleProcessVideosSucceeded);
+        this.electron.ipcRenderer?.once('process_videos_failed', this.handleProcessVideosFailed);
+
+        this.isProcessingVideos = true;
+        this.electron.ipcRenderer?.send('process_videos_load', { gameNumber: this.getGameNumber() });
+    }
 
     private getGameNumber(): string {
         return `${this.gameNumberPrefix} ${this.gameNumberControl.value} ${this.gameNumberSuffix}`;

@@ -3,14 +3,15 @@ import IpcMainEvent = Electron.IpcMainEvent;
 
 import logger from './utils/logger';
 import { checkGameFolderExists } from './utils/path';
-import { concatVideos, copyVideoToUserDataPath } from './utils/video';
+import { concatVideos, copyVideoToUserDataPath, getGameVideoPathByGameNumber } from './utils/video';
 
 export default function(ipcMain: IpcMain) {
-    ipcMain.on('process_videos_imported', onConcatVideosListener);
+    ipcMain.on('process_videos_imported', onImportVideosListener);
+    ipcMain.on('process_videos_load', onLoadGameListener);
 }
 
-type OnConcatVideosListenerArgs = { force?: boolean; gameNumber: string; videoPaths: string[] };
-const onConcatVideosListener = async (event: IpcMainEvent, { force, gameNumber, videoPaths }: OnConcatVideosListenerArgs) => {
+type OnImportVideosListenerArgs = { force?: boolean; gameNumber: string; videoPaths: string[] };
+const onImportVideosListener = async (event: IpcMainEvent, { force, gameNumber, videoPaths }: OnImportVideosListenerArgs) => {
     logger.debug('OnConcatVideosListener');
 
     if (!videoPaths.length) {
@@ -36,5 +37,17 @@ const onConcatVideosListener = async (event: IpcMainEvent, { force, gameNumber, 
     } catch (error) {
         logger.error(`error onConcatVideosListener: ${error}`);
         event.reply('process_videos_failed', error);
+    }
+};
+
+type OnLoadGameListenerArgs = { gameNumber: string };
+const onLoadGameListener = async (event: IpcMainEvent, { gameNumber }: OnLoadGameListenerArgs) => {
+    logger.debug('OnLoadGameListener');
+
+    const gameFolderPath = await getGameVideoPathByGameNumber(gameNumber);
+    if (gameFolderPath) {
+        event.reply('process_videos_succeeded', gameFolderPath);
+    } else {
+        event.reply('process_videos_failed');
     }
 };
