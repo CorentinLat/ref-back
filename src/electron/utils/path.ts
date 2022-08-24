@@ -36,3 +36,15 @@ export function checkGameFolderExists(gameNumber: string, logger: winston.Logger
     logger.info(`Game folder created: ${gameFolderPath}`);
     return false;
 }
+
+export async function getExistingGameFolders(logger: winston.Logger): Promise<string[]> {
+    const gameFolders = await new Promise<string[]>(resolve => {
+        fs.readdir(workPath, (_, files) => {
+            const filteredFiles = files.filter(file => file.endsWith('RCT'));
+            resolve(filteredFiles);
+        });
+    });
+
+    logger.info(`Game folders existing: ${gameFolders.join(' / ')}`);
+    return gameFolders;
+}

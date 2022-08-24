@@ -1,11 +1,14 @@
-import { Component, HostListener, NgZone } from '@angular/core';
+import { Component, HostListener, NgZone, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import IpcRendererEvent = Electron.IpcRendererEvent;
 
+import { Game } from '../../domain/game';
+
 import { GameNumberExistingModalComponent } from '../../component/modal/game-number-existing-modal/game-number-existing-modal.component';
+import { LoadGamesExistingModalComponent } from '../../component/modal/load-games-existing-modal/load-games-existing-modal.component';
 
 import { ElectronService } from '../../service/ElectronService';
 import { FileService } from '../../service/FileService';
@@ -16,8 +19,9 @@ import { ToastService } from '../../service/ToastService';
     templateUrl: './home.component.html',
     styleUrls: ['./home.component.scss'],
 })
-// Todo: Check at onInit if games are already existing
-export class HomeComponent {
+export class HomeComponent implements OnInit {
+    isLoadingApp = false;
+
     gameForm = new FormGroup({
         gameNumber: new FormControl(
             '',
@@ -78,6 +82,13 @@ export class HomeComponent {
         }
     }
 
+    ngOnInit() {
+        this.electron.ipcRenderer?.once('process_init_app_succeeded', this.handleInitAppSucceeded);
+
+        this.isLoadingApp = true;
+        this.electron.ipcRenderer?.send('process_init_app_started');
+    }
+
     exposeClassNameForGameNumberInput(): string {
         if (this.gameNumberControl.pristine || this.gameNumberControl.untouched) {
             return 'form-control';
@@ -115,6 +126,20 @@ export class HomeComponent {
         });
     }
 
+    private handleInitAppSucceeded = (_: IpcRendererEvent, games: Game[]) => {
+        this.zone.run(() => {
+            if (games.length) {
+                const modal = this.modalService.open(LoadGamesExistingModalComponent, { centered: true, size: 'lg' });
+                modal.componentInstance.games = games;
+                modal.result
+                    .then((game: Game) => this.navigateToMatchAnalysisPage(game))
+                    .finally(() => this.isLoadingApp = false);
+            } else {
+                this.isLoadingApp = false;
+            }
+        });
+    };
+
     private isGameNumberControlValid(): boolean {
         return this.gameNumberControl.valid;
     }
@@ -127,11 +152,8 @@ export class HomeComponent {
         this.zone.run(() => this.progress = Math.round(progress));
     };
 
-    private handleProcessVideosSucceeded = (_: IpcRendererEvent, videoPath: string) => {
-        this.zone.run(() => this.router.navigate(
-            ['/match-analysis'],
-            { queryParams: { gameNumber: this.getGameNumber(), videoPath } }
-        ));
+    private handleProcessVideosSucceeded = (_: IpcRendererEvent, game: Game) => {
+        this.navigateToMatchAnalysisPage(game);
     };
 
     private handleProcessVideosFailed = (_: IpcRendererEvent, error: any) => {
@@ -166,6 +188,10 @@ export class HomeComponent {
 
         this.isProcessingVideos = true;
         this.electron.ipcRenderer?.send('process_videos_load', { gameNumber: this.getGameNumber() });
+    }
+
+    private navigateToMatchAnalysisPage(game: Game) {
+        this.zone.run(() => this.router.navigate(['/match-analysis'], { queryParams: game }));
     }
 
     private getGameNumber(): string {

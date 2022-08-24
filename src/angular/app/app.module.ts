@@ -18,6 +18,7 @@ import { PageNotFoundComponent } from './page/page-not-found/page-not-found.comp
 
 import { ToastsComponent } from './component/toasts/toasts.component';
 import { GameNumberExistingModalComponent } from './component/modal/game-number-existing-modal/game-number-existing-modal.component';
+import { LoadGamesExistingModalComponent } from './component/modal/load-games-existing-modal/load-games-existing-modal.component';
 
 import DirectivesModule from './directive/directives.module';
 
@@ -27,6 +28,7 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader => new Transla
     declarations: [
         AppComponent,
         GameNumberExistingModalComponent,
+        LoadGamesExistingModalComponent,
         HomeComponent,
         MatchAnalysisComponent,
         PageNotFoundComponent,

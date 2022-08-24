@@ -1,0 +1,22 @@
+<section>
+    <article class="modal-header">
+        <h5 class="modal-title">{{ 'MODAL.LOAD_GAMES_EXISTING.TITLE' | translate }}</h5>
+        <button type="button" class="btn-close" (click)="modal.dismiss()"></button>
+    </article>
+
+    <section class="modal-body text-center">
+        <h5 class="mb-0"><strong>{{ 'MODAL.LOAD_GAMES_EXISTING.EXPLANATION_1' | translate }}</strong></h5>
+        <p>{{ 'MODAL.LOAD_GAMES_EXISTING.EXPLANATION_2' | translate }}</p>
+
+        <article class="d-flex flex-column align-items-center">
+            <button
+                type="button"
+                class="btn btn-link mb-2"
+                (click)="modal.close(game)"
+                *ngFor="let game of games"
+            >
+                {{ game.gameNumber }}
+            </button>
+        </article>
+    </section>
+</section>

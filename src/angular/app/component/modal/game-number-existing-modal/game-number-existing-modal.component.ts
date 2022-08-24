@@ -5,5 +5,5 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 export class GameNumberExistingModalComponent {
     @Input() gameNumber = '';
 
-    constructor(public modal: NgbActiveModal) { }
+    constructor(public modal: NgbActiveModal) {}
 }

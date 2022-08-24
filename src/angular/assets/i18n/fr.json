@@ -10,6 +10,11 @@
       "CANCEL": "Annuler",
       "OVERWRITE": "Écraser",
       "LOAD": "Charger"
+    },
+    "LOAD_GAMES_EXISTING": {
+      "TITLE": "Charger des rencontres existantes",
+      "EXPLANATION_1": "Les rencontres suivantes ont été trouvées :",
+      "EXPLANATION_2": "Vous pouvez les charger en cliquant dessus."
     }
   },
   "PAGE": {

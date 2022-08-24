@@ -5,7 +5,13 @@
         <p>{{ 'PAGE.HOME.MULTI_VIDEO_EXPLANATION' | translate }}</p>
     </section>
 
-    <form class="row col-8 offset-2 mt-5 pt-5" [formGroup]="gameForm" (ngSubmit)="submit()" novalidate>
+    <form
+        class="row col-8 offset-2 mt-5 pt-5"
+        [formGroup]="gameForm"
+        (ngSubmit)="submit()"
+        *ngIf="!isLoadingApp"
+        novalidate
+    >
         <section class="text-start">
             <article class="col-6 offset-3">
                 <label for="game-number" class="form-label">
