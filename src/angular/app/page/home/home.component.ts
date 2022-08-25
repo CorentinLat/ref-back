@@ -3,14 +3,10 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
-import IpcRendererEvent = Electron.IpcRendererEvent;
-
-import { Game } from '../../domain/game';
-
 import { GameNumberExistingModalComponent } from '../../component/modal/game-number-existing-modal/game-number-existing-modal.component';
 import { LoadGamesExistingModalComponent } from '../../component/modal/load-games-existing-modal/load-games-existing-modal.component';
 
-import { ElectronService } from '../../service/ElectronService';
+import CommunicationService from '../../service/CommunicationService';
 import { FileService } from '../../service/FileService';
 import { ToastService } from '../../service/ToastService';
 
@@ -42,15 +38,13 @@ export class HomeComponent implements OnInit {
     modalsCount = 0;
 
     constructor(
-        private electron: ElectronService,
+        private communication: CommunicationService,
         private fileService: FileService,
         private modalService: NgbModal,
         private router: Router,
         private toastService: ToastService,
-        private zone: NgZone,
-    ) {
-        this.modalService.activeInstances.subscribe(list => this.modalsCount = list.length);
-    }
+        private zone: NgZone
+    ) {}
 
     get gameNumberControl(): FormControl { return this.gameForm.get('gameNumber') as FormControl; }
     get videoControl(): FormControl { return this.gameForm.get('video') as FormControl; }
@@ -83,10 +77,12 @@ export class HomeComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.electron.ipcRenderer?.once('process_init_app_succeeded', this.handleInitAppSucceeded);
-
         this.isLoadingApp = true;
-        this.electron.ipcRenderer?.send('process_init_app_started');
+
+        this.communication.getExistingGameNumbers().then(this.handleExistingGames);
+
+        this.communication.getProcessVideoProgress().subscribe(progress => this.zone.run(() => this.progress = Math.round(progress)));
+        this.modalService.activeInstances.subscribe(list => this.modalsCount = list.length);
     }
 
     exposeClassNameForGameNumberInput(): string {
@@ -107,37 +103,57 @@ export class HomeComponent implements OnInit {
         return this.notSupportedFiles.map(({ name }) => name);
     }
 
-    submit(force: boolean = false) {
+    async submit(force: boolean = false) {
         if (this.gameForm.invalid) {
             return;
         }
 
         const videoPaths = this.files.map(({ path }) => path);
 
-        this.electron.ipcRenderer?.on('process_videos_progress', this.handleProcessVideosProgress);
-        this.electron.ipcRenderer?.once('process_videos_succeeded', this.handleProcessVideosSucceeded);
-        this.electron.ipcRenderer?.once('process_videos_failed', this.handleProcessVideosFailed);
-
         this.isProcessingVideos = true;
-        this.electron.ipcRenderer?.send('process_videos_imported', {
-            force,
-            gameNumber: this.getGameNumber(),
-            videoPaths,
-        });
+        try {
+            const gameNumber = await this.communication.createNewGame(force, this.getGameNumber(), videoPaths);
+            this.navigateToMatchAnalysisPage(gameNumber);
+        } catch (error) {
+            this.handleProcessVideosFailed(error);
+        }
     }
 
-    private handleInitAppSucceeded = (_: IpcRendererEvent, games: Game[]) => {
-        this.zone.run(() => {
-            if (games.length) {
-                const modal = this.modalService.open(LoadGamesExistingModalComponent, { centered: true, size: 'lg' });
-                modal.componentInstance.games = games;
-                modal.result
-                    .then((game: Game) => this.navigateToMatchAnalysisPage(game))
-                    .finally(() => this.isLoadingApp = false);
-            } else {
-                this.isLoadingApp = false;
-            }
-        });
+    private handleExistingGames = (gameNumbers: string[]) => {
+        if (gameNumbers.length) {
+            const modal = this.modalService.open(LoadGamesExistingModalComponent, { centered: true, size: 'lg' });
+            modal.componentInstance.gameNumbers = gameNumbers;
+            modal.result
+                .then((gameNumber: string) => this.navigateToMatchAnalysisPage(gameNumber))
+                .finally(() => this.isLoadingApp = false);
+        } else {
+            this.isLoadingApp = false;
+        }
+    };
+
+    private handleProcessVideosFailed = (error: any) => {
+        this.isProcessingVideos = false;
+
+        if (error?.alreadyExisting) {
+            if (this.modalsCount > 0) { return; }
+
+            const gameNumber = this.getGameNumber();
+            const modal = this.modalService.open(GameNumberExistingModalComponent, { centered: true, size: 'lg' });
+            modal.componentInstance.gameNumber = gameNumber;
+            modal.result.then(
+                async ({ overwrite }: { overwrite: boolean }) => {
+                    if (overwrite) {
+                        await this.submit(true);
+                    } else {
+                        this.navigateToMatchAnalysisPage(gameNumber);
+                    }
+                },
+                () => this.gameNumberControl.setErrors({ alreadyExisting: true }),
+            );
+        } else {
+            this.videoControl.setErrors({ processVideoFailed: true });
+            this.toastService.showError('TOAST.ERROR.PROCESS_VIDEO_FAILED');
+        }
     };
 
     private isGameNumberControlValid(): boolean {
@@ -148,53 +164,11 @@ export class HomeComponent implements OnInit {
         return this.videoControl.valid || (this.videoControl.invalid && this.videoControl.errors?.required);
     }
 
-    private handleProcessVideosProgress = (_: IpcRendererEvent, progress: number) => {
-        this.zone.run(() => this.progress = Math.round(progress));
-    };
-
-    private handleProcessVideosSucceeded = (_: IpcRendererEvent, game: Game) => {
-        this.navigateToMatchAnalysisPage(game);
-    };
-
-    private handleProcessVideosFailed = (_: IpcRendererEvent, error: any) => {
-        this.zone.run(() => {
-            this.isProcessingVideos = false;
-
-            if (error?.alreadyExisting) {
-                if (this.modalsCount > 0) { return; }
-
-                const modal = this.modalService.open(GameNumberExistingModalComponent, { centered: true, size: 'lg' });
-                modal.componentInstance.gameNumber = this.getGameNumber();
-                modal.result.then(
-                    ({ overwrite }: { overwrite: boolean }) => {
-                        if (overwrite) {
-                            this.submit(true);
-                        } else {
-                            this.loadExistingGame();
-                        }
-                    },
-                    () => this.gameNumberControl.setErrors({ alreadyExisting: true }),
-                );
-            } else {
-                this.videoControl.setErrors({ processVideoFailed: true });
-                this.toastService.showError('TOAST.ERROR.PROCESS_VIDEO_FAILED');
-            }
-        });
-    };
-
-    private loadExistingGame() {
-        this.electron.ipcRenderer?.once('process_videos_succeeded', this.handleProcessVideosSucceeded);
-        this.electron.ipcRenderer?.once('process_videos_failed', this.handleProcessVideosFailed);
-
-        this.isProcessingVideos = true;
-        this.electron.ipcRenderer?.send('process_videos_load', { gameNumber: this.getGameNumber() });
-    }
-
-    private navigateToMatchAnalysisPage(game: Game) {
-        this.zone.run(() => this.router.navigate(['/match-analysis'], { queryParams: game }));
-    }
-
     private getGameNumber(): string {
         return `${this.gameNumberPrefix} ${this.gameNumberControl.value} ${this.gameNumberSuffix}`;
+    }
+
+    private navigateToMatchAnalysisPage(gameNumber: string) {
+        this.router.navigate(['/match-analysis'], { queryParams: { gameNumber } });
     }
 }

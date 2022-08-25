@@ -9,7 +9,7 @@
         <h4 class="title">{{ gameNumber }}</h4>
     </header>
 
-    <section class="match-analysis-body">
+    <section class="match-analysis-body" *ngIf="game">
         <section class="video-and-controls">
             <vg-player>
                 <vg-overlay-play></vg-overlay-play>

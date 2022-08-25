@@ -46,6 +46,7 @@
   },
   "TOAST": {
     "ERROR": {
+      "PROCESS_GAME_FAILED": "Impossible de charger le match...",
       "PROCESS_VIDEO_FAILED": "Impossible de traiter les vidéos..."
     }
   }

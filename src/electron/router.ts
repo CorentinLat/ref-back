@@ -2,8 +2,9 @@ import IpcMain = Electron.IpcMain;
 import IpcMainEvent = Electron.IpcMainEvent;
 
 import logger from './utils/logger';
+import { createNewGameFile, getGame } from './utils/game';
 import { checkGameFolderExists, getExistingGameFolders } from './utils/path';
-import { concatVideos, copyVideoToUserDataPath, getGameVideoPathByGameNumber } from './utils/video';
+import { concatVideos, copyVideoToUserDataPath } from './utils/video';
 
 export default function(ipcMain: IpcMain) {
     ipcMain.on('process_init_app_started', onInitAppStartedListener);
@@ -11,19 +12,12 @@ export default function(ipcMain: IpcMain) {
     ipcMain.on('process_videos_load', onLoadGameListener);
 }
 
-type Game = { gameNumber: string; videoPath: string };
 const onInitAppStartedListener = async (event: IpcMainEvent) => {
     logger.debug('OnInitAppStartedListener');
 
-    const gameFolders = await getExistingGameFolders(logger);
-    const existingGames = await gameFolders.reduce<Promise<Game[]>>(async (acc, gameFolder) => {
-        const previousAcc = await acc;
-        const videoPath = await getGameVideoPathByGameNumber(gameFolder);
+    const gameNumbers = await getExistingGameFolders(logger);
 
-        return videoPath ? [...previousAcc, { gameNumber: gameFolder, videoPath }] : previousAcc;
-    }, Promise.resolve([]));
-
-    event.reply('process_init_app_succeeded', existingGames);
+    event.reply('process_init_app_succeeded', gameNumbers);
 };
 
 type OnImportVideosListenerArgs = { force?: boolean; gameNumber: string; videoPaths: string[] };
@@ -49,7 +43,9 @@ const onImportVideosListener = async (event: IpcMainEvent, { force, gameNumber, 
             videoPath = await copyVideoToUserDataPath(gameNumber, videoPaths[0], event);
         }
 
-        event.reply('process_videos_succeeded', { gameNumber, videoPath });
+        createNewGameFile(gameNumber, videoPath);
+
+        event.reply('process_videos_succeeded', gameNumber);
     } catch (error) {
         logger.error(`error onConcatVideosListener: ${error}`);
         event.reply('process_videos_failed', error);
@@ -60,9 +56,9 @@ type OnLoadGameListenerArgs = { gameNumber: string };
 const onLoadGameListener = async (event: IpcMainEvent, { gameNumber }: OnLoadGameListenerArgs) => {
     logger.debug('OnLoadGameListener');
 
-    const videoPath = await getGameVideoPathByGameNumber(gameNumber);
-    if (videoPath) {
-        event.reply('process_videos_succeeded', { gameNumber, videoPath });
+    const game = await getGame(gameNumber);
+    if (game) {
+        event.reply('process_videos_succeeded', game);
     } else {
         event.reply('process_videos_failed');
     }

@@ -1,7 +1,6 @@
 import ffmpegElectron from 'ffmpeg-static-electron';
 import ffprobeElectron from 'ffprobe-static-electron';
 import FluentFFMPEG from 'fluent-ffmpeg';
-import fs from 'fs';
 import path from 'path';
 
 import IpcMainEvent = Electron.IpcMainEvent;
@@ -64,23 +63,6 @@ export async function copyVideoToUserDataPath(gameNumber: string, videoPath: str
         logger.info(`Format not supported: ${currentVideoExtension}. Converting to mp4...`);
         return await concatVideos(gameNumber, [videoPath], event);
     }
-}
-
-export async function getGameVideoPathByGameNumber(gameNumber: string): Promise<string|null> {
-    const gamePath = path.join(workPath, gameNumber);
-    const gameVideoFileName = await new Promise<string>(resolve => {
-        fs.readdir(gamePath, (_, files) => {
-            files.forEach(file => {
-                SUPPORTED_HTML_VIDEO_EXTENSIONS.forEach(extension => {
-                    if (file.toLowerCase().endsWith(extension)) {
-                        resolve(file);
-                    }
-                });
-            });
-        });
-    });
-
-    return gameVideoFileName ? path.join(gamePath, gameVideoFileName) : null;
 }
 
 function generateVideoName(extension: string = 'mp4'): string {

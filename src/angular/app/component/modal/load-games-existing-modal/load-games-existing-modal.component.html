@@ -12,10 +12,10 @@
             <button
                 type="button"
                 class="btn btn-link mb-2"
-                (click)="modal.close(game)"
-                *ngFor="let game of games"
+                (click)="modal.close(gameNumber)"
+                *ngFor="let gameNumber of gameNumbers"
             >
-                {{ game.gameNumber }}
+                {{ gameNumber }}
             </button>
         </article>
     </section>

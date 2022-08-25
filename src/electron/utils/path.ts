@@ -28,7 +28,7 @@ export function checkGameFolderExists(gameNumber: string, logger: winston.Logger
             return true;
         }
 
-        fs.rmdirSync(gameFolderPath, { recursive: true });
+        fs.rmSync(gameFolderPath, { recursive: true });
         logger.info(`Game folder forced removed: ${gameFolderPath}`);
     }
 
@@ -45,6 +45,8 @@ export async function getExistingGameFolders(logger: winston.Logger): Promise<st
         });
     });
 
-    logger.info(`Game folders existing: ${gameFolders.join(' / ')}`);
+    if (gameFolders.length) {
+        logger.info(`Game folders existing: ${gameFolders.join(' / ')}`);
+    }
     return gameFolders;
 }
