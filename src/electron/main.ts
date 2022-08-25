@@ -5,7 +5,7 @@ import { checkMandatoryFolderExists } from './utils/path';
 import router from './router';
 import createWindow from './window';
 
-checkMandatoryFolderExists(logger);
+checkMandatoryFolderExists();
 router(ipcMain);
 
 app.on('window-all-closed', () => {

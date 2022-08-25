@@ -1,12 +1,15 @@
+$match-analysis-component-margin: 10px;
+$header-height: 30px;
+$header-margin-bottom: 10px;
+
 .match-analysis-component {
-    height: 100vh;
-    padding: 10px;
-    overflow: clip;
+    margin: $match-analysis-component-margin;
 
     .match-analysis-header {
         display: flex;
         align-items: center;
-        margin-bottom: 10px;
+        height: $header-height;
+        margin-bottom: $header-margin-bottom;
 
         .back-button-container {
             flex-basis: 0;
@@ -29,7 +32,7 @@
         display: flex;
         gap: 20px;
 
-        height: 100%;
+        height: calc(100vh - #{$match-analysis-component-margin} * 2 - #{$header-height} - #{$header-margin-bottom});
 
         .video-and-controls {
             flex-basis: 0;
@@ -38,14 +41,27 @@
             flex-direction: column;
             gap: 20px;
 
-            height: calc(100vh - 30vh);
+            .video {
+                flex-basis: 0;
+                flex-grow: 9;
+            }
+
+            .controls {
+                flex-basis: 0;
+                flex-grow: 4;
+            }
         }
 
-        .actions {
+        .actions-container {
+            display: flex;
+            flex-direction: column;
             flex-basis: 0;
             flex-grow: 2;
+            overflow: hidden;
 
-            overflow: auto;
+            .actions {
+                overflow: auto;
+            }
         }
     }
 }

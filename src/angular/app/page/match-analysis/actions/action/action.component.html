@@ -1,0 +1,14 @@
+<section class="action-component">
+    <article>{{ action.time }}</article>
+
+    <article>{{ action.type }}</article>
+
+    <section class="btn-group" role="group">
+        <button class="btn btn-outline-warning" (click)="handleEditAction()">
+            <i class="bi bi-pen"></i>
+        </button>
+        <button class="btn btn-outline-danger" (click)="handleRemoveAction()">
+            <i class="bi bi-trash"></i>
+        </button>
+    </section>
+</section>

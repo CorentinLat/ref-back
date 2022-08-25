@@ -1,7 +1,8 @@
 import { app } from 'electron';
 import fs from 'fs';
 import path from 'path';
-import winston from 'winston';
+
+import logger from './logger';
 
 export const downloadPath = app.getPath('downloads');
 export const userDataPath = app.getPath('userData');
@@ -10,7 +11,7 @@ export const workPath = path.join(userDataPath, 'work');
 
 const MANDATORY_FOLDERS = [logsPath, workPath];
 
-export function checkMandatoryFolderExists(logger: winston.Logger) {
+export function checkMandatoryFolderExists() {
     MANDATORY_FOLDERS.forEach(folder => {
         if (!fs.existsSync(folder)) {
             fs.mkdirSync(folder, { recursive: true });
@@ -19,7 +20,7 @@ export function checkMandatoryFolderExists(logger: winston.Logger) {
     });
 }
 
-export function checkGameFolderExists(gameNumber: string, logger: winston.Logger, force?: boolean) {
+export function checkGameFolderExists(gameNumber: string, force?: boolean) {
     const gameFolderPath = path.join(workPath, gameNumber);
 
     if (fs.existsSync(gameFolderPath)) {
@@ -37,7 +38,7 @@ export function checkGameFolderExists(gameNumber: string, logger: winston.Logger
     return false;
 }
 
-export async function getExistingGameFolders(logger: winston.Logger): Promise<string[]> {
+export async function getExistingGameFolders(): Promise<string[]> {
     const gameFolders = await new Promise<string[]>(resolve => {
         fs.readdir(workPath, (_, files) => {
             const filteredFiles = files.filter(file => file.endsWith('RCT'));

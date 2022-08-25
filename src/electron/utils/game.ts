@@ -1,9 +1,12 @@
 import fs from 'fs';
 import path from 'path';
+import { v4 as uuidv4 } from 'uuid';
 
+import logger from './logger';
 import { workPath } from './path';
 
-type Action = { id: string; time: number; type: string };
+export type Action = { id: string; time: number; type: string };
+export type NewAction = Omit<Action, 'id'>;
 export type Game = {
     actions: Action[];
     information: {
@@ -26,26 +29,60 @@ export function createNewGameFile(gameNumber: string, videoPath: string): void {
     fs.writeFileSync(gameFile, JSON.stringify(game));
 }
 
-export function addNewActionToGame(gameNumber: string, action: Action): Action[]|null {
+export function addNewActionToGame(gameNumber: string, newAction: NewAction): Action|null {
     const gameFile = path.join(workPath, gameNumber, 'game.json');
 
     const game = getGame(gameNumber);
     if (!game) { return null; }
 
-    game.actions.push(action);
-    fs.writeFileSync(gameFile, JSON.stringify(game));
-    return game.actions;
+    try {
+        const action: Action = { ...newAction, id: uuidv4() };
+        game.actions.push(action);
+        fs.writeFileSync(gameFile, JSON.stringify(game));
+
+        return action;
+    } catch (error) {
+        logger.error(`error addNewActionToGame: ${error}`);
+        return null;
+    }
 }
 
-export function removeActionFromGame(gameNumber: string, actionId: string): Action[]|null {
+export function editActionFromGame(gameNumber: string, action: Action): boolean {
     const gameFile = path.join(workPath, gameNumber, 'game.json');
 
     const game = getGame(gameNumber);
-    if (!game) { return null; }
+    if (!game) { return false; }
 
-    game.actions = game.actions.filter(action => action.id !== actionId);
-    fs.writeFileSync(gameFile, JSON.stringify(game));
-    return game.actions;
+    try {
+        const actionToEdit = game.actions.find(({ id }) => id === action.id);
+        if (!actionToEdit) { return false; }
+
+        actionToEdit.time = action.time;
+        actionToEdit.type = action.type;
+        fs.writeFileSync(gameFile, JSON.stringify(game));
+
+        return true;
+    } catch (error) {
+        logger.error(`error editActionFromGame: ${error}`);
+        return false;
+    }
+}
+
+export function removeActionFromGame(gameNumber: string, actionId: string): boolean {
+    const gameFile = path.join(workPath, gameNumber, 'game.json');
+
+    const game = getGame(gameNumber);
+    if (!game) { return false; }
+
+    try {
+        game.actions = game.actions.filter(action => action.id !== actionId);
+        fs.writeFileSync(gameFile, JSON.stringify(game));
+
+        return true;
+    } catch (error) {
+        logger.error(`error removeActionFromGame: ${error}`);
+        return false;
+    }
 }
 
 export function getGame(gameNumber: string): Game|null {
@@ -54,7 +91,8 @@ export function getGame(gameNumber: string): Game|null {
     try {
         const game = fs.readFileSync(gameFile, 'utf8');
         return JSON.parse(game);
-    } catch (_) {
+    } catch (error) {
+        logger.error(`error getGame: ${error}`);
         return null;
     }
 }

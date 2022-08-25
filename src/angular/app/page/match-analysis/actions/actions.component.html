@@ -1,0 +1,12 @@
+<section class="actions-component">
+    <app-action
+        *ngFor="let action of exposeActionsSortedByTime()"
+        [action]="action"
+        (editActionEvent)="editAction($event)"
+        (removeActionEvent)="removeAction($event)"
+    ></app-action>
+
+    <article class="no-action" *ngIf="actions.length === 0">
+        <h5>{{ 'PAGE.MATCH_ANALYSIS.ACTIONS.NO_ACTION' | translate }}</h5>
+    </article>
+</section>

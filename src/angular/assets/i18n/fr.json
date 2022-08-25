@@ -41,11 +41,21 @@
       }
     },
     "MATCH_ANALYSIS": {
-      "BACK_HOME": "Retour à l'Accueil"
+      "BACK_HOME": "Retour à l'Accueil",
+      "ACTIONS": {
+        "TITLE": "Décisions",
+        "NO_ACTION": "Aucune décision n'a été ajoutée pour le moment."
+      },
+      "FORM": {
+        "ADD_DECISION": "Ajouter une décision"
+      }
     }
   },
   "TOAST": {
     "ERROR": {
+      "PROCESS_ACTION_ADD_FAILED": "Impossible d'ajouter cette action...",
+      "PROCESS_ACTION_EDIT_FAILED": "Impossible d'éditer cette action...",
+      "PROCESS_ACTION_REMOVE_FAILED": "Impossible de supprimer cette action...",
       "PROCESS_GAME_FAILED": "Impossible de charger le match...",
       "PROCESS_VIDEO_FAILED": "Impossible de traiter les vidéos..."
     }

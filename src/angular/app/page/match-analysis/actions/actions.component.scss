@@ -1,0 +1,12 @@
+.actions-component {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+
+    overflow: auto;
+
+    .no-action {
+        margin-top: 50px;
+        text-align: center;
+    }
+}

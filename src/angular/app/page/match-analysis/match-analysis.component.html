@@ -11,7 +11,7 @@
 
     <section class="match-analysis-body" *ngIf="game">
         <section class="video-and-controls">
-            <vg-player>
+            <vg-player class="video">
                 <vg-overlay-play></vg-overlay-play>
 
                 <vg-scrub-bar>
@@ -39,38 +39,21 @@
                 </video>
             </vg-player>
 
-            <section class="controls">
-                <button>Hello</button>
-            </section>
+            <app-add-action
+                class="controls"
+                [actions]="game.actions"
+                [gameNumber]="gameNumber"
+            ></app-add-action>
         </section>
 
-        <section class="actions">
-            <p>Incroyable</p>
-            <p>Incroyable</p>
-            <p>Incroyable</p>
-            <p>Incroyable</p>
-            <p>Incroyable</p>
-            <p>Incroyable</p>
-            <p>Incroyable</p>
-            <p>Incroyable</p>
-            <p>Incroyable</p>
-            <p>Incroyable</p>
-            <p>Incroyable</p>
-            <p>Incroyable</p>
-            <p>Incroyable</p>
-            <p>Incroyable</p>
-            <p>Incroyable</p>
-            <p>Incroyable</p>
-            <p>Incroyable</p>
-            <p>Incroyable</p>
-            <p>Incroyable</p>
-            <p>Incroyable</p>
-            <p>Incroyable</p>
-            <p>Incroyable</p>
-            <p>Incroyable</p>
-            <p>Incroyable</p>
-            <p>Incroyable</p>
-            <p>Incroyable</p>
+        <section class="actions-container">
+            <h3>{{ 'PAGE.MATCH_ANALYSIS.ACTIONS.TITLE' | translate }}</h3>
+
+            <app-actions
+                class="actions"
+                [actions]="game.actions"
+                [gameNumber]="gameNumber"
+            ></app-actions>
         </section>
     </section>
 </section>

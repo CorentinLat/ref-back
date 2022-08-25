@@ -14,6 +14,9 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HomeComponent } from './page/home/home.component';
 import { MatchAnalysisComponent } from './page/match-analysis/match-analysis.component';
+import { ActionComponent } from './page/match-analysis/actions/action/action.component';
+import { ActionsComponent } from './page/match-analysis/actions/actions.component';
+import { AddActionComponent } from './page/match-analysis/add-action/add-action.component';
 import { PageNotFoundComponent } from './page/page-not-found/page-not-found.component';
 
 import { ToastsComponent } from './component/toasts/toasts.component';
@@ -26,6 +29,9 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader => new Transla
 
 @NgModule({
     declarations: [
+        ActionComponent,
+        ActionsComponent,
+        AddActionComponent,
         AppComponent,
         GameNumberExistingModalComponent,
         LoadGamesExistingModalComponent,
