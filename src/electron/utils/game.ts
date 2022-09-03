@@ -5,7 +5,17 @@ import { v4 as uuidv4 } from 'uuid';
 import logger from './logger';
 import { workPath } from './path';
 
-export type Action = { id: string; time: number; type: string };
+export type Action = {
+    id: string;
+    second: number;
+    type: string;
+    against: string;
+    card?: 'RED' | 'YELLOW' | 'WHITE';
+    sector: string;
+    fault: string;
+    precise: 'YES' | 'NOT' | 'DOUBT';
+    comment: string;
+};
 export type NewAction = Omit<Action, 'id'>;
 export type Game = {
     actions: Action[];
@@ -57,7 +67,7 @@ export function editActionFromGame(gameNumber: string, action: Action): boolean 
         const actionToEdit = game.actions.find(({ id }) => id === action.id);
         if (!actionToEdit) { return false; }
 
-        actionToEdit.time = action.time;
+        actionToEdit.second = action.second;
         actionToEdit.type = action.type;
         fs.writeFileSync(gameFile, JSON.stringify(game));
 

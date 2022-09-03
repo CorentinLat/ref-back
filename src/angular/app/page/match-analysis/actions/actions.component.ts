@@ -20,7 +20,7 @@ export class ActionsComponent {
     ) {}
 
     exposeActionsSortedByTime(): Action[] {
-        return this.actions.sort((a, b) => a.time - b.time);
+        return this.actions.sort((a, b) => a.second - b.second);
     }
 
     async editAction(actionEdited: Action): Promise<void> {
@@ -29,7 +29,7 @@ export class ActionsComponent {
 
         try {
             await this.communication.editActionFromGame(actionEdited, this.gameNumber);
-            action.time = actionEdited.time;
+            action.second = actionEdited.second;
             action.type = actionEdited.type;
         } catch (_) {
             this.toastService.showError('TOAST.ERROR.PROCESS_ACTION_EDIT_FAILED');

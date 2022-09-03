@@ -13,6 +13,7 @@ import { ToastService } from '../../../service/ToastService';
 export class AddActionComponent {
     @Input() actions!: Action[];
     @Input() gameNumber!: string;
+    @Input() getCurrentVideoTime!: () => number;
 
     constructor(
         private communication: CommunicationService,
@@ -20,7 +21,15 @@ export class AddActionComponent {
     ) {}
 
     async handleAddAction(): Promise<void> {
-        const newAction: NewAction = { time: Date.now(), type: 'Type' };
+        const newAction: NewAction = {
+            second: this.getCurrentVideoTime(),
+            type: 'Type',
+            against: 'Against',
+            sector: 'Sector',
+            fault: 'Fault',
+            precise: 'YES',
+            comment: 'Comment',
+        };
 
         try {
             const action = await this.communication.addActionToGame(newAction, this.gameNumber);

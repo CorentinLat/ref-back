@@ -1,9 +1,43 @@
 .actions-component {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    overflow: hidden;
 
-    overflow: auto;
+    .actions-header {
+        display: flex;
+        font-size: 18px;
+        font-weight: bold;
+
+        padding: 0 5px 10px 5px;
+        border-bottom: 2px solid black;
+
+        .minute {
+            flex-grow: 1;
+            flex-basis: 0;
+        }
+        .type {
+            flex-grow: 2;
+            flex-basis: 0;
+        }
+        .against {
+            flex-grow: 3;
+            flex-basis: 0;
+        }
+        .sector {
+            flex-grow: 3;
+            flex-basis: 0;
+        }
+        .actions {
+            flex-grow: 2;
+            flex-basis: 0;
+        }
+    }
+
+    .actions-container {
+        display: flex;
+        flex-direction: column;
+        overflow: auto;
+    }
 
     .no-action {
         margin-top: 50px;

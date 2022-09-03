@@ -1,9 +1,13 @@
 <section class="action-component">
-    <article>{{ action.time }}</article>
+    <article class="minute">{{ exposeActionMinutes() }}</article>
+    <article class="type">{{ action.type }}</article>
+    <article class="against">{{ action.against }}</article>
+    <article class="sector">{{ action.sector }}</article>
 
-    <article>{{ action.type }}</article>
-
-    <section class="btn-group" role="group">
+    <section class="btn-group actions" role="group">
+        <button class="btn btn-outline-primary" (click)="handleViewAction()">
+            <i class="bi bi-eye"></i>
+        </button>
         <button class="btn btn-outline-warning" (click)="handleEditAction()">
             <i class="bi bi-pen"></i>
         </button>

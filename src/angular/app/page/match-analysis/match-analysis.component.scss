@@ -60,7 +60,9 @@ $header-margin-bottom: 10px;
             overflow: hidden;
 
             .actions {
-                overflow: auto;
+                display: flex;
+                flex-direction: column;
+                overflow: hidden;
             }
         }
     }

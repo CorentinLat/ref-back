@@ -44,7 +44,11 @@
       "BACK_HOME": "Retour à l'Accueil",
       "ACTIONS": {
         "TITLE": "Décisions",
-        "NO_ACTION": "Aucune décision n'a été ajoutée pour le moment."
+        "NO_ACTION": "Aucune décision n'a été ajoutée pour le moment.",
+        "MINUTE": "Minute",
+        "TYPE": "Sanction",
+        "AGAINST": "Contre",
+        "SECTOR": "Secteur"
       },
       "FORM": {
         "ADD_DECISION": "Ajouter une décision"

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
+import { VgApiService } from '@videogular/ngx-videogular/core';
 
 import { Game } from '../../domain/game';
 
@@ -16,6 +17,8 @@ export class MatchAnalysisComponent implements OnInit {
     public game!: Game;
     public gameNumber!: string|null;
     public videoPath!: SafeResourceUrl;
+
+    public videoApiService!: VgApiService;
 
     constructor(
         private communication: CommunicationService,
@@ -43,6 +46,12 @@ export class MatchAnalysisComponent implements OnInit {
                 this.navigateToHome();
             });
     }
+
+    public onPlayerReady(api: VgApiService): void {
+        this.videoApiService = api;
+    }
+
+    public getCurrentVideoTime = (): number => Math.round(this.videoApiService.currentTime);
 
     private navigateToHome(): void {
         this.router.navigate(['/']);

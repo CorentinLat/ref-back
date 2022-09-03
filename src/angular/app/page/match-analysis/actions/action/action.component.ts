@@ -15,6 +15,19 @@ export class ActionComponent {
 
     constructor() {}
 
+    exposeActionMinutes(): string {
+        const minutes = Math.floor(this.action.second / 60);
+        const minutesStr = minutes.toString().padStart(2, '0');
+        const seconds = this.action.second % 60;
+        const secondsStr = seconds.toString().padStart(2, '0');
+
+        return minutesStr + ':' + secondsStr;
+    }
+
+    handleViewAction(): void {
+        this.editActionEvent.emit({ ...this.action, type: 'Type Edited' });
+    }
+
     handleEditAction(): void {
         this.editActionEvent.emit({ ...this.action, type: 'Type Edited' });
     }

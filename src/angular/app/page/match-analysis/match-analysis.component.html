@@ -11,7 +11,7 @@
 
     <section class="match-analysis-body" *ngIf="game">
         <section class="video-and-controls">
-            <vg-player class="video">
+            <vg-player class="video" (onPlayerReady)="onPlayerReady($event)">
                 <vg-overlay-play></vg-overlay-play>
 
                 <vg-scrub-bar>
@@ -43,6 +43,7 @@
                 class="controls"
                 [actions]="game.actions"
                 [gameNumber]="gameNumber"
+                [getCurrentVideoTime]="getCurrentVideoTime"
             ></app-add-action>
         </section>
 
