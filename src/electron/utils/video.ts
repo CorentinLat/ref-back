@@ -35,7 +35,7 @@ export async function concatVideos(gameNumber: string, videoPaths: string[], eve
             .on('progress', (progress: { timemark: string }) => {
                 const currentSeconds = extractNumberOfSecondsFromTimeMark(progress.timemark);
                 const percentageDone = Math.min(currentSeconds / totalDuration * 100, 100);
-                event.reply('process_videos_progress', percentageDone);
+                event.reply('videos_progress', percentageDone);
             })
             .on('error', (err: Error) => {
                 logger.error(`error concatVideos: ${err}`);

@@ -15,35 +15,35 @@ import { checkGameFolderExists, getExistingGameFolders } from './utils/path';
 import { concatVideos, copyVideoToUserDataPath } from './utils/video';
 
 export default function(ipcMain: IpcMain) {
-    ipcMain.on('process_init_app_started', onInitAppStartedListener);
-    ipcMain.on('process_videos_imported', onImportVideosListener);
-    ipcMain.on('process_videos_load', onLoadGameListener);
-    ipcMain.on('process_add_action', onAddActionListener);
-    ipcMain.on('process_edit_action', onEditActionListener);
-    ipcMain.on('process_remove_action', onRemoveActionListener);
+    ipcMain.on('get_existing_games', onInitAppListener);
+    ipcMain.on('create_new_game', onCreateNewGameListener);
+    ipcMain.on('get_game', onGetGameListener);
+    ipcMain.on('add_action', onAddActionListener);
+    ipcMain.on('edit_action', onEditActionListener);
+    ipcMain.on('remove_action', onRemoveActionListener);
 }
 
-const onInitAppStartedListener = async (event: IpcMainEvent) => {
-    logger.debug('OnInitAppStartedListener');
+const onInitAppListener = async (event: IpcMainEvent) => {
+    logger.debug('OnInitAppListener');
 
     const gameNumbers = await getExistingGameFolders();
 
-    event.reply('process_init_app_succeeded', gameNumbers);
+    event.reply('get_existing_games_succeeded', gameNumbers);
 };
 
 type OnImportVideosListenerArgs = { force?: boolean; gameNumber: string; videoPaths: string[] };
-const onImportVideosListener = async (event: IpcMainEvent, { force, gameNumber, videoPaths }: OnImportVideosListenerArgs) => {
-    logger.debug('OnConcatVideosListener');
+const onCreateNewGameListener = async (event: IpcMainEvent, { force, gameNumber, videoPaths }: OnImportVideosListenerArgs) => {
+    logger.debug('OnCreateNewGameListener');
 
     if (!videoPaths.length) {
         logger.error('No video to handle');
-        event.reply('process_videos_failed');
+        event.reply('create_new_game_failed');
     }
 
     try {
         const alreadyExisting = checkGameFolderExists(gameNumber, force);
         if (alreadyExisting) {
-            event.reply('process_videos_failed', { alreadyExisting: true });
+            event.reply('create_new_game_failed', { alreadyExisting: true });
             return;
         }
 
@@ -56,22 +56,22 @@ const onImportVideosListener = async (event: IpcMainEvent, { force, gameNumber, 
 
         createNewGameFile(gameNumber, videoPath);
 
-        event.reply('process_videos_succeeded', gameNumber);
+        event.reply('create_new_game_succeeded', gameNumber);
     } catch (error) {
-        logger.error(`error onConcatVideosListener: ${error}`);
-        event.reply('process_videos_failed', error);
+        logger.error(`error OnCreateNewGameListener: ${error}`);
+        event.reply('create_new_game_failed', error);
     }
 };
 
 type OnLoadGameListenerArgs = { gameNumber: string };
-const onLoadGameListener = async (event: IpcMainEvent, { gameNumber }: OnLoadGameListenerArgs) => {
-    logger.debug('OnLoadGameListener');
+const onGetGameListener = async (event: IpcMainEvent, { gameNumber }: OnLoadGameListenerArgs) => {
+    logger.debug('OnGetGameListener');
 
     const game = await getGame(gameNumber);
     if (game) {
-        event.reply('process_videos_succeeded', game);
+        event.reply('get_game_succeeded', game);
     } else {
-        event.reply('process_videos_failed');
+        event.reply('get_game_failed');
     }
 };
 
@@ -81,9 +81,9 @@ const onAddActionListener = (event: IpcMainEvent, { newAction, gameNumber }: OnA
 
     const action = addNewActionToGame(gameNumber, newAction);
     if (action) {
-        event.reply('process_add_action_succeeded', action);
+        event.reply('add_action_succeeded', action);
     } else {
-        event.reply('process_add_action_failed');
+        event.reply('add_action_failed');
     }
 };
 
@@ -93,9 +93,9 @@ const onEditActionListener = (event: IpcMainEvent, { action, gameNumber }: OnEdi
 
     const isEdited = editActionFromGame(gameNumber, action);
     if (isEdited) {
-        event.reply('process_edit_action_succeeded');
+        event.reply('edit_action_succeeded');
     } else {
-        event.reply('process_edit_action_failed');
+        event.reply('edit_action_failed');
     }
 };
 
@@ -105,8 +105,8 @@ const onRemoveActionListener = (event: IpcMainEvent, { actionId, gameNumber }: O
 
     const isRemoved = removeActionFromGame(gameNumber, actionId);
     if (isRemoved) {
-        event.reply('process_remove_action_succeeded');
+        event.reply('remove_action_succeeded');
     } else {
-        event.reply('process_remove_action_failed');
+        event.reply('remove_action_failed');
     }
 };
