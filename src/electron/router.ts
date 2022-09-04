@@ -10,6 +10,7 @@ import {
     editActionFromGame,
     getGame,
     removeActionFromGame,
+    removeGame,
 } from './utils/game';
 import { checkGameFolderExists, getExistingGameFolders } from './utils/path';
 import { concatVideos, copyVideoToUserDataPath } from './utils/video';
@@ -18,6 +19,7 @@ export default function(ipcMain: IpcMain) {
     ipcMain.on('get_existing_games', onInitAppListener);
     ipcMain.on('create_new_game', onCreateNewGameListener);
     ipcMain.on('get_game', onGetGameListener);
+    ipcMain.on('remove_game', onRemoveGameListener);
     ipcMain.on('add_action', onAddActionListener);
     ipcMain.on('edit_action', onEditActionListener);
     ipcMain.on('remove_action', onRemoveActionListener);
@@ -31,8 +33,8 @@ const onInitAppListener = async (event: IpcMainEvent) => {
     event.reply('get_existing_games_succeeded', gameNumbers);
 };
 
-type OnImportVideosListenerArgs = { force?: boolean; gameNumber: string; videoPaths: string[] };
-const onCreateNewGameListener = async (event: IpcMainEvent, { force, gameNumber, videoPaths }: OnImportVideosListenerArgs) => {
+type OnCreateNewGameListenerArgs = { force?: boolean; gameNumber: string; videoPaths: string[] };
+const onCreateNewGameListener = async (event: IpcMainEvent, { force, gameNumber, videoPaths }: OnCreateNewGameListenerArgs) => {
     logger.debug('OnCreateNewGameListener');
 
     if (!videoPaths.length) {
@@ -63,15 +65,27 @@ const onCreateNewGameListener = async (event: IpcMainEvent, { force, gameNumber,
     }
 };
 
-type OnLoadGameListenerArgs = { gameNumber: string };
-const onGetGameListener = async (event: IpcMainEvent, { gameNumber }: OnLoadGameListenerArgs) => {
+type OnGetGameListenerArgs = { gameNumber: string };
+const onGetGameListener = (event: IpcMainEvent, { gameNumber }: OnGetGameListenerArgs) => {
     logger.debug('OnGetGameListener');
 
-    const game = await getGame(gameNumber);
+    const game = getGame(gameNumber);
     if (game) {
         event.reply('get_game_succeeded', game);
     } else {
         event.reply('get_game_failed');
+    }
+};
+
+type OnRemoveGameListenerArgs = { gameNumber: string };
+const onRemoveGameListener = (event: IpcMainEvent, { gameNumber }: OnRemoveGameListenerArgs) => {
+    logger.debug('OnRemoveGameListener');
+
+    const gameRemoved = removeGame(gameNumber);
+    if (gameRemoved) {
+        event.reply('remove_game_succeeded');
+    } else {
+        event.reply('remove_game_failed');
     }
 };
 

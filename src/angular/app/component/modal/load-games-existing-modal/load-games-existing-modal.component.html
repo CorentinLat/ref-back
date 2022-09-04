@@ -8,15 +8,27 @@
         <h5 class="mb-0"><strong>{{ 'MODAL.LOAD_GAMES_EXISTING.EXPLANATION_1' | translate }}</strong></h5>
         <p>{{ 'MODAL.LOAD_GAMES_EXISTING.EXPLANATION_2' | translate }}</p>
 
-        <article class="d-flex flex-column align-items-center">
-            <button
-                type="button"
-                class="btn btn-link mb-2"
-                (click)="modal.close(gameNumber)"
+        <section class="d-flex flex-column align-items-center gap-3">
+            <article
+                class="d-flex align-items-center gap-2"
                 *ngFor="let gameNumber of gameNumbers"
             >
-                {{ gameNumber }}
-            </button>
-        </article>
+                <button
+                    class="btn btn-link"
+                    type="button"
+                    (click)="modal.close(gameNumber)"
+                >
+                    {{ gameNumber }}
+                </button>
+
+                <button
+                    class="btn ml-2"
+                    type="button"
+                    (click)="handleRemoveGame(gameNumber)"
+                >
+                    <i class="bi bi-trash text-danger"></i>
+                </button>
+            </article>
+        </section>
     </section>
 </section>

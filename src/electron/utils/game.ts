@@ -39,6 +39,30 @@ export function createNewGameFile(gameNumber: string, videoPath: string): void {
     fs.writeFileSync(gameFile, JSON.stringify(game));
 }
 
+export function getGame(gameNumber: string): Game|null {
+    const gameFile = path.join(workPath, gameNumber, 'game.json');
+
+    try {
+        const game = fs.readFileSync(gameFile, 'utf8');
+        return JSON.parse(game);
+    } catch (error) {
+        logger.error(`error getGame: ${error}`);
+        return null;
+    }
+}
+
+export function removeGame(gameNumber: string): boolean {
+    const gameFolderPath = path.join(workPath, gameNumber);
+
+    try {
+        fs.rmSync(gameFolderPath, { recursive: true });
+        return true;
+    } catch (error) {
+        logger.error(`error removeGame: ${error}`);
+        return false;
+    }
+}
+
 export function addNewActionToGame(gameNumber: string, newAction: NewAction): Action|null {
     const gameFile = path.join(workPath, gameNumber, 'game.json');
 
@@ -92,17 +116,5 @@ export function removeActionFromGame(gameNumber: string, actionId: string): bool
     } catch (error) {
         logger.error(`error removeActionFromGame: ${error}`);
         return false;
-    }
-}
-
-export function getGame(gameNumber: string): Game|null {
-    const gameFile = path.join(workPath, gameNumber, 'game.json');
-
-    try {
-        const game = fs.readFileSync(gameFile, 'utf8');
-        return JSON.parse(game);
-    } catch (error) {
-        logger.error(`error getGame: ${error}`);
-        return null;
     }
 }

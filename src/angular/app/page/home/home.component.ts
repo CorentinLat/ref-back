@@ -16,6 +16,8 @@ import { ToastService } from '../../service/ToastService';
     styleUrls: ['./home.component.scss'],
 })
 export class HomeComponent implements OnInit {
+    hasExistingGames = false;
+
     gameForm = new FormGroup({
         gameNumber: new FormControl(
             '',
@@ -73,7 +75,13 @@ export class HomeComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.communication.getProcessVideoProgress().subscribe(progress => this.zone.run(() => this.progress = Math.round(progress)));
+        this.communication
+            .getExistingGameNumbers()
+            .then(gameNumbers => (this.hasExistingGames = gameNumbers.length > 0));
+
+        this.communication
+            .getProcessVideoProgress()
+            .subscribe(progress => this.zone.run(() => this.progress = Math.round(progress)));
     }
 
     exposeClassNameForGameNumberInput(): string {
@@ -111,13 +119,14 @@ export class HomeComponent implements OnInit {
     }
 
     async handleDisplayExistingGames() {
-        const gameNumbers = await this.communication.getExistingGameNumbers();
-
-        if (gameNumbers.length) {
-            const modal = this.modalService.open(LoadGamesExistingModalComponent, { centered: true, size: 'lg' });
-            modal.componentInstance.gameNumbers = gameNumbers;
-            modal.result.then((gameNumber: string) => this.navigateToMatchAnalysisPage(gameNumber));
-        }
+        const modal = this.modalService.open(LoadGamesExistingModalComponent, { centered: true, size: 'lg' });
+        modal.result
+            .then((gameNumber: string) => this.navigateToMatchAnalysisPage(gameNumber))
+            .catch((reason?: { noMoreGame?: boolean }) => {
+                if (reason?.noMoreGame) {
+                    this.hasExistingGames = false;
+                }
+            });
     };
 
     private handleProcessVideosFailed = (error: any) => {

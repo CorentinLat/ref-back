@@ -5,6 +5,7 @@
         <button
             class="col-2 btn btn-outline-primary"
             (click)="handleDisplayExistingGames()"
+            *ngIf="hasExistingGames"
         >
             <i class="bi bi-eye"></i> {{ 'PAGE.HOME.SEE_EXISTING_GAMES' | translate }}
         </button>
