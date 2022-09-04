@@ -1,17 +1,21 @@
 <section class="home-component container text-center">
-    <section>
-        <h1 class="title my-3">{{ 'PAGE.HOME.TITLE' | translate }}</h1>
-        <h3>{{ 'PAGE.HOME.IMPORT' | translate }}</h3>
-        <p>{{ 'PAGE.HOME.MULTI_VIDEO_EXPLANATION' | translate }}</p>
-    </section>
+    <header class="row my-5">
+        <h1 class="col-8 offset-2 title">{{ 'PAGE.HOME.TITLE' | translate }}</h1>
 
-    <form
-        class="row col-8 offset-2 mt-5 pt-5"
-        [formGroup]="gameForm"
-        (ngSubmit)="submit()"
-        *ngIf="!isLoadingApp"
-        novalidate
-    >
+        <button
+            class="col-2 btn btn-outline-primary"
+            (click)="handleDisplayExistingGames()"
+        >
+            <i class="bi bi-eye"></i> {{ 'PAGE.HOME.SEE_EXISTING_GAMES' | translate }}
+        </button>
+    </header>
+
+    <form class="row col-8 offset-2 py-3" [formGroup]="gameForm" (ngSubmit)="submit()" novalidate>
+        <section class="mb-4">
+            <h3>{{ 'PAGE.HOME.IMPORT' | translate }}</h3>
+            <p>{{ 'PAGE.HOME.MULTI_VIDEO_EXPLANATION' | translate }}</p>
+        </section>
+
         <section class="text-start">
             <article class="col-6 offset-3">
                 <label for="game-number" class="form-label">
@@ -65,7 +69,7 @@
 
         <article class="mb-3">
             <button
-                class="btn btn-primary btn-lg"
+                class="btn btn-success btn-lg"
                 [disabled]="gameForm.invalid || isProcessingVideos"
             >
                 {{ 'PAGE.HOME.IMPORT_BUTTON' | translate }}

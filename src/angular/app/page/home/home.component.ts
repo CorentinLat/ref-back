@@ -16,8 +16,6 @@ import { ToastService } from '../../service/ToastService';
     styleUrls: ['./home.component.scss'],
 })
 export class HomeComponent implements OnInit {
-    isLoadingApp = false;
-
     gameForm = new FormGroup({
         gameNumber: new FormControl(
             '',
@@ -34,8 +32,6 @@ export class HomeComponent implements OnInit {
 
     isProcessingVideos = false;
     progress = 0;
-
-    modalsCount = 0;
 
     constructor(
         private communication: CommunicationService,
@@ -77,12 +73,7 @@ export class HomeComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.isLoadingApp = true;
-
-        this.communication.getExistingGameNumbers().then(this.handleExistingGames);
-
         this.communication.getProcessVideoProgress().subscribe(progress => this.zone.run(() => this.progress = Math.round(progress)));
-        this.modalService.activeInstances.subscribe(list => this.modalsCount = list.length);
     }
 
     exposeClassNameForGameNumberInput(): string {
@@ -119,15 +110,13 @@ export class HomeComponent implements OnInit {
         }
     }
 
-    private handleExistingGames = (gameNumbers: string[]) => {
+    async handleDisplayExistingGames() {
+        const gameNumbers = await this.communication.getExistingGameNumbers();
+
         if (gameNumbers.length) {
             const modal = this.modalService.open(LoadGamesExistingModalComponent, { centered: true, size: 'lg' });
             modal.componentInstance.gameNumbers = gameNumbers;
-            modal.result
-                .then((gameNumber: string) => this.navigateToMatchAnalysisPage(gameNumber))
-                .finally(() => this.isLoadingApp = false);
-        } else {
-            this.isLoadingApp = false;
+            modal.result.then((gameNumber: string) => this.navigateToMatchAnalysisPage(gameNumber));
         }
     };
 
@@ -135,8 +124,6 @@ export class HomeComponent implements OnInit {
         this.isProcessingVideos = false;
 
         if (error?.alreadyExisting) {
-            if (this.modalsCount > 0) { return; }
-
             const gameNumber = this.getGameNumber();
             const modal = this.modalService.open(GameNumberExistingModalComponent, { centered: true, size: 'lg' });
             modal.componentInstance.gameNumber = gameNumber;

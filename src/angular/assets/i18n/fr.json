@@ -23,6 +23,7 @@
       "IMPORT_BUTTON": "Démarrer",
       "MULTI_VIDEO_EXPLANATION": "Si votre vidéo est découpée en plusieurs clips, vous pouvez tous les importer.",
       "TITLE": "Perf'Arbitres++",
+      "SEE_EXISTING_GAMES": "Matchs créés",
       "FORM": {
         "LABEL": {
           "GAME_NUMBER": "Numéro de rencontre"
