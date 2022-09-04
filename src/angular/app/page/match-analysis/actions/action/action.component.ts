@@ -24,12 +24,10 @@ export class ActionComponent {
         return minutesStr + ':' + secondsStr;
     }
 
-    handleViewAction(): void {
-        this.editActionEvent.emit({ ...this.action, type: 'Type Edited' });
-    }
+    handleViewAction(): void {}
 
     handleEditAction(): void {
-        this.editActionEvent.emit({ ...this.action, type: 'Type Edited' });
+        this.editActionEvent.emit({ ...this.action, type: 'PENALTY_TRY' });
     }
 
     handleRemoveAction(): void {

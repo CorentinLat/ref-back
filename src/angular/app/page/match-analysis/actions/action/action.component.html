@@ -1,8 +1,8 @@
 <section class="action-component">
     <article class="minute">{{ exposeActionMinutes() }}</article>
-    <article class="type">{{ action.type }}</article>
-    <article class="against">{{ action.against }}</article>
-    <article class="sector">{{ action.sector }}</article>
+    <article class="type">{{ 'PAGE.MATCH_ANALYSIS.ACTIONS.ACTION.TYPE.' + action.type | translate }}</article>
+    <article class="against">{{ 'PAGE.MATCH_ANALYSIS.ACTIONS.ACTION.AGAINST.' + action.against | translate }}</article>
+    <article class="sector">{{ 'PAGE.MATCH_ANALYSIS.ACTIONS.ACTION.SECTOR.' + action.sector | translate }}</article>
 
     <section class="btn-group actions" role="group">
         <button class="btn btn-outline-primary" (click)="handleViewAction()">

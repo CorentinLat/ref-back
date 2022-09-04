@@ -1,3 +1,10 @@
 .add-action-component {
-
+    .second { flex-basis: 0; flex-grow: 1; }
+    .type { flex-basis: 0; flex-grow: 2; }
+    .decision-card { flex-basis: 0; flex-grow: 2; }
+    .against { flex-basis: 0; flex-grow: 2; }
+    .sector { flex-basis: 0; flex-grow: 2; }
+    .fault { flex-basis: 0; flex-grow: 2; }
+    .precise { flex-basis: 0; flex-grow: 2; }
+    .comment { flex-basis: 0; flex-grow: 4; }
 }

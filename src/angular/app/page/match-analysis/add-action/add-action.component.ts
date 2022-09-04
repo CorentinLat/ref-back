@@ -1,6 +1,17 @@
 import { Component, Input } from '@angular/core';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 
-import { Action, NewAction } from '../../../domain/game';
+import {
+    Action,
+    NewAction,
+    actionAgainsts,
+    actionCardTypes,
+    actionCards,
+    actionFaults,
+    actionSectors,
+    actionTypes,
+    actionPrecises,
+} from '../../../domain/game';
 
 import CommunicationService from '../../../service/CommunicationService';
 import { ToastService } from '../../../service/ToastService';
@@ -15,27 +26,93 @@ export class AddActionComponent {
     @Input() gameNumber!: string;
     @Input() getCurrentVideoTime!: () => number;
 
+    displayAddActionForm = false;
+    isAddingAction = false;
+
+    addActionForm = new FormGroup({
+        second: new FormControl('', [Validators.required]),
+        type: new FormControl('', [Validators.required]),
+        card: new FormControl(),
+        against: new FormControl('', [Validators.required]),
+        sector: new FormControl('', [Validators.required]),
+        fault: new FormControl('', [Validators.required]),
+        precise: new FormControl('', [Validators.required]),
+        comment: new FormControl(),
+    });
+
     constructor(
         private communication: CommunicationService,
         private toastService: ToastService,
     ) {}
 
-    async handleAddAction(): Promise<void> {
-        const newAction: NewAction = {
-            second: this.getCurrentVideoTime(),
-            type: 'Type',
-            against: 'Against',
-            sector: 'Sector',
-            fault: 'Fault',
-            precise: 'YES',
-            comment: 'Comment',
-        };
+    get secondControl(): FormControl { return this.addActionForm.get('second') as FormControl; }
+    get typeControl(): FormControl { return this.addActionForm.get('type') as FormControl; }
+    get cardControl(): FormControl { return this.addActionForm.get('card') as FormControl; }
+    get againstControl(): FormControl { return this.addActionForm.get('against') as FormControl; }
+    get sectorControl(): FormControl { return this.addActionForm.get('sector') as FormControl; }
+    get faultControl(): FormControl { return this.addActionForm.get('fault') as FormControl; }
+    get preciseControl(): FormControl { return this.addActionForm.get('precise') as FormControl; }
+    get commentControl(): FormControl { return this.addActionForm.get('comment') as FormControl; }
+
+    get actionAgainsts(): string[] { return actionAgainsts; }
+    get actionCardTypes(): string[] { return actionCardTypes; }
+    get actionCards(): string[] { return actionCards; }
+    get actionFaults(): { [sector: string]: string[] } { return actionFaults; }
+    get actionSectors(): string[] { return actionSectors; }
+    get actionTypes(): string[] { return actionTypes; }
+    get actionPrecises(): string[] { return actionPrecises; }
+
+    exposeClassNameForSecondInput(): string {
+        if (this.secondControl.pristine || this.secondControl.untouched) {
+            return 'form-control';
+        }
+        return this.isSecondControlValid() ? 'form-control is-valid' : 'form-control is-invalid';
+    }
+
+    exposeDisplayCardInput(): boolean {
+        return this.actionCardTypes.includes(this.typeControl.value);
+    }
+
+    exposeFaultOptions(): string[] {
+        return this.actionFaults[this.sectorControl.value];
+    }
+
+    handleDisplayAddActionForm(): void {
+        this.displayAddActionForm = true;
+
+        this.addActionForm.reset();
+        this.secondControl.setValue(this.getCurrentVideoTime());
+        this.typeControl.setValue(this.actionTypes[0]);
+        this.cardControl.setValue('');
+        this.againstControl.setValue(this.actionAgainsts[0]);
+        this.sectorControl.setValue(this.actionSectors[0]);
+        this.faultControl.setValue(this.actionFaults[this.actionSectors[0]]);
+        this.preciseControl.setValue(this.actionPrecises[0]);
+    }
+
+    handleHideAddActionForm(): void {
+        this.displayAddActionForm = false;
+        this.addActionForm.reset();
+    }
+
+    async handleSubmitAddAction(): Promise<void> {
+        if (this.addActionForm.invalid) {
+            return;
+        }
+
+        const newAction: NewAction = this.addActionForm.value;
 
         try {
             const action = await this.communication.addActionToGame(newAction, this.gameNumber);
             this.actions.push(action);
         } catch (_) {
             this.toastService.showError('TOAST.ERROR.PROCESS_ACTION_ADD_FAILED');
+        } finally {
+            this.handleHideAddActionForm();
         }
+    }
+
+    private isSecondControlValid(): boolean {
+        return this.secondControl.valid;
     }
 }

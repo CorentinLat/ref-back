@@ -51,7 +51,7 @@ export class MatchAnalysisComponent implements OnInit {
         this.videoApiService = api;
     }
 
-    public getCurrentVideoTime = (): number => Math.round(this.videoApiService.currentTime);
+    public getCurrentVideoTime = (): number => Math.floor(this.videoApiService.currentTime);
 
     private navigateToHome(): void {
         this.router.navigate(['/']);

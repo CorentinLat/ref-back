@@ -8,13 +8,13 @@ import { workPath } from './path';
 export type Action = {
     id: string;
     second: number;
-    type: string;
-    against: string;
+    type: 'PLAY_ON' | 'TOUCH' | 'SCRUM' | 'FREE_KICK' | 'PENALTY' | 'PENALTY_TRY';
     card?: 'RED' | 'YELLOW' | 'WHITE';
-    sector: string;
+    against: 'LOCAL' | 'VISITOR';
+    sector: 'RUCK' | 'SCRUM' | 'LINE_OUT';
     fault: string;
-    precise: 'YES' | 'NOT' | 'DOUBT';
-    comment: string;
+    precise: 'YES' | 'NO' | 'DOUBT';
+    comment?: string;
 };
 export type NewAction = Omit<Action, 'id'>;
 export type Game = {

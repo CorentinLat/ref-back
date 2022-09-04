@@ -47,12 +47,58 @@
         "TITLE": "Décisions",
         "NO_ACTION": "Aucune décision n'a été ajoutée pour le moment.",
         "MINUTE": "Minute",
-        "TYPE": "Sanction",
+        "TYPE": "Décision",
         "AGAINST": "Contre",
-        "SECTOR": "Secteur"
+        "SECTOR": "Secteur",
+        "ACTION": {
+          "TYPE": {
+            "PLAY_ON": "Jeu",
+            "TOUCH": "Touche",
+            "SCRUM": "Mêlée",
+            "FREE_KICK": "Coup franc",
+            "PENALTY": "Pénalité",
+            "PENALTY_TRY": "Essai de pénalité"
+          },
+          "CARD": {
+            "WHITE": "Blanc",
+            "YELLOW": "Jaune",
+            "RED": "Rouge"
+          },
+          "AGAINST": {
+            "LOCAL": "Locaux",
+            "VISITOR": "Visiteurs"
+          },
+          "SECTOR": {
+            "RUCK": "Ruck",
+            "SCRUM": "Mêlée",
+            "LINE_OUT": "Alignement"
+          },
+          "FAULT": {
+            "SIDE_ENTRY": "Entrée latérale",
+            "COLLAPSE": "Écroulement",
+            "NOT_STRAIGHT": "Lancer pas droit"
+          },
+          "PRECISE": {
+            "YES": "Oui",
+            "NO": "Non",
+            "DOUBT": "Doute"
+          }
+        }
       },
       "FORM": {
-        "ADD_DECISION": "Ajouter une décision"
+        "ADD_DECISION": "Ajouter une décision",
+        "ADD": "Ajouter",
+        "CANCEL": "Annuler",
+        "LABEL": {
+          "SECOND": "Minute",
+          "TYPE": "Décision",
+          "CARD": "Carton",
+          "AGAINST": "Contre",
+          "SECTOR": "Secteur",
+          "FAULT": "Faute",
+          "PRECISE": "Précis",
+          "COMMENT": "Commentaire"
+        }
       }
     }
   },
