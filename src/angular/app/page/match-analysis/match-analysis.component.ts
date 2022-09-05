@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { VgApiService } from '@videogular/ngx-videogular/core';
@@ -23,6 +23,7 @@ export class MatchAnalysisComponent implements OnInit {
     public areActionsCollapsed = true;
 
     constructor(
+        private cdr: ChangeDetectorRef,
         private communication: CommunicationService,
         private route: ActivatedRoute,
         private router: Router,
@@ -49,15 +50,14 @@ export class MatchAnalysisComponent implements OnInit {
             });
     }
 
-    public onPlayerReady(api: VgApiService): void {
+    public onPlayerReady = (api: VgApiService): void => {
         this.videoApiService = api;
-    }
+        this.cdr.detectChanges();
+    };
 
     public putVideoAtSecond = (second: number): void => {
         this.videoApiService.getDefaultMedia().currentTime = second;
     };
-
-    public getCurrentVideoTime = (): number => Math.floor(this.videoApiService.currentTime);
 
     private navigateToHome(): void {
         this.router.navigate(['/']);

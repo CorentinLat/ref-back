@@ -23,8 +23,6 @@ export class ActionFullComponent {
         return this.dateTimeService.convertSecondsToMMSS(this.action.second);
     }
 
-    handleViewAction(): void {}
-
     handleEditAction(): void {
         this.editActionEvent.emit({ ...this.action, type: 'PENALTY_TRY' });
     }

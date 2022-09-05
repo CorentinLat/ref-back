@@ -51,7 +51,6 @@ export default class CommunicationService {
         return new Observable(observer => {
             if (this.electron.ipcRenderer?.listeners('videos_progress').length === 0) {
                 this.electron.ipcRenderer?.on('videos_progress', (_, progress: number) => {
-                    console.log(progress);
                     observer.next(progress);
                 });
             }

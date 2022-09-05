@@ -53,7 +53,12 @@
                 <label for="sector" class="form-label">
                     {{ 'PAGE.MATCH_ANALYSIS.FORM.LABEL.SECTOR' | translate }} :
                 </label>
-                <select class="form-select" id="sector" formControlName="sector">
+                <select
+                    class="form-select"
+                    id="sector"
+                    formControlName="sector"
+                    (change)="handleSectorChange()"
+                >
                     <option *ngFor="let sector of actionSectors" [value]="sector">
                         {{ 'PAGE.MATCH_ANALYSIS.ACTIONS.ACTION.SECTOR.' + sector | translate }}
                     </option>

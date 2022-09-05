@@ -1,7 +1,8 @@
-import { Component, HostListener, NgZone, OnInit } from '@angular/core';
+import { Component, HostListener, NgZone, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { Subscription } from 'rxjs';
 
 import { GameNumberExistingModalComponent } from '../../component/modal/game-number-existing-modal/game-number-existing-modal.component';
 import { LoadGamesExistingModalComponent } from '../../component/modal/load-games-existing-modal/load-games-existing-modal.component';
@@ -15,7 +16,7 @@ import { ToastService } from '../../service/ToastService';
     templateUrl: './home.component.html',
     styleUrls: ['./home.component.scss'],
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent implements OnInit, OnDestroy {
     hasExistingGames = false;
 
     gameForm = new FormGroup({
@@ -34,6 +35,8 @@ export class HomeComponent implements OnInit {
 
     isProcessingVideos = false;
     progress = 0;
+
+    private videoProgressSubscription$!: Subscription;
 
     constructor(
         private communication: CommunicationService,
@@ -79,9 +82,13 @@ export class HomeComponent implements OnInit {
             .getExistingGameNumbers()
             .then(gameNumbers => (this.hasExistingGames = gameNumbers.length > 0));
 
-        this.communication
+        this.videoProgressSubscription$ = this.communication
             .getProcessVideoProgress()
             .subscribe(progress => this.zone.run(() => this.progress = Math.round(progress)));
+    }
+
+    ngOnDestroy() {
+        this.videoProgressSubscription$.unsubscribe();
     }
 
     exposeClassNameForGameNumberInput(): string {

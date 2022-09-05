@@ -1,5 +1,7 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { VgApiService } from '@videogular/ngx-videogular/core';
+import { Subscription } from 'rxjs';
 
 import {
     Action,
@@ -17,17 +19,15 @@ import CommunicationService from '../../../service/CommunicationService';
 import { DateTimeService } from '../../../service/DateTimeService';
 import { ToastService } from '../../../service/ToastService';
 
-// TODO: get current time from video
-// TODO: on sector selection update current fault selected
 @Component({
     selector: 'app-add-action',
     templateUrl: './add-action.component.html',
     styleUrls: ['./add-action.component.scss']
 })
-export class AddActionComponent {
+export class AddActionComponent implements OnInit, OnDestroy {
     @Input() actions!: Action[];
     @Input() gameNumber!: string;
-    @Input() getCurrentVideoTime!: () => number;
+    @Input() videoApiService!: VgApiService;
 
     displayAddActionForm = false;
     isAddingAction = false;
@@ -42,6 +42,8 @@ export class AddActionComponent {
         precise: new FormControl('', [Validators.required]),
         comment: new FormControl(),
     });
+
+    private currentVideoTimeSubscription$!: Subscription;
 
     constructor(
         private communication: CommunicationService,
@@ -65,8 +67,22 @@ export class AddActionComponent {
     get actionTypes(): string[] { return actionTypes; }
     get actionPrecises(): string[] { return actionPrecises; }
 
+    ngOnInit(): void {
+        this.currentVideoTimeSubscription$ = this.videoApiService.getDefaultMedia()
+            .subscriptions.timeUpdate
+            .subscribe(() => this.secondControl.setValue(this.getCurrentVideoTime()));
+    }
+
+    ngOnDestroy(): void {
+        this.currentVideoTimeSubscription$.unsubscribe();
+    }
+
     exposeDisplayCardInput(): boolean {
         return this.actionCardTypes.includes(this.typeControl.value);
+    }
+
+    handleSectorChange(): void {
+        this.faultControl.setValue(this.actionFaults[this.sectorControl.value][0]);
     }
 
     exposeFaultOptions(): string[] {
@@ -111,5 +127,9 @@ export class AddActionComponent {
         } finally {
             this.handleHideAddActionForm();
         }
+    }
+
+    private getCurrentVideoTime(): number {
+        return Math.floor(this.videoApiService.currentTime);
     }
 }

@@ -61,7 +61,8 @@
             class="controls"
             [actions]="game.actions"
             [gameNumber]="gameNumber"
-            [getCurrentVideoTime]="getCurrentVideoTime"
+            [videoApiService]="videoApiService"
+            *ngIf="videoApiService"
         ></app-add-action>
     </section>
 </section>
