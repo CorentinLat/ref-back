@@ -81,27 +81,6 @@ export function addNewActionToGame(gameNumber: string, newAction: NewAction): Ac
     }
 }
 
-export function editActionFromGame(gameNumber: string, action: Action): boolean {
-    const gameFile = path.join(workPath, gameNumber, 'game.json');
-
-    const game = getGame(gameNumber);
-    if (!game) { return false; }
-
-    try {
-        const actionToEdit = game.actions.find(({ id }) => id === action.id);
-        if (!actionToEdit) { return false; }
-
-        actionToEdit.second = action.second;
-        actionToEdit.type = action.type;
-        fs.writeFileSync(gameFile, JSON.stringify(game));
-
-        return true;
-    } catch (error) {
-        logger.error(`error editActionFromGame: ${error}`);
-        return false;
-    }
-}
-
 export function removeActionFromGame(gameNumber: string, actionId: string): boolean {
     const gameFile = path.join(workPath, gameNumber, 'game.json');
 

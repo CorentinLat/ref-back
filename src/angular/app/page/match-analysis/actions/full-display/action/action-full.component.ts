@@ -14,17 +14,12 @@ export class ActionFullComponent {
 
     @Input() putVideoAtSecond!: (second: number) => void;
 
-    @Output() editActionEvent = new EventEmitter<Action>();
     @Output() removeActionEvent = new EventEmitter<string>();
 
     constructor(private dateTimeService: DateTimeService) {}
 
     exposeActionMinutes(): string {
         return this.dateTimeService.convertSecondsToMMSS(this.action.second);
-    }
-
-    handleEditAction(): void {
-        this.editActionEvent.emit({ ...this.action, type: 'PENALTY_TRY' });
     }
 
     handleRemoveAction(): void {

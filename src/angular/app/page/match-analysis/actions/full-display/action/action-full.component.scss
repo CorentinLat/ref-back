@@ -17,8 +17,8 @@
         text-overflow: ellipsis;
         white-space: nowrap;
 
-        &.against, &.minute { flex-grow: 1; }
-        &.type, &.actions, &.comment { flex-grow: 2; }
+        &.actions, &.against, &.minute { flex-grow: 1; }
+        &.type, &.comment { flex-grow: 2; }
         &.sector, &.fault { flex-grow: 3; }
     }
 }

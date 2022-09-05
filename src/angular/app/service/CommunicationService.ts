@@ -87,21 +87,6 @@ export default class CommunicationService {
         });
     }
 
-    editActionFromGame(action: Action, gameNumber: string): Promise<void> {
-        return new Promise((resolve, reject) => {
-            this.electron.ipcRenderer?.once('edit_action_succeeded', () => {
-                this.electron.ipcRenderer?.removeAllListeners('edit_action_failed');
-                resolve();
-            });
-            this.electron.ipcRenderer?.once('edit_action_failed', () => {
-                this.electron.ipcRenderer?.removeAllListeners('edit_action_succeeded');
-                reject();
-            });
-
-            this.electron.ipcRenderer?.send('edit_action', { action, gameNumber });
-        });
-    }
-
     removeActionFromGame(actionId: string, gameNumber: string): Promise<void> {
         return new Promise((resolve, reject) => {
             this.electron.ipcRenderer?.once('remove_action_succeeded', () => {

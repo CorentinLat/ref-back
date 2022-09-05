@@ -21,19 +21,6 @@ export class FullDisplayActionsComponent {
         private toastService: ToastService,
     ) {}
 
-    async editAction(actionEdited: Action): Promise<void> {
-        const action = this.actions.find(({ id }) => id === actionEdited.id);
-        if (!action) { return; }
-
-        try {
-            await this.communication.editActionFromGame(actionEdited, this.gameNumber);
-            action.second = actionEdited.second;
-            action.type = actionEdited.type;
-        } catch (_) {
-            this.toastService.showError('TOAST.ERROR.PROCESS_ACTION_EDIT_FAILED');
-        }
-    }
-
     async removeAction(actionId: string): Promise<void> {
         const actionIndex = this.actions.findIndex(action => action.id === actionId);
         if (actionIndex === -1) { return; }

@@ -3,11 +3,9 @@ import IpcMainEvent = Electron.IpcMainEvent;
 
 import logger from './utils/logger';
 import {
-    Action,
     NewAction,
     addNewActionToGame,
     createNewGameFile,
-    editActionFromGame,
     getGame,
     removeActionFromGame,
     removeGame,
@@ -21,7 +19,6 @@ export default function(ipcMain: IpcMain) {
     ipcMain.on('get_game', onGetGameListener);
     ipcMain.on('remove_game', onRemoveGameListener);
     ipcMain.on('add_action', onAddActionListener);
-    ipcMain.on('edit_action', onEditActionListener);
     ipcMain.on('remove_action', onRemoveActionListener);
 }
 
@@ -98,18 +95,6 @@ const onAddActionListener = (event: IpcMainEvent, { newAction, gameNumber }: OnA
         event.reply('add_action_succeeded', action);
     } else {
         event.reply('add_action_failed');
-    }
-};
-
-type OnEditActionListenerArgs = { action: Action; gameNumber: string };
-const onEditActionListener = (event: IpcMainEvent, { action, gameNumber }: OnEditActionListenerArgs) => {
-    logger.debug('OnEditActionListener');
-
-    const isEdited = editActionFromGame(gameNumber, action);
-    if (isEdited) {
-        event.reply('edit_action_succeeded');
-    } else {
-        event.reply('edit_action_failed');
     }
 };
 

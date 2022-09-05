@@ -16,7 +16,6 @@
             *ngFor="let action of actions"
             [action]="action"
             [putVideoAtSecond]="putVideoAtSecond"
-            (editActionEvent)="editAction($event)"
             (removeActionEvent)="removeAction($event)"
         ></app-full-action>
     </section>
