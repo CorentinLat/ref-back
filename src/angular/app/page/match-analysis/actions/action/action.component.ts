@@ -2,6 +2,8 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 import { Action } from '../../../../domain/game';
 
+import { DateTimeService } from '../../../../service/DateTimeService';
+
 @Component({
     selector: 'app-action',
     templateUrl: './action.component.html',
@@ -13,15 +15,10 @@ export class ActionComponent {
     @Output() editActionEvent = new EventEmitter<Action>();
     @Output() removeActionEvent = new EventEmitter<string>();
 
-    constructor() {}
+    constructor(private dateTimeService: DateTimeService) {}
 
     exposeActionMinutes(): string {
-        const minutes = Math.floor(this.action.second / 60);
-        const minutesStr = minutes.toString().padStart(2, '0');
-        const seconds = this.action.second % 60;
-        const secondsStr = seconds.toString().padStart(2, '0');
-
-        return minutesStr + ':' + secondsStr;
+        return this.dateTimeService.convertSecondsToMMSS(this.action.second);
     }
 
     handleViewAction(): void {}

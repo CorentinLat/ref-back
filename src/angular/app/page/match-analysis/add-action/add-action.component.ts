@@ -14,6 +14,7 @@ import {
 } from '../../../domain/game';
 
 import CommunicationService from '../../../service/CommunicationService';
+import { DateTimeService } from '../../../service/DateTimeService';
 import { ToastService } from '../../../service/ToastService';
 
 @Component({
@@ -42,6 +43,7 @@ export class AddActionComponent {
 
     constructor(
         private communication: CommunicationService,
+        private dateTimeService: DateTimeService,
         private toastService: ToastService,
     ) {}
 
@@ -52,7 +54,6 @@ export class AddActionComponent {
     get sectorControl(): FormControl { return this.addActionForm.get('sector') as FormControl; }
     get faultControl(): FormControl { return this.addActionForm.get('fault') as FormControl; }
     get preciseControl(): FormControl { return this.addActionForm.get('precise') as FormControl; }
-    get commentControl(): FormControl { return this.addActionForm.get('comment') as FormControl; }
 
     get actionAgainsts(): string[] { return actionAgainsts; }
     get actionCardTypes(): string[] { return actionCardTypes; }
@@ -62,19 +63,21 @@ export class AddActionComponent {
     get actionTypes(): string[] { return actionTypes; }
     get actionPrecises(): string[] { return actionPrecises; }
 
-    exposeClassNameForSecondInput(): string {
-        if (this.secondControl.pristine || this.secondControl.untouched) {
-            return 'form-control';
-        }
-        return this.isSecondControlValid() ? 'form-control is-valid' : 'form-control is-invalid';
-    }
-
     exposeDisplayCardInput(): boolean {
         return this.actionCardTypes.includes(this.typeControl.value);
     }
 
     exposeFaultOptions(): string[] {
         return this.actionFaults[this.sectorControl.value];
+    }
+
+    exposeActionMinutes(): string {
+        return this.dateTimeService.convertSecondsToMMSS(this.secondControl.value);
+    }
+
+    handleHideAddActionForm(): void {
+        this.displayAddActionForm = false;
+        this.addActionForm.reset();
     }
 
     handleDisplayAddActionForm(): void {
@@ -88,11 +91,6 @@ export class AddActionComponent {
         this.sectorControl.setValue(this.actionSectors[0]);
         this.faultControl.setValue(this.actionFaults[this.actionSectors[0]]);
         this.preciseControl.setValue(this.actionPrecises[0]);
-    }
-
-    handleHideAddActionForm(): void {
-        this.displayAddActionForm = false;
-        this.addActionForm.reset();
     }
 
     async handleSubmitAddAction(): Promise<void> {
@@ -110,9 +108,5 @@ export class AddActionComponent {
         } finally {
             this.handleHideAddActionForm();
         }
-    }
-
-    private isSecondControlValid(): boolean {
-        return this.secondControl.valid;
     }
 }

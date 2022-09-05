@@ -46,7 +46,7 @@
       "ACTIONS": {
         "TITLE": "Décisions",
         "NO_ACTION": "Aucune décision n'a été ajoutée pour le moment.",
-        "MINUTE": "Minute",
+        "MINUTE": "Minutage",
         "TYPE": "Décision",
         "AGAINST": "Contre",
         "SECTOR": "Secteur",
@@ -90,7 +90,7 @@
         "ADD": "Ajouter",
         "CANCEL": "Annuler",
         "LABEL": {
-          "SECOND": "Minute",
+          "SECOND": "Minutage",
           "TYPE": "Décision",
           "CARD": "Carton",
           "AGAINST": "Contre",

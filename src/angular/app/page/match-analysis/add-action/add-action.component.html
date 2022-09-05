@@ -15,27 +15,6 @@
         novalidate
     >
         <section class="d-flex gap-3">
-            <section class="second">
-                <label for="second" class="form-label">
-                    {{ 'PAGE.MATCH_ANALYSIS.FORM.LABEL.SECOND' | translate }} :
-                </label>
-                <input
-                    [className]="exposeClassNameForSecondInput()"
-                    id="second"
-                    formControlName="second"
-                    type="text"
-                >
-
-                <article class="invalid-feedback" *ngIf="secondControl.touched">
-                    <span *ngIf="secondControl.errors?.pattern">
-                        {{ 'PAGE.MATCH_ANALYSIS.ERROR.SECOND.PATTERN' | translate }}
-                    </span>
-                    <span *ngIf="secondControl.errors?.required">
-                        {{ 'PAGE.MATCH_ANALYSIS.ERROR.SECOND.REQUIRED' | translate }}
-                    </span>
-                </article>
-            </section>
-
             <section class="type">
                 <label for="type" class="form-label">
                     {{ 'PAGE.MATCH_ANALYSIS.FORM.LABEL.TYPE' | translate }} :
@@ -107,11 +86,20 @@
                 <label for="comment" class="form-label">
                     {{ 'PAGE.MATCH_ANALYSIS.FORM.LABEL.COMMENT' | translate }} :
                 </label>
-                <textarea class="form-control" id="comment" formControlName="comment"></textarea>
+                <textarea
+                    class="form-control"
+                    id="comment"
+                    formControlName="comment"
+                    rows="1"
+                ></textarea>
             </section>
         </section>
 
-        <article class="d-flex gap-3">
+        <section class="d-flex align-items-center justify-content-end gap-3">
+            <article>
+                <b>{{ 'PAGE.MATCH_ANALYSIS.FORM.LABEL.SECOND' | translate }} :</b>
+                {{ exposeActionMinutes() }}
+            </article>
             <button
                 class="btn btn-danger"
                 type="button"
@@ -127,6 +115,6 @@
             >
                 {{ 'PAGE.MATCH_ANALYSIS.FORM.ADD' | translate }}
             </button>
-        </article>
+        </section>
     </form>
 </section>
