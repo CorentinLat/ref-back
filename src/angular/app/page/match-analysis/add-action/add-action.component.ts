@@ -130,6 +130,6 @@ export class AddActionComponent implements OnInit, OnDestroy {
     }
 
     private getCurrentVideoTime(): number {
-        return Math.floor(this.videoApiService.currentTime);
+        return this.videoApiService.currentTime;
     }
 }
