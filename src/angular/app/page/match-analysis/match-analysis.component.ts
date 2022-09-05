@@ -20,6 +20,8 @@ export class MatchAnalysisComponent implements OnInit {
 
     public videoApiService!: VgApiService;
 
+    public areActionsCollapsed = true;
+
     constructor(
         private communication: CommunicationService,
         private route: ActivatedRoute,
@@ -50,6 +52,10 @@ export class MatchAnalysisComponent implements OnInit {
     public onPlayerReady(api: VgApiService): void {
         this.videoApiService = api;
     }
+
+    public putVideoAtSecond = (second: number): void => {
+        this.videoApiService.getDefaultMedia().currentTime = second;
+    };
 
     public getCurrentVideoTime = (): number => Math.floor(this.videoApiService.currentTime);
 

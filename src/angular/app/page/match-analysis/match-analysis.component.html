@@ -7,10 +7,17 @@
         </p>
 
         <h4 class="title">{{ gameNumber }}</h4>
+
+        <article class="collapse-btn-container">
+            <button class="btn btn-outline-dark" (click)="areActionsCollapsed = !areActionsCollapsed">
+                <i class="bi bi-chevron-right" *ngIf="!areActionsCollapsed"></i>
+                <i class="bi bi-chevron-left" *ngIf="areActionsCollapsed"></i>
+            </button>
+        </article>
     </header>
 
     <section class="match-analysis-body" *ngIf="game">
-        <section class="video-and-controls">
+        <section class="video-and-actions" [ngClass]="{ collapsed: areActionsCollapsed }">
             <vg-player class="video" (onPlayerReady)="onPlayerReady($event)">
                 <vg-overlay-play></vg-overlay-play>
 
@@ -39,22 +46,22 @@
                 </video>
             </vg-player>
 
-            <app-add-action
-                class="controls"
-                [actions]="game.actions"
-                [gameNumber]="gameNumber"
-                [getCurrentVideoTime]="getCurrentVideoTime"
-            ></app-add-action>
+            <section class="actions-container">
+                <app-actions
+                    class="actions"
+                    [actions]="game.actions"
+                    [collapsed]="areActionsCollapsed"
+                    [gameNumber]="gameNumber"
+                    [putVideoAtSecond]="putVideoAtSecond"
+                ></app-actions>
+            </section>
         </section>
 
-        <section class="actions-container">
-            <h3>{{ 'PAGE.MATCH_ANALYSIS.ACTIONS.TITLE' | translate }}</h3>
-
-            <app-actions
-                class="actions"
-                [actions]="game.actions"
-                [gameNumber]="gameNumber"
-            ></app-actions>
-        </section>
+        <app-add-action
+            class="controls"
+            [actions]="game.actions"
+            [gameNumber]="gameNumber"
+            [getCurrentVideoTime]="getCurrentVideoTime"
+        ></app-add-action>
     </section>
 </section>

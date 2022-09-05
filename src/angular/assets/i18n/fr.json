@@ -46,18 +46,28 @@
       "ACTIONS": {
         "TITLE": "Décisions",
         "NO_ACTION": "Aucune décision n'a été ajoutée pour le moment.",
+        "NO_ACTION_SHORT": "Aucune décision",
         "MINUTE": "Minutage",
         "TYPE": "Décision",
         "AGAINST": "Contre",
         "SECTOR": "Secteur",
+        "FAULT": "Faute",
+        "PRECISE": "Précis",
+        "COMMENT": "Commentaire",
         "ACTION": {
           "TYPE": {
             "PLAY_ON": "Jeu",
+            "PLAY_ON_SHORT": "Jeu",
             "TOUCH": "Touche",
+            "TOUCH_SHORT": "Touche",
             "SCRUM": "Mêlée",
+            "SCRUM_SHORT": "Mêlée",
             "FREE_KICK": "Coup franc",
+            "FREE_KICK_SHORT": "CPF",
             "PENALTY": "Pénalité",
-            "PENALTY_TRY": "Essai de pénalité"
+            "PENALTY_SHORT": "CPP",
+            "PENALTY_TRY": "Essai de pénalité",
+            "PENALTY_TRY_SHORT": "EdP"
           },
           "CARD": {
             "WHITE": "Blanc",
@@ -70,8 +80,11 @@
           },
           "SECTOR": {
             "RUCK": "Ruck",
+            "RUCK_SHORT": "Ruck",
             "SCRUM": "Mêlée",
-            "LINE_OUT": "Alignement"
+            "SCRUM_SHORT": "Mêlée",
+            "LINE_OUT": "Alignement",
+            "LINE_OUT_SHORT": "Alignem."
           },
           "FAULT": {
             "SIDE_ENTRY": "Entrée latérale",
@@ -109,6 +122,9 @@
       "PROCESS_ACTION_REMOVE_FAILED": "Impossible de supprimer cette action...",
       "PROCESS_GAME_FAILED": "Impossible de charger le match...",
       "PROCESS_VIDEO_FAILED": "Impossible de traiter les vidéos..."
+    },
+    "SUCCESS": {
+      "PROCESS_ACTION_ADD_SUCCESS": "Action ajoutée !"
     }
   }
 }

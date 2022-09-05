@@ -17,6 +17,8 @@ import CommunicationService from '../../../service/CommunicationService';
 import { DateTimeService } from '../../../service/DateTimeService';
 import { ToastService } from '../../../service/ToastService';
 
+// TODO: get current time from video
+// TODO: on sector selection update current fault selected
 @Component({
     selector: 'app-add-action',
     templateUrl: './add-action.component.html',
@@ -103,6 +105,7 @@ export class AddActionComponent {
         try {
             const action = await this.communication.addActionToGame(newAction, this.gameNumber);
             this.actions.push(action);
+            this.toastService.showSuccess('TOAST.SUCCESS.PROCESS_ACTION_ADD_SUCCESS');
         } catch (_) {
             this.toastService.showError('TOAST.ERROR.PROCESS_ACTION_ADD_FAILED');
         } finally {

@@ -1,10 +1,9 @@
 .add-action-component {
-    .second { flex-basis: 0; flex-grow: 1; }
-    .type { flex-basis: 0; flex-grow: 2; }
-    .decision-card { flex-basis: 0; flex-grow: 2; }
-    .against { flex-basis: 0; flex-grow: 2; }
-    .sector { flex-basis: 0; flex-grow: 2; }
-    .fault { flex-basis: 0; flex-grow: 2; }
-    .precise { flex-basis: 0; flex-grow: 2; }
-    .comment { flex-basis: 0; flex-grow: 4; }
+    .input {
+        flex-basis: 0;
+
+        &.type, &.decision-card, &.against, &.precise { flex-grow: 1; }
+        &.sector, &.fault { flex-grow: 2; }
+        &.comment { flex-grow: 4; }
+    }
 }

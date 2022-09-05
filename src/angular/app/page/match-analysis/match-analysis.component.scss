@@ -1,6 +1,6 @@
-$match-analysis-component-margin: 10px;
+$match-analysis-component-margin: 20px;
 $header-height: 30px;
-$header-margin-bottom: 10px;
+$header-margin-bottom: 20px;
 
 .match-analysis-component {
     margin: $match-analysis-component-margin;
@@ -26,44 +26,55 @@ $header-margin-bottom: 10px;
             flex-grow: 3;
             margin: 0;
         }
+
+        .collapse-btn-container {
+            width: 100px;
+            text-align: center;
+        }
     }
 
     .match-analysis-body {
         display: flex;
+        flex-direction: column;
         gap: 20px;
 
         height: calc(100vh - #{$match-analysis-component-margin} * 2 - #{$header-height} - #{$header-margin-bottom});
 
-        .video-and-controls {
-            flex-basis: 0;
-            flex-grow: 3;
+        .video-and-actions {
             display: flex;
-            flex-direction: column;
             gap: 20px;
+            height: 100%;
+            overflow: hidden;
 
             .video {
                 flex-basis: 0;
-                flex-grow: 9;
+                flex-grow: 2;
             }
 
-            .controls {
+            .actions-container {
+                display: flex;
+                flex-direction: column;
                 flex-basis: 0;
-                flex-grow: 4;
+                flex-grow: 3;
+                overflow: hidden;
+
+                .actions {
+                    display: flex;
+                    flex-direction: column;
+                    overflow: hidden;
+                }
+            }
+
+            &.collapsed {
+                .actions-container {
+                    flex-grow: 0;
+                    min-width: 100px;
+                }
             }
         }
 
-        .actions-container {
-            display: flex;
-            flex-direction: column;
-            flex-basis: 0;
-            flex-grow: 2;
-            overflow: hidden;
-
-            .actions {
-                display: flex;
-                flex-direction: column;
-                overflow: hidden;
-            }
+        .controls {
+            min-height: 124px;
         }
     }
 }

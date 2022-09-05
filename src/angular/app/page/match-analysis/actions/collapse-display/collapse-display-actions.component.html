@@ -1,0 +1,52 @@
+<section class="collapse-display-actions-component">
+    <section class="decision-card decision" *ngFor="let action of actions">
+        <section class="d-flex align-items-center justify-content-between">
+            <article class="second">
+                <button
+                    class="btn btn-link p-0"
+                    [ngClass]="{ yes: action.precise === 'YES', no: action.precise === 'NO', doubt: action.precise === 'DOUBT' }"
+                    (click)="putVideoAtSecond(action.second)"
+                >
+                    {{ exposeActionMinutes(action.second) }}
+                </button>
+            </article>
+
+            <article class="against">
+                <i class="bi bi-house" *ngIf="action.against === 'LOCAL'"></i>
+                <i class="bi bi-airplane" *ngIf="action.against === 'VISITOR'"></i>
+            </article>
+        </section>
+
+        <section class="d-flex align-items-center justify-content-between">
+            <article class="type">
+                {{ 'PAGE.MATCH_ANALYSIS.ACTIONS.ACTION.TYPE.' + action.type + '_SHORT' | translate }}
+            </article>
+
+            <article class="card-type">
+                <i class="bi bi-square" *ngIf="action.card === 'WHITE'"></i>
+                <i class="bi bi-square-fill text-warning" *ngIf="action.card === 'YELLOW'"></i>
+                <i class="bi bi-square-fill text-danger" *ngIf="action.card === 'RED'"></i>
+            </article>
+        </section>
+
+        <section class="d-flex align-items-center justify-content-between">
+            <article class="sector">
+                {{ 'PAGE.MATCH_ANALYSIS.ACTIONS.ACTION.SECTOR.' + action.sector + '_SHORT' | translate }}
+            </article>
+
+            <article class="comment" *ngIf="action.comment">
+                <i
+                    class="bi bi-chat text-primary"
+                    [ngbPopover]="action.comment"
+                    [openDelay]="400"
+                    triggers="mouseenter:mouseleave"
+                    placement="left"
+                ></i>
+            </article>
+        </section>
+    </section>
+
+    <p class="decision-card no-decision" *ngIf="!actions.length">
+        {{ 'PAGE.MATCH_ANALYSIS.ACTIONS.NO_ACTION_SHORT' | translate }}
+    </p>
+</section>

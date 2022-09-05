@@ -14,8 +14,10 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HomeComponent } from './page/home/home.component';
 import { MatchAnalysisComponent } from './page/match-analysis/match-analysis.component';
-import { ActionComponent } from './page/match-analysis/actions/action/action.component';
 import { ActionsComponent } from './page/match-analysis/actions/actions.component';
+import { CollapseDisplayActionsComponent } from './page/match-analysis/actions/collapse-display/collapse-display-actions.component';
+import { FullDisplayActionsComponent } from './page/match-analysis/actions/full-display/full-display-actions.component';
+import { ActionFullComponent } from './page/match-analysis/actions/full-display/action/action-full.component';
 import { AddActionComponent } from './page/match-analysis/add-action/add-action.component';
 import { PageNotFoundComponent } from './page/page-not-found/page-not-found.component';
 
@@ -29,13 +31,15 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader => new Transla
 
 @NgModule({
     declarations: [
-        ActionComponent,
+        ActionFullComponent,
         ActionsComponent,
         AddActionComponent,
         AppComponent,
+        CollapseDisplayActionsComponent,
+        FullDisplayActionsComponent,
         GameNumberExistingModalComponent,
-        LoadGamesExistingModalComponent,
         HomeComponent,
+        LoadGamesExistingModalComponent,
         MatchAnalysisComponent,
         PageNotFoundComponent,
         ToastsComponent,

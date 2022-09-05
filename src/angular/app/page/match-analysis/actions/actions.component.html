@@ -1,22 +1,13 @@
-<section class="actions-component">
-    <section class="actions-header" *ngIf="actions.length > 0">
-        <article class="minute">{{ 'PAGE.MATCH_ANALYSIS.ACTIONS.MINUTE' | translate }}</article>
-        <article class="type">{{ 'PAGE.MATCH_ANALYSIS.ACTIONS.TYPE' | translate }}</article>
-        <article class="against">{{ 'PAGE.MATCH_ANALYSIS.ACTIONS.AGAINST' | translate }}</article>
-        <article class="sector">{{ 'PAGE.MATCH_ANALYSIS.ACTIONS.SECTOR' | translate }}</article>
-        <article class="actions"></article>
-    </section>
-
-    <section class="actions-container" *ngIf="actions.length > 0">
-        <app-action
-            *ngFor="let action of exposeActionsSortedByTime()"
-            [action]="action"
-            (editActionEvent)="editAction($event)"
-            (removeActionEvent)="removeAction($event)"
-        ></app-action>
-    </section>
-
-    <article class="no-action" *ngIf="actions.length === 0">
-        <h5>{{ 'PAGE.MATCH_ANALYSIS.ACTIONS.NO_ACTION' | translate }}</h5>
-    </article>
-</section>
+<app-full-display-actions
+    class="display-actions"
+    [actions]="exposeActionsSortedByTime()"
+    [gameNumber]="gameNumber"
+    [putVideoAtSecond]="putVideoAtSecond"
+    *ngIf="!collapsed"
+></app-full-display-actions>
+<app-collapse-display-actions
+    class="display-actions"
+    [actions]="exposeActionsSortedByTime()"
+    [putVideoAtSecond]="putVideoAtSecond"
+    *ngIf="collapsed"
+></app-collapse-display-actions>

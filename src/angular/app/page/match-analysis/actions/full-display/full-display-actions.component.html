@@ -1,0 +1,27 @@
+<section class="full-display-actions-component">
+    <h3>{{ 'PAGE.MATCH_ANALYSIS.ACTIONS.TITLE' | translate }}</h3>
+
+    <section class="actions-header" *ngIf="actions.length > 0">
+        <article class="box minute">{{ 'PAGE.MATCH_ANALYSIS.ACTIONS.MINUTE' | translate }}</article>
+        <article class="box type">{{ 'PAGE.MATCH_ANALYSIS.ACTIONS.TYPE' | translate }}</article>
+        <article class="box against">{{ 'PAGE.MATCH_ANALYSIS.ACTIONS.AGAINST' | translate }}</article>
+        <article class="box sector">{{ 'PAGE.MATCH_ANALYSIS.ACTIONS.SECTOR' | translate }}</article>
+        <article class="box fault">{{ 'PAGE.MATCH_ANALYSIS.ACTIONS.FAULT' | translate }}</article>
+        <article class="box comment">{{ 'PAGE.MATCH_ANALYSIS.ACTIONS.COMMENT' | translate }}</article>
+        <article class="box actions"></article>
+    </section>
+
+    <section class="actions-container" *ngIf="actions.length > 0">
+        <app-full-action
+            *ngFor="let action of actions"
+            [action]="action"
+            [putVideoAtSecond]="putVideoAtSecond"
+            (editActionEvent)="editAction($event)"
+            (removeActionEvent)="removeAction($event)"
+        ></app-full-action>
+    </section>
+
+    <article class="no-action" *ngIf="actions.length === 0">
+        <h5>{{ 'PAGE.MATCH_ANALYSIS.ACTIONS.NO_ACTION' | translate }}</h5>
+    </article>
+</section>
