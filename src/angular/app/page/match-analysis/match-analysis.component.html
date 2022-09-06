@@ -41,7 +41,7 @@
                     <vg-fullscreen></vg-fullscreen>
                 </vg-controls>
 
-                <video [vgMedia]="media" #media preload="auto" crossorigin>
+                <video [vgMedia]="$any(media)" #media preload="auto" crossorigin>
                     <source [src]="videoPath">
                 </video>
             </vg-player>

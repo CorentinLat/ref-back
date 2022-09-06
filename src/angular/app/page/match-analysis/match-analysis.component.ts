@@ -15,7 +15,7 @@ import { ToastService } from '../../service/ToastService';
 })
 export class MatchAnalysisComponent implements OnInit {
     public game!: Game;
-    public gameNumber!: string|null;
+    public gameNumber!: string;
     public videoPath!: SafeResourceUrl;
 
     public videoApiService!: VgApiService;
@@ -32,12 +32,13 @@ export class MatchAnalysisComponent implements OnInit {
     ) {}
 
     ngOnInit(): void {
-        this.gameNumber = this.route.snapshot.queryParamMap.get('gameNumber');
-        if (!this.gameNumber) {
+        const gameNumber = this.route.snapshot.queryParamMap.get('gameNumber');
+        if (!gameNumber) {
             this.navigateToHome();
             return;
         }
 
+        this.gameNumber = gameNumber;
         this.communication
             .getGameByNumber(this.gameNumber)
             .then(game => {
