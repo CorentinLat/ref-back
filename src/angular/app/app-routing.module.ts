@@ -4,6 +4,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { HomeComponent } from './page/home/home.component';
 import { MatchAnalysisComponent } from './page/match-analysis/match-analysis.component';
 import { PageNotFoundComponent } from './page/page-not-found/page-not-found.component';
+import { SummaryComponent } from './page/summary/summary.component';
 
 const routes: Routes = [
     {
@@ -16,6 +17,10 @@ const routes: Routes = [
         component: MatchAnalysisComponent,
     },
     {
+        path: 'summary',
+        component: SummaryComponent,
+    },
+    {
         path: '**',
         component: PageNotFoundComponent,
     },
@@ -25,5 +30,4 @@ const routes: Routes = [
     imports: [RouterModule.forRoot(routes, { relativeLinkResolution: 'legacy' })],
     exports: [RouterModule],
 })
-export class AppRoutingModule {
-}
+export class AppRoutingModule {}
