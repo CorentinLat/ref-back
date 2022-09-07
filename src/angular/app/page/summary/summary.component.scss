@@ -1,0 +1,40 @@
+$summary-component-margin: 20px;
+$header-height: 30px;
+$header-margin-bottom: 20px;
+
+.summary-component {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin: $summary-component-margin;
+
+    .summary-header {
+        display: flex;
+        align-items: center;
+        height: $header-height;
+        margin-bottom: $header-margin-bottom;
+
+        .title {
+            flex-grow: 1;
+            margin: 0;
+            text-align: center;
+        }
+    }
+
+    .summary-game-and-buttons {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+
+        .summary-game {
+            flex-grow: 1;
+            text-align: center;
+        }
+
+        .summary-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+    }
+}

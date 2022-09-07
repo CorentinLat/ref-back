@@ -100,6 +100,7 @@
       },
       "FORM": {
         "ADD_DECISION": "Ajouter une décision",
+        "NAVIGATE_TO_SUMMARY": "Accéder au récapitulatif",
         "ADD": "Ajouter",
         "CANCEL": "Annuler",
         "LABEL": {
@@ -112,6 +113,15 @@
           "PRECISE": "Précis",
           "COMMENT": "Commentaire"
         }
+      }
+    },
+    "SUMMARY": {
+      "BACK_MATCH_ANALYSIS": "Retour à l'Analyse",
+      "TITLE": "Récapitulatif",
+      "BUTTONS": {
+        "DOWNLOAD_VIDEO": "Télécharger",
+        "EXPORT_SUMMARY": "Exporter",
+        "NAVIGATE_HOME": "Terminer"
       }
     }
   },

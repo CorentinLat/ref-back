@@ -19,7 +19,6 @@ import { CollapseDisplayActionsComponent } from './page/match-analysis/actions/c
 import { FullDisplayActionsComponent } from './page/match-analysis/actions/full-display/full-display-actions.component';
 import { ActionFullComponent } from './page/match-analysis/actions/full-display/action/action-full.component';
 import { AddActionComponent } from './page/match-analysis/add-action/add-action.component';
-import { PageNotFoundComponent } from './page/page-not-found/page-not-found.component';
 import { SummaryComponent } from './page/summary/summary.component';
 
 import { ToastsComponent } from './component/toasts/toasts.component';
@@ -42,7 +41,6 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader => new Transla
         HomeComponent,
         LoadGamesExistingModalComponent,
         MatchAnalysisComponent,
-        PageNotFoundComponent,
         SummaryComponent,
         ToastsComponent,
     ],

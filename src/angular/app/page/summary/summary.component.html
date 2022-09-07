@@ -1,1 +1,38 @@
-<p>summary works!</p>
+<section class="summary-component">
+    <header class="summary-header">
+        <button class="btn btn-link" (click)="handleNavigateToMatchAnalysis()">
+            <i class="bi bi-arrow-left"></i> {{ 'PAGE.SUMMARY.BACK_MATCH_ANALYSIS' | translate }}
+        </button>
+
+        <h4 class="title">{{ 'PAGE.SUMMARY.TITLE' | translate }}</h4>
+    </header>
+
+    <section class="summary-game-and-buttons">
+        <h5 class="summary-game">
+            {{ gameNumber }}
+        </h5>
+
+        <article class="summary-buttons">
+            <button class="btn btn-primary" (click)="handleDownloadVideo()">
+                {{ 'PAGE.SUMMARY.BUTTONS.DOWNLOAD_VIDEO' | translate }}
+                <i class="bi bi-camera-video mx-1"></i>
+            </button>
+            <button class="btn btn-primary" (click)="handleExportSummary()" disabled>
+                {{ 'PAGE.SUMMARY.BUTTONS.EXPORT_SUMMARY' | translate }}
+                <i class="bi bi-table mx-1"></i>
+            </button>
+            <button class="btn btn-danger" (click)="handleNavigateToHome()">
+                {{ 'PAGE.SUMMARY.BUTTONS.NAVIGATE_HOME' | translate }}
+                <i class="bi bi-house mx-1"></i>
+            </button>
+        </article>
+    </section>
+
+    <section class="summary-body" *ngIf="game?.actions.length">
+        <app-full-display-actions
+            [actions]="exposeActionsSortedByTime()"
+            [gameNumber]="gameNumber"
+            [isSummaryDisplay]="true"
+        ></app-full-display-actions>
+    </section>
+</section>

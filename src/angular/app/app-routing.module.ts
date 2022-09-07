@@ -3,7 +3,6 @@ import { Routes, RouterModule } from '@angular/router';
 
 import { HomeComponent } from './page/home/home.component';
 import { MatchAnalysisComponent } from './page/match-analysis/match-analysis.component';
-import { PageNotFoundComponent } from './page/page-not-found/page-not-found.component';
 import { SummaryComponent } from './page/summary/summary.component';
 
 const routes: Routes = [
@@ -22,7 +21,7 @@ const routes: Routes = [
     },
     {
         path: '**',
-        component: PageNotFoundComponent,
+        redirectTo: '',
     },
 ];
 

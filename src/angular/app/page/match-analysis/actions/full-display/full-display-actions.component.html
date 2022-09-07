@@ -7,8 +7,9 @@
         <article class="box against">{{ 'PAGE.MATCH_ANALYSIS.ACTIONS.AGAINST' | translate }}</article>
         <article class="box sector">{{ 'PAGE.MATCH_ANALYSIS.ACTIONS.SECTOR' | translate }}</article>
         <article class="box fault">{{ 'PAGE.MATCH_ANALYSIS.ACTIONS.FAULT' | translate }}</article>
+        <article class="box precise" *ngIf="isSummaryDisplay">{{ 'PAGE.MATCH_ANALYSIS.ACTIONS.PRECISE' | translate }}</article>
         <article class="box comment">{{ 'PAGE.MATCH_ANALYSIS.ACTIONS.COMMENT' | translate }}</article>
-        <article class="box actions"></article>
+        <article class="box actions" *ngIf="!isSummaryDisplay"></article>
     </section>
 
     <section class="actions-container" *ngIf="actions.length > 0">
@@ -16,6 +17,7 @@
             *ngFor="let action of actions"
             [action]="action"
             [putVideoAtSecond]="putVideoAtSecond"
+            [isSummaryDisplay]="isSummaryDisplay"
             (removeActionEvent)="removeAction($event)"
         ></app-full-action>
     </section>
