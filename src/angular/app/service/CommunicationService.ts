@@ -101,4 +101,19 @@ export default class CommunicationService {
             this.electron.ipcRenderer?.send('remove_action', { actionId, gameNumber });
         });
     }
+
+    downloadVideoGame(gameNumber: string): Promise<void> {
+        return new Promise((resolve, reject) => {
+            this.electron.ipcRenderer?.once('download_video_game_succeeded', () => {
+                this.electron.ipcRenderer?.removeAllListeners('download_video_game_failed');
+                resolve();
+            });
+            this.electron.ipcRenderer?.once('download_video_game_failed', (_, error: any) => {
+                this.electron.ipcRenderer?.removeAllListeners('download_video_game_succeeded');
+                reject(error);
+            });
+
+            this.electron.ipcRenderer?.send('download_video_game', { gameNumber });
+        });
+    }
 }

@@ -130,6 +130,7 @@
       "PROCESS_ACTION_ADD_FAILED": "Impossible d'ajouter cette action...",
       "PROCESS_ACTION_EDIT_FAILED": "Impossible d'éditer cette action...",
       "PROCESS_ACTION_REMOVE_FAILED": "Impossible de supprimer cette action...",
+      "PROCESS_DOWNLOAD_GAME_FAILED": "Impossible de télécharger la vidéo...",
       "PROCESS_GAME_FAILED": "Impossible de charger le match...",
       "PROCESS_VIDEO_FAILED": "Impossible de traiter les vidéos..."
     },

@@ -1,7 +1,7 @@
 import IpcMain = Electron.IpcMain;
 import IpcMainEvent = Electron.IpcMainEvent;
 
-import logger from './utils/logger';
+import { askSaveVideoPath } from './utils/dialog';
 import {
     NewAction,
     addNewActionToGame,
@@ -10,8 +10,9 @@ import {
     removeActionFromGame,
     removeGame,
 } from './utils/game';
+import logger from './utils/logger';
 import { checkGameFolderExists, getExistingGameFolders } from './utils/path';
-import { concatVideos, copyVideoToUserDataPath } from './utils/video';
+import { concatVideos, copyGameVideoToPath, copyVideoToUserDataPath } from './utils/video';
 
 export default function(ipcMain: IpcMain) {
     ipcMain.on('get_existing_games', onInitAppListener);
@@ -20,6 +21,7 @@ export default function(ipcMain: IpcMain) {
     ipcMain.on('remove_game', onRemoveGameListener);
     ipcMain.on('add_action', onAddActionListener);
     ipcMain.on('remove_action', onRemoveActionListener);
+    ipcMain.on('download_video_game', onDownloadVideoGameListener);
 }
 
 const onInitAppListener = async (event: IpcMainEvent) => {
@@ -108,4 +110,27 @@ const onRemoveActionListener = (event: IpcMainEvent, { actionId, gameNumber }: O
     } else {
         event.reply('remove_action_failed');
     }
+};
+
+type OnDownloadVideoGameListenerArgs = { gameNumber: string };
+const onDownloadVideoGameListener = (event: IpcMainEvent, { gameNumber }: OnDownloadVideoGameListenerArgs) => {
+    logger.debug('OnDownloadVideoGameListener');
+
+    const game = getGame(gameNumber);
+    if (!game) {
+        logger.debug('Game not found.');
+        event.reply('download_video_game_failed');
+        return;
+    }
+
+    const savePath = askSaveVideoPath(game);
+    logger.debug(`Video save path : ${savePath}`);
+    if (!savePath) {
+        logger.debug('Download video game closed');
+        event.reply('download_video_game_failed', { closed: true });
+        return;
+    }
+
+    copyGameVideoToPath(game, savePath);
+    event.reply('download_video_game_succeeded');
 };

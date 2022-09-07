@@ -13,7 +13,11 @@
         </h5>
 
         <article class="summary-buttons">
-            <button class="btn btn-primary" (click)="handleDownloadVideo()">
+            <button
+                class="btn btn-primary"
+                [disabled]="isDownloadingVideo"
+                (click)="handleDownloadVideo()"
+            >
                 {{ 'PAGE.SUMMARY.BUTTONS.DOWNLOAD_VIDEO' | translate }}
                 <i class="bi bi-camera-video mx-1"></i>
             </button>

@@ -15,6 +15,8 @@ export class SummaryComponent implements OnInit {
     public game!: Game;
     public gameNumber!: string;
 
+    public isDownloadingVideo = false;
+
     constructor(
         private communication: CommunicationService,
         private route: ActivatedRoute,
@@ -46,8 +48,18 @@ export class SummaryComponent implements OnInit {
         );
     }
 
-    handleDownloadVideo(): void {
+    async handleDownloadVideo(): Promise<void> {
+        this.isDownloadingVideo = true;
 
+        try {
+            await this.communication.downloadVideoGame(this.gameNumber);
+        } catch (error: any) {
+            if (!error?.closed) {
+                this.toastService.showError('TOAST.ERROR.PROCESS_DOWNLOAD_GAME_FAILED');
+            }
+        } finally {
+            this.isDownloadingVideo = false;
+        }
     }
 
     handleExportSummary(): void {}

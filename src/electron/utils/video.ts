@@ -5,6 +5,7 @@ import path from 'path';
 
 import IpcMainEvent = Electron.IpcMainEvent;
 
+import { Game } from './game';
 import logger from './logger';
 import { copyFileToPath, extractFileExtension } from './file';
 import { workPath } from './path';
@@ -63,6 +64,12 @@ export async function copyVideoToUserDataPath(gameNumber: string, videoPath: str
         logger.info(`Format not supported: ${currentVideoExtension}. Converting to mp4...`);
         return await concatVideos(gameNumber, [videoPath], event);
     }
+}
+
+export function copyGameVideoToPath(game: Game, destVideoPath: string): void {
+    const currentVideoPath = game.information.videoPath;
+
+    copyFileToPath(currentVideoPath, destVideoPath);
 }
 
 function generateVideoName(extension: string = 'mp4'): string {
