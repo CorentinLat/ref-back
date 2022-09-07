@@ -72,6 +72,18 @@ export class SummaryComponent implements OnInit {
         return this.game.actions.sort((a, b) => a.second - b.second);
     }
 
+    exposeSectorsWithAtLeastOneDecision(): string[] {
+        const uniqueSectors = this.game.actions
+            .reduce<Set<string>>((sectors, action) => {
+                sectors.add(action.sector);
+                return sectors;
+            }, new Set());
+
+        return Array
+            .from(uniqueSectors)
+            .sort((a, b) => a.localeCompare(b));
+    }
+
     private navigateToHome(): void {
         this.router.navigate(['/']);
     }

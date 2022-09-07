@@ -6,16 +6,16 @@ $header-margin-bottom: 20px;
     display: flex;
     flex-direction: column;
     gap: 20px;
+
+    max-height: calc(100vh - #{$summary-component-margin * 2});
     margin: $summary-component-margin;
+    overflow: hidden;
 
     .summary-header {
-        display: flex;
-        align-items: center;
         height: $header-height;
         margin-bottom: $header-margin-bottom;
 
         .title {
-            flex-grow: 1;
             margin: 0;
             text-align: center;
         }
@@ -36,5 +36,11 @@ $header-margin-bottom: 20px;
             flex-direction: column;
             gap: 10px;
         }
+    }
+
+    .summary-body {
+        overflow: auto;
+        border: 1px solid rgba(0, 0, 0, 0.125);
+        border-radius: calc(0.25rem - 1px);
     }
 }

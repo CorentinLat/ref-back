@@ -23,7 +23,7 @@
       "IMPORT_BUTTON": "Démarrer",
       "MULTI_VIDEO_EXPLANATION": "Si votre vidéo est découpée en plusieurs clips, vous pouvez tous les importer.",
       "TITLE": "Perf'Arbitres++",
-      "SEE_EXISTING_GAMES": "Matchs créés",
+      "SEE_EXISTING_GAMES": "Rencontres",
       "FORM": {
         "LABEL": {
           "GAME_NUMBER": "Numéro de rencontre"
@@ -122,6 +122,13 @@
         "DOWNLOAD_VIDEO": "Télécharger",
         "EXPORT_SUMMARY": "Exporter",
         "NAVIGATE_HOME": "Terminer"
+      },
+      "PANEL": {
+        "ALL_ACTIONS": "Toutes les décisions",
+        "LINE_OUT": "Décisions concernant l'Alignement",
+        "RUCK": "Décisions concernant le Ruck",
+        "SCRUM": "Décisions concernant la Mêlée",
+        "STATISTICS": "Statistiques"
       }
     }
   },

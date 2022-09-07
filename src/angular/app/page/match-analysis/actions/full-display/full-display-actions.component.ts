@@ -15,12 +15,24 @@ export class FullDisplayActionsComponent {
     @Input() gameNumber!: string;
 
     @Input() isSummaryDisplay = false;
+    @Input() sector: string|null = null;
+
     @Input() putVideoAtSecond!: (second: number) => void;
 
     constructor(
         private communication: CommunicationService,
         private toastService: ToastService,
     ) {}
+
+    exposeIsBySectorDisplay(): boolean {
+        return this.sector !== null;
+    }
+
+    exposeActions(): Action[] {
+        return this.exposeIsBySectorDisplay()
+            ? this.actions.filter(({ sector }) => sector === this.sector)
+            : this.actions;
+    }
 
     async removeAction(actionId: string): Promise<void> {
         if (this.isSummaryDisplay) { return; }

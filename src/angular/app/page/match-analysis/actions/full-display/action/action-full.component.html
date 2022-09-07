@@ -20,7 +20,7 @@
     <article class="box against">
         {{ 'PAGE.MATCH_ANALYSIS.ACTIONS.ACTION.AGAINST.' + action.against | translate }}
     </article>
-    <article class="box sector">
+    <article class="box sector" *ngIf="!isBySectorDisplay">
         {{ 'PAGE.MATCH_ANALYSIS.ACTIONS.ACTION.SECTOR.' + action.sector | translate }}
     </article>
     <article class="box fault">
