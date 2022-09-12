@@ -13,6 +13,7 @@
     </article>
     <article class="box type">
         {{ 'PAGE.MATCH_ANALYSIS.ACTIONS.ACTION.TYPE.' + action.type | translate }}
+        <i class="bi bi-exclamation-square" *ngIf="action.card === 'WARNING'"></i>
         <i class="bi bi-square" *ngIf="action.card === 'WHITE'"></i>
         <i class="bi bi-square-fill text-warning" *ngIf="action.card === 'YELLOW'"></i>
         <i class="bi bi-square-fill text-danger" *ngIf="action.card === 'RED'"></i>
