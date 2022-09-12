@@ -38,7 +38,7 @@
         class="summary-body"
         [closeOthers]="true"
         activeIds="statistics"
-        *ngIf="game?.actions.length"
+        *ngIf="game?.actions?.length"
     >
         <ngb-panel id="statistics" title="{{ 'PAGE.SUMMARY.PANEL.STATISTICS' | translate }}">
             <ng-template ngbPanelContent>
