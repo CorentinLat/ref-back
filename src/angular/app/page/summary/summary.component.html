@@ -37,9 +37,15 @@
     <ngb-accordion
         class="summary-body"
         [closeOthers]="true"
-        activeIds="all_actions"
+        activeIds="statistics"
         *ngIf="game?.actions.length"
     >
+        <ngb-panel id="statistics" title="{{ 'PAGE.SUMMARY.PANEL.STATISTICS' | translate }}">
+            <ng-template ngbPanelContent>
+                <app-summary-statistics [actions]="game.actions"></app-summary-statistics>
+            </ng-template>
+        </ngb-panel>
+
         <ngb-panel id="all_actions" title="{{ 'PAGE.SUMMARY.PANEL.ALL_ACTIONS' | translate }}">
             <ng-template ngbPanelContent>
                 <app-full-display-actions
@@ -62,11 +68,6 @@
                     [isSummaryDisplay]="true"
                     [sector]="sector"
                 ></app-full-display-actions>
-            </ng-template>
-        </ngb-panel>
-
-        <ngb-panel id="statistics" title="{{ 'PAGE.SUMMARY.PANEL.STATISTICS' | translate }}" [disabled]="true">
-            <ng-template ngbPanelContent>
             </ng-template>
         </ngb-panel>
     </ngb-accordion>

@@ -196,6 +196,24 @@
         "LINE_OUT-MAUL": "Décisions concernant l'Alignement et le Maul",
         "ADVANTAGE": "Décisions concernant l'Avantage",
         "STATISTICS": "Statistiques"
+      },
+      "STATISTICS": {
+        "PENALTIES_NUMBER": "Pénalités sifflées",
+        "FREE_KICKS_NUMBER": "Coup francs sifflés",
+        "PENALTIES_BY_SECTORS": "Nombre de pénalités par secteur",
+        "FREE_KICKS_BY_SECTORS": "Nombre de coup francs par secteur",
+        "AGAINST": {
+          "LOCAL": "Contre les locaux",
+          "VISITOR": "Contre les visiteurs"
+        },
+        "SECTOR": {
+          "SCRUM": "Mêlée",
+          "FOUL_PLAY": "Jeu Déloyal",
+          "SPACE": "Espace",
+          "TACKLE-RUCK": "Plaquage - Ruck",
+          "LINE_OUT-MAUL": "Alignement - Maul",
+          "ADVANTAGE": "Avantage"
+        }
       }
     }
   },
