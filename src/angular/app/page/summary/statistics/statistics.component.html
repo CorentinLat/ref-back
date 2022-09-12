@@ -4,7 +4,7 @@
             <ngx-charts-advanced-pie-chart
                 [results]="penaltyNumbersByTeams"
                 [nameFormatting]="formatAgainst"
-                animations="true"
+                [animations]="true"
                 label="{{ 'PAGE.SUMMARY.STATISTICS.PENALTIES_NUMBER' | translate }}"
                 scheme="cool"
                 *ngIf="penaltyNumbersByTeams.length"
@@ -15,7 +15,7 @@
             <ngx-charts-advanced-pie-chart
                 [results]="freeKickNumbersByTeams"
                 [nameFormatting]="formatAgainst"
-                animations="true"
+                [animations]="true"
                 label="{{ 'PAGE.SUMMARY.STATISTICS.FREE_KICKS_NUMBER' | translate }}"
                 scheme="cool"
                 *ngIf="freeKickNumbersByTeams.length"
@@ -30,7 +30,7 @@
             <ngx-charts-advanced-pie-chart
                 [results]="penaltyNumbersBySectors"
                 [nameFormatting]="formatSector"
-                animations="true"
+                [animations]="true"
                 label="{{ 'PAGE.SUMMARY.STATISTICS.PENALTIES_BY_SECTORS' | translate }}"
                 scheme="cool"
                 *ngIf="penaltyNumbersBySectors.length"
@@ -41,7 +41,7 @@
             <ngx-charts-advanced-pie-chart
                 [results]="freeKickNumbersBySectors"
                 [nameFormatting]="formatSector"
-                animations="true"
+                [animations]="true"
                 label="{{ 'PAGE.SUMMARY.STATISTICS.FREE_KICKS_BY_SECTORS' | translate }}"
                 scheme="cool"
                 *ngIf="freeKickNumbersBySectors.length"
