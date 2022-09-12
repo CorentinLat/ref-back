@@ -12,6 +12,9 @@ import { DateTimeService } from '../../../../../service/DateTimeService';
 export class ActionFullComponent {
     @Input() action!: Action;
 
+    @Input() isSummaryDisplay = false;
+    @Input() isBySectorDisplay = false;
+
     @Input() putVideoAtSecond!: (second: number) => void;
 
     @Output() removeActionEvent = new EventEmitter<string>();

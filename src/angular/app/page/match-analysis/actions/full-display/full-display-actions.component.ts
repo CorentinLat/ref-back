@@ -14,6 +14,9 @@ export class FullDisplayActionsComponent {
     @Input() actions!: Action[];
     @Input() gameNumber!: string;
 
+    @Input() isSummaryDisplay = false;
+    @Input() sector: string|null = null;
+
     @Input() putVideoAtSecond!: (second: number) => void;
 
     constructor(
@@ -21,7 +24,19 @@ export class FullDisplayActionsComponent {
         private toastService: ToastService,
     ) {}
 
+    exposeIsBySectorDisplay(): boolean {
+        return this.sector !== null;
+    }
+
+    exposeActions(): Action[] {
+        return this.exposeIsBySectorDisplay()
+            ? this.actions.filter(({ sector }) => sector === this.sector)
+            : this.actions;
+    }
+
     async removeAction(actionId: string): Promise<void> {
+        if (this.isSummaryDisplay) { return; }
+
         const actionIndex = this.actions.findIndex(action => action.id === actionId);
         if (actionIndex === -1) { return; }
 

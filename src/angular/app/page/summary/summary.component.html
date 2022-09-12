@@ -1,0 +1,74 @@
+<section class="summary-component">
+    <header class="summary-header row">
+        <article class="col-3">
+            <button class="btn btn-link" (click)="handleNavigateToMatchAnalysis()">
+                <i class="bi bi-arrow-left"></i> {{ 'PAGE.SUMMARY.BACK_MATCH_ANALYSIS' | translate }}
+            </button>
+        </article>
+
+        <h4 class="title col-6">{{ 'PAGE.SUMMARY.TITLE' | translate }}</h4>
+    </header>
+
+    <section class="summary-game-and-buttons">
+        <h5 class="summary-game">
+            {{ gameNumber }}
+        </h5>
+
+        <article class="summary-buttons">
+            <button
+                class="btn btn-primary"
+                [disabled]="isDownloadingVideo"
+                (click)="handleDownloadVideo()"
+            >
+                {{ 'PAGE.SUMMARY.BUTTONS.DOWNLOAD_VIDEO' | translate }}
+                <i class="bi bi-camera-video mx-1"></i>
+            </button>
+            <button class="btn btn-primary" (click)="handleExportSummary()" disabled>
+                {{ 'PAGE.SUMMARY.BUTTONS.EXPORT_SUMMARY' | translate }}
+                <i class="bi bi-table mx-1"></i>
+            </button>
+            <button class="btn btn-danger" (click)="handleNavigateToHome()">
+                {{ 'PAGE.SUMMARY.BUTTONS.NAVIGATE_HOME' | translate }}
+                <i class="bi bi-house mx-1"></i>
+            </button>
+        </article>
+    </section>
+
+    <ngb-accordion
+        class="summary-body"
+        [closeOthers]="true"
+        activeIds="statistics"
+        *ngIf="game?.actions.length"
+    >
+        <ngb-panel id="statistics" title="{{ 'PAGE.SUMMARY.PANEL.STATISTICS' | translate }}">
+            <ng-template ngbPanelContent>
+                <app-summary-statistics [actions]="game.actions"></app-summary-statistics>
+            </ng-template>
+        </ngb-panel>
+
+        <ngb-panel id="all_actions" title="{{ 'PAGE.SUMMARY.PANEL.ALL_ACTIONS' | translate }}">
+            <ng-template ngbPanelContent>
+                <app-full-display-actions
+                    [actions]="exposeActionsSortedByTime()"
+                    [gameNumber]="gameNumber"
+                    [isSummaryDisplay]="true"
+                ></app-full-display-actions>
+            </ng-template>
+        </ngb-panel>
+
+        <ngb-panel
+            [id]="sector"
+            title="{{ 'PAGE.SUMMARY.PANEL.' + sector | translate }}"
+            *ngFor="let sector of exposeSectorsWithAtLeastOneDecision()"
+        >
+            <ng-template ngbPanelContent>
+                <app-full-display-actions
+                    [actions]="exposeActionsSortedByTime()"
+                    [gameNumber]="gameNumber"
+                    [isSummaryDisplay]="true"
+                    [sector]="sector"
+                ></app-full-display-actions>
+            </ng-template>
+        </ngb-panel>
+    </ngb-accordion>
+</section>

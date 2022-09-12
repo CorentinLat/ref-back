@@ -23,7 +23,7 @@
       "IMPORT_BUTTON": "Démarrer",
       "MULTI_VIDEO_EXPLANATION": "Si votre vidéo est découpée en plusieurs clips, vous pouvez tous les importer.",
       "TITLE": "Perf'Arbitres++",
-      "SEE_EXISTING_GAMES": "Matchs créés",
+      "SEE_EXISTING_GAMES": "Rencontres",
       "FORM": {
         "LABEL": {
           "GAME_NUMBER": "Numéro de rencontre"
@@ -67,9 +67,14 @@
             "PENALTY": "Pénalité",
             "PENALTY_SHORT": "CPP",
             "PENALTY_TRY": "Essai de pénalité",
-            "PENALTY_TRY_SHORT": "EdP"
+            "PENALTY_TRY_SHORT": "EdP",
+            "TRY": "Essai",
+            "TRY_SHORT": "Essai",
+            "NO_TRY": "Essai refusé",
+            "NO_TRY_SHORT": "Pas ess."
           },
           "CARD": {
+            "WARNING": "Avertissement",
             "WHITE": "Blanc",
             "YELLOW": "Jaune",
             "RED": "Rouge"
@@ -79,17 +84,76 @@
             "VISITOR": "Visiteurs"
           },
           "SECTOR": {
-            "RUCK": "Ruck",
-            "RUCK_SHORT": "Ruck",
             "SCRUM": "Mêlée",
             "SCRUM_SHORT": "Mêlée",
-            "LINE_OUT": "Alignement",
-            "LINE_OUT_SHORT": "Alignem."
+            "FOUL_PLAY": "Jeu Déloyal",
+            "FOUL_PLAY_SHORT": "Jeu Déloy.",
+            "SPACE": "Espace",
+            "SPACE_SHORT": "Espace",
+            "TACKLE-RUCK": "Plaquage - Ruck",
+            "TACKLE-RUCK_SHORT": "Pla. - Ruck",
+            "LINE_OUT-MAUL": "Alignement - Maul",
+            "LINE_OUT-MAUL_SHORT": "Ali. - Maul",
+            "ADVANTAGE": "Avantage",
+            "ADVANTAGE_SHORT": "Avant."
           },
           "FAULT": {
+            "INTRODUCTION": "Introduction",
+            "COLLAPSED": "Mêlée effondrée",
+            "BROKE_UP": "Mêlée relevée",
+            "WHEELED": "Mêlée tournée",
+            "SOON_PUSHED": "Poussée anticipée",
+            "CALLS_NOT_RESPECTED": "Non respect des commandements",
+            "PRE_ENGAGED": "Pré-engagement",
+            "LOOSE_HEAD_PROP_THRUST_AXIS": "Pilier droit axe de poussée",
+            "LOOSE_HEAD_PROP_ARMBAR": "Pilier droit clé de bras",
+            "TIGHT_HEAD_PROP_INSIDE_THRUST": "Pilier gauche pousse vers l'intérieur",
+            "TIGHT_HEAD_PROP_PULL_DOWN": "Pilier gauche tire vers le bas",
+            "3RD_LINE_NOT_BINDING": "3ème ligne détaché",
+            "BRUTALITY": "Brutalité",
+            "AIR_CONTEST": "Challenge dans les airs",
+            "SHOULDER_CHARGE": "Charge à l'épaule",
+            "CONTESTATIONS": "Contestations",
+            "INTENTIONAL_KNOCK_ON": "En-avant volontaire",
+            "NOT_10": "Pas à 10 mètres",
+            "LATE_TACKLE": "Plaquage à retardement",
+            "HIGH_TACKLE": "Plaquage haut",
+            "LIFT_TACKLE": "Plaquage par retournement",
+            "NO_BALL_TACKLE": "Plaquage sans ballon",
+            "NO_ARM_TACKLE": "Plaquage sans les bras",
+            "NECK_ROLL": "Prise au cou",
+            "FOREARM_PROJECTION": "Projection avant-bras / coude",
+            "IN_FRONT_OF_KICKER":  "Départ devant botteur",
+            "KNOCK_ON":  "En-avant",
+            "FORWARD_PASS":  "En-avant de passe",
+            "OFFSIDE_KNOCK_ON":  "En-avant repris devant",
+            "OFFSIDE_IN_OPEN_PLAY":  "Hors-jeu - Jeu courant",
+            "LINE_OFFSIDE":  "Hors-jeu de ligne",
+            "OBSTRUCTION":  "Passage à vide",
+            "TRY_SITUATION":  "Situation d'essai",
+            "FOUR_STEPS": "4 appuis",
+            "TACKLE_ASSISTANT": "Assistant-plaqueur",
+            "KICK_IN_RUCK": "Ballon botté dans ruck",
             "SIDE_ENTRY": "Entrée latérale",
-            "COLLAPSE": "Écroulement",
-            "NOT_STRAIGHT": "Lancer pas droit"
+            "TACKLED": "Plaqué",
+            "TACKLER": "Plaqueur",
+            "SEALING": "Sealing",
+            "HAND_IN_RUCK": "Talonnage à la main",
+            "COLLAPSED_MAUL": "Écroulement maul",
+            "MAUL_SIDE_ENTRY": "Entrée sur côté maul",
+            "FAULT_ON_JUMPER": "Faute sur sauteur",
+            "THROW_TWO_TIMES": "Lancer en deux temps",
+            "LONG_PASS": "Long transfert",
+            "MAUL_OBSTRUCTION": "Obstruction sur maul",
+            "PISTON": "Piston",
+            "GAP_LINE_OUT": "Prise de couloir",
+            "LEAVE_LINE_OUT": "Quittent alignement",
+            "SACKING": "Sacking sur lifteur",
+            "TOUCH": "Touche",
+            "NOT_STRAIGHT": "Lancer pas droit",
+            "NO_RETURN": "Pas de retour",
+            "BAD_RETURN": "Retour erroné",
+            "OTHER": "Autre faute"
           },
           "PRECISE": {
             "YES": "Oui",
@@ -100,6 +164,7 @@
       },
       "FORM": {
         "ADD_DECISION": "Ajouter une décision",
+        "NAVIGATE_TO_SUMMARY": "Accéder au récapitulatif",
         "ADD": "Ajouter",
         "CANCEL": "Annuler",
         "LABEL": {
@@ -113,6 +178,43 @@
           "COMMENT": "Commentaire"
         }
       }
+    },
+    "SUMMARY": {
+      "BACK_MATCH_ANALYSIS": "Retour à l'Analyse",
+      "TITLE": "Récapitulatif",
+      "BUTTONS": {
+        "DOWNLOAD_VIDEO": "Télécharger",
+        "EXPORT_SUMMARY": "Exporter",
+        "NAVIGATE_HOME": "Terminer"
+      },
+      "PANEL": {
+        "ALL_ACTIONS": "Toutes les décisions",
+        "SCRUM": "Décisions concernant la Mêlée",
+        "FOUL_PLAY": "Décisions concernant le Jeu Déloyal",
+        "SPACE": "Décisions concernant l'Espace",
+        "TACKLE-RUCK": "Décisions concernant le Plaquage et le Ruck",
+        "LINE_OUT-MAUL": "Décisions concernant l'Alignement et le Maul",
+        "ADVANTAGE": "Décisions concernant l'Avantage",
+        "STATISTICS": "Statistiques"
+      },
+      "STATISTICS": {
+        "PENALTIES_NUMBER": "Pénalités sifflées",
+        "FREE_KICKS_NUMBER": "Coup francs sifflés",
+        "PENALTIES_BY_SECTORS": "Nombre de pénalités par secteur",
+        "FREE_KICKS_BY_SECTORS": "Nombre de coup francs par secteur",
+        "AGAINST": {
+          "LOCAL": "Contre les locaux",
+          "VISITOR": "Contre les visiteurs"
+        },
+        "SECTOR": {
+          "SCRUM": "Mêlée",
+          "FOUL_PLAY": "Jeu Déloyal",
+          "SPACE": "Espace",
+          "TACKLE-RUCK": "Plaquage - Ruck",
+          "LINE_OUT-MAUL": "Alignement - Maul",
+          "ADVANTAGE": "Avantage"
+        }
+      }
     }
   },
   "TOAST": {
@@ -120,6 +222,7 @@
       "PROCESS_ACTION_ADD_FAILED": "Impossible d'ajouter cette action...",
       "PROCESS_ACTION_EDIT_FAILED": "Impossible d'éditer cette action...",
       "PROCESS_ACTION_REMOVE_FAILED": "Impossible de supprimer cette action...",
+      "PROCESS_DOWNLOAD_GAME_FAILED": "Impossible de télécharger la vidéo...",
       "PROCESS_GAME_FAILED": "Impossible de charger le match...",
       "PROCESS_VIDEO_FAILED": "Impossible de traiter les vidéos..."
     },

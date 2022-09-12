@@ -1,0 +1,46 @@
+$summary-component-margin: 20px;
+$header-height: 30px;
+$header-margin-bottom: 20px;
+
+.summary-component {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+    max-height: calc(100vh - #{$summary-component-margin * 2});
+    margin: $summary-component-margin;
+    overflow: hidden;
+
+    .summary-header {
+        height: $header-height;
+        margin-bottom: $header-margin-bottom;
+
+        .title {
+            margin: 0;
+            text-align: center;
+        }
+    }
+
+    .summary-game-and-buttons {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+
+        .summary-game {
+            flex-grow: 1;
+            text-align: center;
+        }
+
+        .summary-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+    }
+
+    .summary-body {
+        overflow: auto;
+        border: 1px solid rgba(0, 0, 0, 0.125);
+        border-radius: calc(0.25rem - 1px);
+    }
+}

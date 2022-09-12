@@ -17,8 +17,13 @@
         text-overflow: ellipsis;
         white-space: nowrap;
 
-        &.actions, &.against, &.minute { flex-grow: 1; }
-        &.type, &.comment { flex-grow: 2; }
-        &.sector, &.fault { flex-grow: 3; }
+        &.actions, &.against, &.minute, &.precise { flex-grow: 1; }
+        &.type, &.sector { flex-grow: 2; }
+        &.comment, &.fault { flex-grow: 3; }
+
+        &.comment.summary {
+            overflow: visible;
+            white-space: normal;
+        }
     }
 }

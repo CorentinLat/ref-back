@@ -8,10 +8,10 @@ import { workPath } from './path';
 export type Action = {
     id: string;
     second: number;
-    type: 'PLAY_ON' | 'TOUCH' | 'SCRUM' | 'FREE_KICK' | 'PENALTY' | 'PENALTY_TRY';
-    card?: 'RED' | 'YELLOW' | 'WHITE';
+    type: 'PLAY_ON' | 'TOUCH' | 'SCRUM' | 'FREE_KICK' | 'PENALTY' | 'PENALTY_TRY' | 'TRY' | 'NO_TRY';
+    card?: 'WARNING' | 'RED' | 'YELLOW' | 'WHITE';
     against: 'LOCAL' | 'VISITOR';
-    sector: 'RUCK' | 'SCRUM' | 'LINE_OUT';
+    sector: 'SCRUM' | 'FOUL_PLAY' | 'SPACE' | 'RUCK-TACKLE' | 'LINE_OUT-MAUL' | 'ADVANTAGE';
     fault: string;
     precise: 'YES' | 'NO' | 'DOUBT';
     comment?: string;

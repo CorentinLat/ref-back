@@ -1,5 +1,6 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { VgApiService } from '@videogular/ngx-videogular/core';
 import { Subscription } from 'rxjs';
 
@@ -48,6 +49,7 @@ export class AddActionComponent implements OnInit, OnDestroy {
     constructor(
         private communication: CommunicationService,
         private dateTimeService: DateTimeService,
+        private router: Router,
         private toastService: ToastService,
     ) {}
 
@@ -109,6 +111,13 @@ export class AddActionComponent implements OnInit, OnDestroy {
         this.sectorControl.setValue(this.actionSectors[0]);
         this.faultControl.setValue(this.actionFaults[this.actionSectors[0]]);
         this.preciseControl.setValue(this.actionPrecises[0]);
+    }
+
+    handleNavigateToSummary(): void {
+        this.router.navigate(
+            ['/summary'],
+            { queryParams: { gameNumber: this.gameNumber } }
+        );
     }
 
     async handleSubmitAddAction(): Promise<void> {

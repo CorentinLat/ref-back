@@ -4,12 +4,16 @@
             class="btn btn-link p-0"
             [ngClass]="{ yes: action.precise === 'YES', no: action.precise === 'NO', doubt: action.precise === 'DOUBT' }"
             (click)="putVideoAtSecond(action.second)"
+            *ngIf="!isSummaryDisplay"
         >
             {{ exposeActionMinutes() }}
         </button>
+
+        <span *ngIf="isSummaryDisplay">{{ exposeActionMinutes() }}</span>
     </article>
     <article class="box type">
         {{ 'PAGE.MATCH_ANALYSIS.ACTIONS.ACTION.TYPE.' + action.type | translate }}
+        <i class="bi bi-exclamation-square" *ngIf="action.card === 'WARNING'"></i>
         <i class="bi bi-square" *ngIf="action.card === 'WHITE'"></i>
         <i class="bi bi-square-fill text-warning" *ngIf="action.card === 'YELLOW'"></i>
         <i class="bi bi-square-fill text-danger" *ngIf="action.card === 'RED'"></i>
@@ -17,23 +21,35 @@
     <article class="box against">
         {{ 'PAGE.MATCH_ANALYSIS.ACTIONS.ACTION.AGAINST.' + action.against | translate }}
     </article>
-    <article class="box sector">
+    <article class="box sector" *ngIf="!isBySectorDisplay">
         {{ 'PAGE.MATCH_ANALYSIS.ACTIONS.ACTION.SECTOR.' + action.sector | translate }}
     </article>
     <article class="box fault">
         {{ 'PAGE.MATCH_ANALYSIS.ACTIONS.ACTION.FAULT.' + action.fault | translate }}
     </article>
     <article
+        class="box precise"
+        [ngClass]="{ yes: action.precise === 'YES', no: action.precise === 'NO', doubt: action.precise === 'DOUBT' }"
+        *ngIf="isSummaryDisplay"
+    >
+        {{ 'PAGE.MATCH_ANALYSIS.ACTIONS.ACTION.PRECISE.' + action.precise | translate }}
+    </article>
+
+    <article
         class="box comment"
         [ngbPopover]="action.comment"
         [openDelay]="800"
         triggers="mouseenter:mouseleave"
         placement="left"
+        *ngIf="!isSummaryDisplay"
     >
         {{ action.comment }}
     </article>
+    <article class="box comment summary" *ngIf="isSummaryDisplay">
+        {{ action.comment }}
+    </article>
 
-    <section class="box actions text-end" role="group">
+    <section class="box actions text-end" role="group" *ngIf="!isSummaryDisplay">
         <section class="btn-group">
             <button class="btn btn-outline-danger" (click)="handleRemoveAction()">
                 <i class="bi bi-trash"></i>

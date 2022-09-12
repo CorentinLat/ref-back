@@ -2,6 +2,15 @@
 @import '~bootstrap-icons/font/bootstrap-icons.css';
 @import '~@videogular/ngx-videogular/fonts/videogular.css';
 
+button.accordion-button:focus,
 button.btn:focus {
-    box-shadow: none;
+    box-shadow: none !important;
+}
+
+.accordion-item {
+    border: none;
+
+    &:not(:last-child) {
+        border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+    }
 }
