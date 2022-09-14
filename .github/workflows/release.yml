@@ -25,28 +25,6 @@ jobs:
     outputs:
       version: ${{ steps.package-version.outputs.current-version }}
 
-  archive-source-code:
-    needs: get-release-version
-
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Archive ZIP
-        if: steps.archive-source-code.outputs.cache-hit != 'true'
-        uses: thedoctor0/zip-release@main
-        with:
-          type: zip
-          filename: Source_code.zip
-          exclusions: "*.git* .editorconfig"
-
-      - name: Upload source code archive
-        uses: actions/upload-artifact@v2
-        with:
-          name: source_code-zip-${{ needs.get-release-version.outputs.version }}
-          path: Source_code.zip
-
   build-windows-executable:
     needs: get-release-version
 
@@ -162,7 +140,6 @@ jobs:
   create-release:
     needs:
       - get-release-version
-      - archive-source-code
       - build-windows-executable
       - build-macos-executable
       - build-linux-executable
@@ -170,11 +147,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Download source code archive
-        uses: actions/download-artifact@v2
-        with:
-          name: source_code-zip-${{ needs.get-release-version.outputs.version }}
-
       - name: Download windows executable
         uses: actions/download-artifact@v2
         with:
@@ -190,12 +162,12 @@ jobs:
         with:
           name: executable-linux-${{ needs.get-release-version.outputs.version }}
 
-      - name: Create Release with Source code
+      - name: Create Release with executables
         uses: ncipollo/release-action@v1
         with:
           tag: ${{ needs.get-release-version.outputs.version }}
           commit: ${{ github.sha }}
           name: Perf'Arbitres++ ${{ needs.get-release-version.outputs.version }}
-          artifacts: Source_code.zip,PerfArbitresPlusPlus Setup ${{ needs.get-release-version.outputs.version }}.exe,PerfArbitresPlusPlus-${{ needs.get-release-version.outputs.version }}.dmg,PerfArbitresPlusPlus-${{ needs.get-release-version.outputs.version }}.AppImage
-          draft: true
+          artifacts: PerfArbitresPlusPlus Setup ${{ needs.get-release-version.outputs.version }}.exe,PerfArbitresPlusPlus-${{ needs.get-release-version.outputs.version }}.dmg,PerfArbitresPlusPlus-${{ needs.get-release-version.outputs.version }}.AppImage
+          draft: false
           token: ${{ secrets.GITHUB_TOKEN }}
