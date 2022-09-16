@@ -90,4 +90,32 @@
             </ngb-progressbar>
         </article>
     </form>
+
+    <footer class="footer">
+        <p>
+            {{ 'PAGE.HOME.MADE_BY' | translate }}
+            <b>Corentin LATAPPY</b>
+            <a class="ms-1" href="mailto:corentin.lat@gmail.com"><span class="bi bi-envelope"></span></a>
+            {{ 'PAGE.HOME.WITH' | translate }}
+            <span class="bi bi-heart-fill"></span>
+        </p>
+
+        <span class="bi bi-dot"></span>
+
+        <a
+            href="https://github.com/CorentinLat/perf-arbitres-plus-plus/wiki"
+            target="_blank"
+        >
+            {{ 'PAGE.HOME.DOCUMENTATION' | translate }}
+        </a>
+
+        <span class="bi bi-dot"></span>
+
+        <a
+            href="https://github.com/CorentinLat/perf-arbitres-plus-plus/blob/main/README.md"
+            target="_blank"
+        >
+            {{ exposeApplicationVersion() }}
+        </a>
+    </footer>
 </section>
