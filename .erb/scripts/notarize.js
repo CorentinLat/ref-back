@@ -1,3 +1,4 @@
+require('dotenv').config();
 const { notarize } = require('electron-notarize');
 const { appId } = require('../../electron-builder.json');
 
@@ -13,9 +14,7 @@ exports.default = async function notarizeMacos(context) {
     }
 
     if (!('APPLE_ID' in process.env && 'APPLE_ID_PASS' in process.env)) {
-        console.warn(
-            'Skipping notarizing step. APPLE_ID and APPLE_ID_PASS env variables must be set'
-        );
+        console.warn('Skipping notarizing step. APPLE_ID and APPLE_ID_PASS env variables must be set');
         return;
     }
 
