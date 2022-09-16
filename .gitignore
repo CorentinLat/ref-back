@@ -52,6 +52,7 @@ testem.log
 .DS_Store
 Thumbs.db
 
+.env
 release/app/dist
 release/build
 .erb/dll
