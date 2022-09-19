@@ -121,4 +121,8 @@ export default class CommunicationService {
             this.electron.ipcRenderer?.send('download_video_game', { gameNumber });
         });
     }
+
+    openUrlInBrowser(url: string): void {
+        this.electron.ipcRenderer?.send('open_url_in_browser', { url });
+    }
 }

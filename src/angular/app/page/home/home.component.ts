@@ -140,6 +140,10 @@ export class HomeComponent implements OnInit, OnDestroy {
             });
     };
 
+    handleOpenUrlInBrowser(url: string) {
+        this.communication.openUrlInBrowser(url);
+    }
+
     private handleProcessVideosFailed = (error: any) => {
         this.isProcessingVideos = false;
 

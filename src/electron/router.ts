@@ -1,4 +1,4 @@
-import { app } from 'electron';
+import { app, shell } from 'electron';
 import IpcMain = Electron.IpcMain;
 import IpcMainEvent = Electron.IpcMainEvent;
 
@@ -23,6 +23,7 @@ export default function(ipcMain: IpcMain) {
     ipcMain.on('add_action', onAddActionListener);
     ipcMain.on('remove_action', onRemoveActionListener);
     ipcMain.on('download_video_game', onDownloadVideoGameListener);
+    ipcMain.on('open_url_in_browser', onOpenUrlInBrowserListener);
 }
 
 const onInitAppListener = async (event: IpcMainEvent) => {
@@ -135,4 +136,14 @@ const onDownloadVideoGameListener = (event: IpcMainEvent, { gameNumber }: OnDown
 
     copyGameVideoToPath(game, savePath);
     event.reply('download_video_game_succeeded');
+};
+
+type OnOpenUrlInBrowserListenerArgs = { url: string };
+const onOpenUrlInBrowserListener = (event: IpcMainEvent, { url }: OnOpenUrlInBrowserListenerArgs) => {
+    logger.debug('OnOpenUrlInBrowserListener');
+
+    shell
+        .openExternal(url)
+        .then(() => event.reply('open_url_in_browser_succeeded'))
+        .catch(() => event.reply('open_url_in_browser_failed'));
 };

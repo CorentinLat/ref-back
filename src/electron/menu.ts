@@ -131,7 +131,7 @@ export default class MenuBuilder {
                 {
                     label: 'Documentation',
                     click() {
-                        shell.openExternal('https://github.com/CorentinLat/perf-arbitres-plus-plus');
+                        shell.openExternal('https://github.com/CorentinLat/perf-arbitres-plus-plus/wiki');
                     },
                 },
                 { type: 'separator' },
@@ -221,7 +221,7 @@ export default class MenuBuilder {
                     {
                         label: 'Documentation',
                         click() {
-                            shell.openExternal('https://github.com/CorentinLat/perf-arbitres-plus-plus');
+                            shell.openExternal('https://github.com/CorentinLat/perf-arbitres-plus-plus/wiki');
                         },
                     },
                     {
