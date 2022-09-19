@@ -1,6 +1,6 @@
 {
   "productName": "PerfArbitresPlusPlus",
-  "appId": "fr.slayerac4dc.PerfArbitresPlusPlus",
+  "appId": "fr.corentinlat.perf-arbitres-plus-plus",
   "asar": false,
   "asarUnpack": "**\\*.{node,dll}",
   "files": [
@@ -17,6 +17,7 @@
         "x64"
       ]
     },
+    "category": "public.app-category.sports",
     "type": "distribution",
     "hardenedRuntime": true,
     "entitlements": "assets/entitlements.mac.plist",

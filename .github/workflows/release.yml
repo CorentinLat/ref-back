@@ -11,6 +11,11 @@ on:
 permissions:
   contents: write
 
+env:
+  CI: true
+  APPLE_ID: ${{ secrets.APPLE_ID }}
+  APPLE_ID_PASS: ${{ secrets.APPLE_ID_PASS }}
+
 jobs:
   get-release-version:
     runs-on: ubuntu-latest

@@ -109,7 +109,7 @@ export class AddActionComponent implements OnInit, OnDestroy {
         this.cardControl.setValue('');
         this.againstControl.setValue(this.actionAgainsts[0]);
         this.sectorControl.setValue(this.actionSectors[0]);
-        this.faultControl.setValue(this.actionFaults[this.actionSectors[0]]);
+        this.faultControl.setValue(this.actionFaults[this.actionSectors[0]][0]);
         this.preciseControl.setValue(this.actionPrecises[0]);
     }
 

@@ -22,7 +22,7 @@ export default function createWindow() {
         y: MARGIN,
         width: size.width - 2 * MARGIN,
         height: size.height - 2 * MARGIN,
-        icon: getAssetPath('icon.png'),
+        icon: getAssetPath('icon.icns'),
         webPreferences: {
             devTools: isDebug,
             nodeIntegration: true,

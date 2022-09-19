@@ -5,6 +5,8 @@ import { Action, Game, NewAction } from '../domain/game';
 
 import { ElectronService } from './ElectronService';
 
+type InitAppPayload = { appVersion: string; gameNumbers: string[] };
+
 @Injectable({ providedIn: 'root' })
 export default class CommunicationService {
     constructor(private readonly electron: ElectronService) {}
@@ -24,11 +26,14 @@ export default class CommunicationService {
         });
     }
 
-    getExistingGameNumbers(): Promise<string[]> {
+    initApp(): Promise<InitAppPayload> {
         return new Promise(resolve => {
-            this.electron.ipcRenderer?.once('get_existing_games_succeeded', (_, gameNumbers: string[]) => resolve(gameNumbers));
+            this.electron.ipcRenderer?.once(
+                'init_app_succeeded',
+                (_, { appVersion, gameNumbers }: InitAppPayload) => resolve({ appVersion, gameNumbers })
+            );
 
-            this.electron.ipcRenderer?.send('get_existing_games');
+            this.electron.ipcRenderer?.send('init_app');
         });
     }
 
@@ -115,5 +120,9 @@ export default class CommunicationService {
 
             this.electron.ipcRenderer?.send('download_video_game', { gameNumber });
         });
+    }
+
+    openUrlInBrowser(url: string): void {
+        this.electron.ipcRenderer?.send('open_url_in_browser', { url });
     }
 }

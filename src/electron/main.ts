@@ -1,5 +1,7 @@
 import { BrowserWindow, app, ipcMain, protocol } from 'electron';
 
+require('update-electron-app')();
+
 import logger from './utils/logger';
 import { checkMandatoryFolderExists } from './utils/path';
 import router from './router';

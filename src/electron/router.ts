@@ -1,3 +1,4 @@
+import { app, shell } from 'electron';
 import IpcMain = Electron.IpcMain;
 import IpcMainEvent = Electron.IpcMainEvent;
 
@@ -15,21 +16,23 @@ import { checkGameFolderExists, getExistingGameFolders } from './utils/path';
 import { concatVideos, copyGameVideoToPath, copyVideoToUserDataPath } from './utils/video';
 
 export default function(ipcMain: IpcMain) {
-    ipcMain.on('get_existing_games', onInitAppListener);
+    ipcMain.on('init_app', onInitAppListener);
     ipcMain.on('create_new_game', onCreateNewGameListener);
     ipcMain.on('get_game', onGetGameListener);
     ipcMain.on('remove_game', onRemoveGameListener);
     ipcMain.on('add_action', onAddActionListener);
     ipcMain.on('remove_action', onRemoveActionListener);
     ipcMain.on('download_video_game', onDownloadVideoGameListener);
+    ipcMain.on('open_url_in_browser', onOpenUrlInBrowserListener);
 }
 
 const onInitAppListener = async (event: IpcMainEvent) => {
     logger.debug('OnInitAppListener');
 
+    const appVersion = app.getVersion();
     const gameNumbers = await getExistingGameFolders();
 
-    event.reply('get_existing_games_succeeded', gameNumbers);
+    event.reply('init_app_succeeded', { appVersion, gameNumbers });
 };
 
 type OnCreateNewGameListenerArgs = { force?: boolean; gameNumber: string; videoPaths: string[] };
@@ -133,4 +136,14 @@ const onDownloadVideoGameListener = (event: IpcMainEvent, { gameNumber }: OnDown
 
     copyGameVideoToPath(game, savePath);
     event.reply('download_video_game_succeeded');
+};
+
+type OnOpenUrlInBrowserListenerArgs = { url: string };
+const onOpenUrlInBrowserListener = (event: IpcMainEvent, { url }: OnOpenUrlInBrowserListenerArgs) => {
+    logger.debug('OnOpenUrlInBrowserListener');
+
+    shell
+        .openExternal(url)
+        .then(() => event.reply('open_url_in_browser_succeeded'))
+        .catch(() => event.reply('open_url_in_browser_failed'));
 };
