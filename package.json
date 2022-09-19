@@ -2,6 +2,7 @@
   "name": "perf-arbitres-plus-plus",
   "version": "1.0.0",
   "description": "",
+  "repository": "https://github.com/CorentinLat/perf-arbitres-plus-plus",
   "homepage": "https://github.com/CorentinLat/perf-arbitres-plus-plus",
   "author": {
     "name": "Corentin LATAPPY",
@@ -41,6 +42,7 @@
     "bootstrap-icons": "1.9.1",
     "rxjs": "7.5.5",
     "tslib": "^2.1.0",
+    "update-electron-app": "2.0.1",
     "zone.js": "~0.11.5"
   },
   "devDependencies": {
