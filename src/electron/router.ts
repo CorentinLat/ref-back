@@ -1,3 +1,4 @@
+import { app } from 'electron';
 import IpcMain = Electron.IpcMain;
 import IpcMainEvent = Electron.IpcMainEvent;
 
@@ -15,7 +16,7 @@ import { checkGameFolderExists, getExistingGameFolders } from './utils/path';
 import { concatVideos, copyGameVideoToPath, copyVideoToUserDataPath } from './utils/video';
 
 export default function(ipcMain: IpcMain) {
-    ipcMain.on('get_existing_games', onInitAppListener);
+    ipcMain.on('init_app', onInitAppListener);
     ipcMain.on('create_new_game', onCreateNewGameListener);
     ipcMain.on('get_game', onGetGameListener);
     ipcMain.on('remove_game', onRemoveGameListener);
@@ -27,9 +28,10 @@ export default function(ipcMain: IpcMain) {
 const onInitAppListener = async (event: IpcMainEvent) => {
     logger.debug('OnInitAppListener');
 
+    const appVersion = app.getVersion();
     const gameNumbers = await getExistingGameFolders();
 
-    event.reply('get_existing_games_succeeded', gameNumbers);
+    event.reply('init_app_succeeded', { appVersion, gameNumbers });
 };
 
 type OnCreateNewGameListenerArgs = { force?: boolean; gameNumber: string; videoPaths: string[] };

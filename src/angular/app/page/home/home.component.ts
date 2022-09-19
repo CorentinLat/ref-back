@@ -4,8 +4,6 @@ import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
 
-import { version } from '../../../../../package.json';
-
 import { GameNumberExistingModalComponent } from '../../component/modal/game-number-existing-modal/game-number-existing-modal.component';
 import { LoadGamesExistingModalComponent } from '../../component/modal/load-games-existing-modal/load-games-existing-modal.component';
 
@@ -19,6 +17,7 @@ import { ToastService } from '../../service/ToastService';
     styleUrls: ['./home.component.scss'],
 })
 export class HomeComponent implements OnInit, OnDestroy {
+    appVersion = '';
     hasExistingGames = false;
 
     gameForm = new FormGroup({
@@ -81,8 +80,11 @@ export class HomeComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.communication
-            .getExistingGameNumbers()
-            .then(gameNumbers => (this.hasExistingGames = gameNumbers.length > 0));
+            .initApp()
+            .then(({ appVersion, gameNumbers }) => {
+                this.appVersion = appVersion;
+                this.hasExistingGames = gameNumbers.length > 0;
+            });
 
         this.videoProgressSubscription$ = this.communication
             .getProcessVideoProgress()
@@ -137,10 +139,6 @@ export class HomeComponent implements OnInit, OnDestroy {
                 }
             });
     };
-
-    exposeApplicationVersion(): string {
-        return version;
-    }
 
     private handleProcessVideosFailed = (error: any) => {
         this.isProcessingVideos = false;

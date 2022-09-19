@@ -14,8 +14,8 @@ export class LoadGamesExistingModalComponent implements OnInit {
 
     ngOnInit(): void {
         this.communication
-            .getExistingGameNumbers()
-            .then(gameNumbers => {
+            .initApp()
+            .then(({ gameNumbers }) => {
                 if (!gameNumbers.length) { this.modal.dismiss({ noMoreGame: true }); }
                 this.gameNumbers = gameNumbers;
             })
