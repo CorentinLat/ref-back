@@ -29,7 +29,7 @@ export async function concatVideos(gameNumber: string, videoPaths: string[], eve
 
     const totalDuration = await computeTotalDurationOfVideos(videoPaths);
 
-    const command = new FluentFFMPEG();
+    const command = FluentFFMPEG();
     videoPaths.forEach(videoPath => command.input(videoPath));
     return new Promise((resolve, reject) => {
         command
@@ -46,7 +46,8 @@ export async function concatVideos(gameNumber: string, videoPaths: string[], eve
                 logger.info(`Concat videos succeeded: ${outputFileName}`);
                 resolve(outputFileName);
             })
-            .mergeToFile(outputFileName, workPath);
+            .videoBitrate('4600k')
+            .mergeToFile(outputFileName);
     });
 }
 
@@ -79,12 +80,12 @@ function generateVideoName(extension: string = 'mp4'): string {
 async function computeTotalDurationOfVideos(videoPaths: string[]): Promise<number> {
     const durations = await Promise.all(videoPaths.map(async videoPath =>
         await new Promise<number>((resolve, reject) => {
-            FluentFFMPEG.ffprobe(videoPath, function(err: Error, data: { format: { duration: number } }) {
+            FluentFFMPEG.ffprobe(videoPath, function(err: Error, data: { format: { duration?: number } }) {
                 if (err) {
                     reject(err);
                 }
 
-                resolve(data.format.duration);
+                resolve(data.format.duration ?? 0);
             });
         })
     ));
