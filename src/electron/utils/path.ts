@@ -7,7 +7,7 @@ import logger from './logger';
 export const downloadPath = app.getPath('downloads');
 export const userDataPath = app.getPath('userData');
 export const logsPath = path.join(userDataPath, 'logs');
-export const workPath = path.join(userDataPath, 'work');
+export const workPath = path.join(userDataPath, app.isPackaged ? 'work' : 'work-dev');
 
 const MANDATORY_FOLDERS = [logsPath, workPath];
 
