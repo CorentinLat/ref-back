@@ -29,7 +29,11 @@
       "DOCUMENTATION": "Documentation",
       "FORM": {
         "LABEL": {
-          "GAME_NUMBER": "Numéro de rencontre"
+          "GAME_NUMBER": "Numéro de Rencontre",
+          "DATE": "Date",
+          "LOCAL_TEAM": "Équipe Locale",
+          "VISIT_TEAM": "Équipe Visiteuse",
+          "SCORE": "Résultat"
         }
       },
       "ERROR" : {
@@ -37,10 +41,20 @@
           "PATTERN": "Le numéro de rencontre n'est pas au bon format.",
           "REQUIRED": "Le numéro de rencontre doit être saisi."
         },
+        "DATE": {
+          "REQUIRED": "La date de la rencontre doit être saisie."
+        },
+        "TEAMS": {
+          "REQUIRED": "Les équipes doivent être saisies."
+        },
+        "SCORES": {
+          "REQUIRED": "Le score de la rencontre doit être saisi."
+        },
         "VIDEO": {
           "IMPORT_INVALID": "Les fichiers suivants ne sont pas supportés :",
           "MULTIPLE_FORMAT": "Les vidéos doivent être au même format.",
-          "PROCESS_FAILED": "Une erreur est survenue lors du traitement."
+          "PROCESS_FAILED": "Une erreur est survenue lors du traitement.",
+          "REQUIRED": "Vous devez sélectionner au moins une vidéo."
         }
       }
     },

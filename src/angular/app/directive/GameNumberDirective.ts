@@ -10,7 +10,9 @@ export default class GameNumberDirective {
         const input = event.target as HTMLInputElement;
 
         if (event.inputType.startsWith('insert')) {
-            if (this.spaceIndexToInclude.includes(input.value.length)) {
+            if (Number.isNaN(Number.parseInt(event.data || '', 10))) {
+                input.value = input.value.slice(0, -1);
+            } else if (this.spaceIndexToInclude.includes(input.value.length)) {
                 input.value += ' ';
             } else if (this.spaceIndexToInclude.includes(input.value.length - 1)) {
                 input.value = input.value.slice(0, -1);

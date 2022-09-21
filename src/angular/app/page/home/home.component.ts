@@ -25,7 +25,22 @@ export class HomeComponent implements OnInit, OnDestroy {
             '',
             [Validators.required, Validators.pattern('^\\d{2}\\s\\d{4}\\s\\d{4}$')]
         ),
-        video: new FormControl(null, [Validators.required]),
+        date: new FormControl('', Validators.required),
+        teams: new FormGroup({
+            local: new FormControl('', Validators.required),
+            visit: new FormControl('', Validators.required),
+        }),
+        scores: new FormGroup({
+            local: new FormControl(
+                0,
+                [Validators.required, Validators.pattern('^\\d{1,3}$')]
+            ),
+            visit: new FormControl(
+                0,
+                [Validators.required, Validators.pattern('^\\d{1,3}$')]
+            ),
+        }),
+        video: new FormControl(null, Validators.required),
     });
 
     readonly gameNumberPrefix = '202223';
@@ -49,6 +64,13 @@ export class HomeComponent implements OnInit, OnDestroy {
     ) {}
 
     get gameNumberControl(): FormControl { return this.gameForm.get('gameNumber') as FormControl; }
+    get dateControl(): FormControl { return this.gameForm.get('date') as FormControl; }
+    get teamsGroup(): FormGroup { return this.gameForm.get('teams') as FormGroup; }
+    get localTeamControl(): FormControl { return this.teamsGroup.get('local') as FormControl; }
+    get visitTeamControl(): FormControl { return this.teamsGroup.get('visit') as FormControl; }
+    get scoresGroup(): FormGroup { return this.gameForm.get('scores') as FormGroup; }
+    get localScoreControl(): FormControl { return this.scoresGroup.get('local') as FormControl; }
+    get visitScoreControl(): FormControl { return this.scoresGroup.get('visit') as FormControl; }
     get videoControl(): FormControl { return this.gameForm.get('video') as FormControl; }
 
     @HostListener('change', ['$event.target.files'])
@@ -95,18 +117,19 @@ export class HomeComponent implements OnInit, OnDestroy {
         this.videoProgressSubscription$.unsubscribe();
     }
 
-    exposeClassNameForGameNumberInput(): string {
-        if (this.gameNumberControl.pristine || this.gameNumberControl.untouched) {
-            return 'form-control';
-        }
-        return this.isGameNumberControlValid() ? 'form-control is-valid' : 'form-control is-invalid';
+    exposeClassNameForFormControl(formControl: FormControl): string {
+        return !formControl || formControl.pristine || formControl.valid
+            ? 'form-control'
+            : 'form-control is-invalid';
     }
 
-    exposeClassNameForVideoInput(): string {
-        if (this.videoControl.pristine) {
-            return 'form-control';
-        }
-        return this.isVideoControlValid() ? 'form-control is-valid' : 'form-control is-invalid';
+    exposeFormControlHasError(formControl: FormControl, error: string): boolean {
+        return formControl.dirty && formControl.hasError(error);
+    }
+
+    exposeFormGroupIsInvalid(formGroup: FormGroup): boolean {
+        const isFormGroupDirty = Object.values(formGroup.controls).every(control => control.dirty);
+        return isFormGroupDirty && formGroup.invalid;
     }
 
     exposeErrorFileNames(): string[] {
@@ -166,14 +189,6 @@ export class HomeComponent implements OnInit, OnDestroy {
             this.toastService.showError('TOAST.ERROR.PROCESS_VIDEO_FAILED');
         }
     };
-
-    private isGameNumberControlValid(): boolean {
-        return this.gameNumberControl.valid;
-    }
-
-    private isVideoControlValid(): boolean {
-        return this.videoControl.valid || (this.videoControl.invalid && this.videoControl.errors?.required);
-    }
 
     private getGameNumber(): string {
         return `${this.gameNumberPrefix} ${this.gameNumberControl.value} ${this.gameNumberSuffix}`;
