@@ -1,19 +1,19 @@
 import { Component, OnInit } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
-import CommunicationService from '../../../service/CommunicationService';
+import { ElectronService } from '../../../service/ElectronService';
 
 @Component({ templateUrl: './load-games-existing-modal.component.html' })
 export class LoadGamesExistingModalComponent implements OnInit {
     gameNumbers!: string[];
 
     constructor(
-        private communication: CommunicationService,
+        private electron: ElectronService,
         public modal: NgbActiveModal,
     ) {}
 
     ngOnInit(): void {
-        this.communication
+        this.electron
             .initApp()
             .then(({ gameNumbers }) => {
                 if (!gameNumbers.length) { this.modal.dismiss({ noMoreGame: true }); }
@@ -23,7 +23,7 @@ export class LoadGamesExistingModalComponent implements OnInit {
     }
 
     handleRemoveGame(gameNumberToRemove: string): void {
-        this.communication
+        this.electron
             .removeGame(gameNumberToRemove)
             .then(() => {
                 this.gameNumbers = this.gameNumbers.filter(gameNumber => gameNumber !== gameNumberToRemove);

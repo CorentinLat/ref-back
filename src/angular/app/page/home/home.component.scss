@@ -2,10 +2,22 @@ $footer-height: 26px;
 $footer-padding-y: 10px;
 
 .home-component {
+    header {
+        position: relative;
+        text-align: center;
+
+        .existing-games {
+            position: absolute;
+            top: 50%;
+            right: 0.75rem;
+            transform: translateY(-50%);
+        }
+    }
+
     .form-container {
         margin-bottom: $footer-height + $footer-padding-y * 2;
 
-        .scores {
+        .score {
             margin-bottom: 20px;
 
             input { text-align: center; }

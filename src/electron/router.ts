@@ -5,6 +5,7 @@ import IpcMainEvent = Electron.IpcMainEvent;
 import { askSaveVideoPath } from './utils/dialog';
 import {
     NewAction,
+    NewGameInformation,
     addNewActionToGame,
     createNewGameFile,
     getGame,
@@ -35,8 +36,8 @@ const onInitAppListener = async (event: IpcMainEvent) => {
     event.reply('init_app_succeeded', { appVersion, gameNumbers });
 };
 
-type OnCreateNewGameListenerArgs = { force?: boolean; gameNumber: string; videoPaths: string[] };
-const onCreateNewGameListener = async (event: IpcMainEvent, { force, gameNumber, videoPaths }: OnCreateNewGameListenerArgs) => {
+type OnCreateNewGameListenerArgs = { force?: boolean; gameInformation: NewGameInformation; videoPaths: string[] };
+const onCreateNewGameListener = async (event: IpcMainEvent, { force, gameInformation, videoPaths }: OnCreateNewGameListenerArgs) => {
     logger.debug('OnCreateNewGameListener');
 
     if (!videoPaths.length) {
@@ -45,6 +46,7 @@ const onCreateNewGameListener = async (event: IpcMainEvent, { force, gameNumber,
     }
 
     try {
+        const { gameNumber } = gameInformation;
         const alreadyExisting = checkGameFolderExists(gameNumber, force);
         if (alreadyExisting) {
             event.reply('create_new_game_failed', { alreadyExisting: true });
@@ -58,7 +60,7 @@ const onCreateNewGameListener = async (event: IpcMainEvent, { force, gameNumber,
             videoPath = await copyVideoToUserDataPath(gameNumber, videoPaths[0], event);
         }
 
-        createNewGameFile(gameNumber, videoPath);
+        createNewGameFile({ ...gameInformation, videoPath });
 
         event.reply('create_new_game_succeeded', gameNumber);
     } catch (error) {

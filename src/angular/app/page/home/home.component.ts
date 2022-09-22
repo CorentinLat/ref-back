@@ -7,7 +7,7 @@ import { Subscription } from 'rxjs';
 import { GameNumberExistingModalComponent } from '../../component/modal/game-number-existing-modal/game-number-existing-modal.component';
 import { LoadGamesExistingModalComponent } from '../../component/modal/load-games-existing-modal/load-games-existing-modal.component';
 
-import CommunicationService from '../../service/CommunicationService';
+import { ElectronService } from '../../service/ElectronService';
 import { FileService } from '../../service/FileService';
 import { ToastService } from '../../service/ToastService';
 
@@ -28,14 +28,14 @@ export class HomeComponent implements OnInit, OnDestroy {
         date: new FormControl('', Validators.required),
         teams: new FormGroup({
             local: new FormControl('', Validators.required),
-            visit: new FormControl('', Validators.required),
+            visitor: new FormControl('', Validators.required),
         }),
-        scores: new FormGroup({
+        score: new FormGroup({
             local: new FormControl(
                 0,
                 [Validators.required, Validators.pattern('^\\d{1,3}$')]
             ),
-            visit: new FormControl(
+            visitor: new FormControl(
                 0,
                 [Validators.required, Validators.pattern('^\\d{1,3}$')]
             ),
@@ -55,7 +55,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     private videoProgressSubscription$!: Subscription;
 
     constructor(
-        private communication: CommunicationService,
+        private electron: ElectronService,
         private fileService: FileService,
         private modalService: NgbModal,
         private router: Router,
@@ -67,10 +67,10 @@ export class HomeComponent implements OnInit, OnDestroy {
     get dateControl(): FormControl { return this.gameForm.get('date') as FormControl; }
     get teamsGroup(): FormGroup { return this.gameForm.get('teams') as FormGroup; }
     get localTeamControl(): FormControl { return this.teamsGroup.get('local') as FormControl; }
-    get visitTeamControl(): FormControl { return this.teamsGroup.get('visit') as FormControl; }
-    get scoresGroup(): FormGroup { return this.gameForm.get('scores') as FormGroup; }
-    get localScoreControl(): FormControl { return this.scoresGroup.get('local') as FormControl; }
-    get visitScoreControl(): FormControl { return this.scoresGroup.get('visit') as FormControl; }
+    get visitorTeamControl(): FormControl { return this.teamsGroup.get('visitor') as FormControl; }
+    get scoreGroup(): FormGroup { return this.gameForm.get('score') as FormGroup; }
+    get localScoreControl(): FormControl { return this.scoreGroup.get('local') as FormControl; }
+    get visitorScoreControl(): FormControl { return this.scoreGroup.get('visitor') as FormControl; }
     get videoControl(): FormControl { return this.gameForm.get('video') as FormControl; }
 
     @HostListener('change', ['$event.target.files'])
@@ -101,14 +101,14 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this.communication
+        this.electron
             .initApp()
             .then(({ appVersion, gameNumbers }) => {
                 this.appVersion = appVersion;
                 this.hasExistingGames = gameNumbers.length > 0;
             });
 
-        this.videoProgressSubscription$ = this.communication
+        this.videoProgressSubscription$ = this.electron
             .getProcessVideoProgress()
             .subscribe(progress => this.zone.run(() => this.progress = Math.round(progress)));
     }
@@ -141,11 +141,16 @@ export class HomeComponent implements OnInit, OnDestroy {
             return;
         }
 
+        const { video, ...gameInformation } = this.gameForm.value;
         const videoPaths = this.files.map(({ path }) => path);
 
         this.isProcessingVideos = true;
         try {
-            const gameNumber = await this.communication.createNewGame(force, this.getGameNumber(), videoPaths);
+            const gameNumber = await this.electron.createNewGame(
+                force,
+                { ...gameInformation, gameNumber: this.getGameNumber() },
+                videoPaths,
+            );
             this.navigateToMatchAnalysisPage(gameNumber);
         } catch (error) {
             this.handleProcessVideosFailed(error);
@@ -164,7 +169,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     };
 
     handleOpenUrlInBrowser(url: string) {
-        this.communication.openUrlInBrowser(url);
+        this.electron.openUrlInBrowser(url);
     }
 
     private handleProcessVideosFailed = (error: any) => {

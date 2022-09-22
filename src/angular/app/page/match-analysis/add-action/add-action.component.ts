@@ -16,7 +16,7 @@ import {
     actionPrecises,
 } from '../../../domain/game';
 
-import CommunicationService from '../../../service/CommunicationService';
+import { ElectronService } from '../../../service/ElectronService';
 import { DateTimeService } from '../../../service/DateTimeService';
 import { ToastService } from '../../../service/ToastService';
 
@@ -47,7 +47,7 @@ export class AddActionComponent implements OnInit, OnDestroy {
     private currentVideoTimeSubscription$!: Subscription;
 
     constructor(
-        private communication: CommunicationService,
+        private electron: ElectronService,
         private dateTimeService: DateTimeService,
         private router: Router,
         private toastService: ToastService,
@@ -128,7 +128,7 @@ export class AddActionComponent implements OnInit, OnDestroy {
         const newAction: NewAction = this.addActionForm.value;
 
         try {
-            const action = await this.communication.addActionToGame(newAction, this.gameNumber);
+            const action = await this.electron.addActionToGame(newAction, this.gameNumber);
             this.actions.push(action);
             this.toastService.showSuccess('TOAST.SUCCESS.PROCESS_ACTION_ADD_SUCCESS');
         } catch (_) {

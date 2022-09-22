@@ -1,9 +1,9 @@
 <section class="home-component">
-    <header class="my-5 text-center">
-        <h1 class="col-8 offset-2 title">{{ 'PAGE.HOME.TITLE' | translate }}</h1>
+    <header class="container my-5">
+        <h1 class="m-0">{{ 'PAGE.HOME.TITLE' | translate }}</h1>
 
         <button
-            class="col-2 btn btn-outline-primary"
+            class="btn btn-outline-primary existing-games"
             (click)="handleDisplayExistingGames()"
             *ngIf="hasExistingGames"
         >
@@ -88,16 +88,16 @@
             </section>
 
             <section class="col-6">
-                <label for="visit-team" class="form-label">
-                    {{ 'PAGE.HOME.FORM.LABEL.VISIT_TEAM' | translate }}
+                <label for="visitor-team" class="form-label">
+                    {{ 'PAGE.HOME.FORM.LABEL.VISITOR_TEAM' | translate }}
                     <span class="text-danger">*</span>
                 </label>
                 <div class="input-group">
                     <span class="input-group-text"><span class="bi bi-airplane"></span></span>
                     <input
-                        [className]="exposeClassNameForFormControl(visitTeamControl)"
-                        id="visit-team"
-                        formControlName="visit"
+                        [className]="exposeClassNameForFormControl(visitorTeamControl)"
+                        id="visitor-team"
+                        formControlName="visitor"
                         type="text"
                     >
                 </div>
@@ -110,7 +110,7 @@
             </article>
         </section>
 
-        <section class="row text-center scores" formGroupName="scores">
+        <section class="row text-center score" formGroupName="score">
             <section class="col-8 offset-2 col-lg-4 offset-lg-4">
                 <label for="local-score" class="form-label">
                     {{ 'PAGE.HOME.FORM.LABEL.SCORE' | translate }}
@@ -126,9 +126,9 @@
                     >
                     <span class="input-group-text">-</span>
                     <input
-                        [className]="exposeClassNameForFormControl(visitScoreControl)"
-                        id="visit-score"
-                        formControlName="visit"
+                        [className]="exposeClassNameForFormControl(visitorScoreControl)"
+                        id="visitor-score"
+                        formControlName="visitor"
                         type="number"
                     >
                     <span class="input-group-text"><span class="bi bi-airplane"></span></span>

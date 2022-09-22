@@ -5,7 +5,7 @@ import { VgApiService } from '@videogular/ngx-videogular/core';
 
 import { Game } from '../../domain/game';
 
-import CommunicationService from '../../service/CommunicationService';
+import { ElectronService } from '../../service/ElectronService';
 import { ToastService } from '../../service/ToastService';
 
 @Component({
@@ -24,7 +24,7 @@ export class MatchAnalysisComponent implements OnInit {
 
     constructor(
         private cdr: ChangeDetectorRef,
-        private communication: CommunicationService,
+        private electron: ElectronService,
         private route: ActivatedRoute,
         private router: Router,
         private sanitizer: DomSanitizer,
@@ -39,7 +39,7 @@ export class MatchAnalysisComponent implements OnInit {
         }
 
         this.gameNumber = gameNumber;
-        this.communication
+        this.electron
             .getGameByNumber(this.gameNumber)
             .then(game => {
                 this.game = game;

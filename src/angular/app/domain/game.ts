@@ -89,10 +89,16 @@ export const actionFaults = {
 };
 export const actionPrecises = ['YES', 'NO', 'DOUBT'];
 
+export type GameInformation = {
+    gameNumber: string;
+    date: string;
+    teams: { local: string; visitor: string };
+    score: { local: number; visitor: number };
+    videoPath: string;
+};
+export type NewGameInformation = Omit<GameInformation, 'videoPath'>;
+
 export type Game = {
     actions: Action[];
-    information: {
-        gameNumber: string;
-        videoPath: string;
-    };
+    information: GameInformation;
 };
