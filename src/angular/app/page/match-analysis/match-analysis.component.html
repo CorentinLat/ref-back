@@ -8,16 +8,12 @@
 
         <section class="game-information-container" *ngIf="game">
             <article class="teams-scores">
-                <h4 class="team-score local">
-                    <b class="team">{{ game.information.teams.local }} </b>
-                </h4>
+                <h4 class="team local">{{ game.information.teams.local }}</h4>
                 <h5 class="scores">
                     <span>{{ game.information.score.local }}</span>
                     <span>{{ game.information.score.visitor }}</span>
                 </h5>
-                <h4 class="team-score visitor">
-                    <b class="team"> {{ game.information.teams.visitor }}</b>
-                </h4>
+                <h4 class="team visitor">{{ game.information.teams.visitor }}</h4>
             </article>
 
             <article class="date-number">

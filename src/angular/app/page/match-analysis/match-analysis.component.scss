@@ -28,12 +28,13 @@ $header-margin-bottom: 20px;
                 justify-content: center;
                 gap: 20px;
 
-                .team-score {
+                .team {
                     flex-basis: 0;
                     flex-grow: 1;
                     overflow: hidden;
                     text-overflow: ellipsis;
                     white-space: nowrap;
+                    font-weight: bold;
 
                     &.local { text-align: right; }
                     &.visitor { text-align: left; }
