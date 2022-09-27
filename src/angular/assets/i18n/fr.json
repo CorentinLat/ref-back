@@ -59,7 +59,7 @@
       }
     },
     "MATCH_ANALYSIS": {
-      "BACK_HOME": "Retour à l'Accueil",
+      "BACK_HOME": "Accueil",
       "ACTIONS": {
         "TITLE": "Décisions",
         "NO_ACTION": "Aucune décision n'a été ajoutée pour le moment.",
