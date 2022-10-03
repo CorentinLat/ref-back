@@ -83,6 +83,7 @@
                         id="local-team"
                         formControlName="local"
                         type="text"
+                        [ngbTypeahead]="searchTeams"
                     >
                 </div>
             </section>
@@ -99,6 +100,7 @@
                         id="visitor-team"
                         formControlName="visitor"
                         type="text"
+                        [ngbTypeahead]="searchTeams"
                     >
                 </div>
             </section>

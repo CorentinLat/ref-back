@@ -1,14 +1,23 @@
-import { Component, HostListener, NgZone, OnDestroy, OnInit } from '@angular/core';
+import {
+    Component,
+    HostListener,
+    NgZone,
+    OnDestroy,
+    OnInit,
+    ViewEncapsulation,
+} from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { Subscription } from 'rxjs';
+import { Observable, of, OperatorFunction, Subscription } from 'rxjs';
+import { catchError, debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 
 import { GameNumberExistingModalComponent } from '../../component/modal/game-number-existing-modal/game-number-existing-modal.component';
 import { LoadGamesExistingModalComponent } from '../../component/modal/load-games-existing-modal/load-games-existing-modal.component';
 
 import { DateTimeService } from '../../service/DateTimeService';
 import { ElectronService } from '../../service/ElectronService';
+import { FfrService } from '../../service/FfrService';
 import { FileService } from '../../service/FileService';
 import { ToastService } from '../../service/ToastService';
 
@@ -16,6 +25,7 @@ import { ToastService } from '../../service/ToastService';
     selector: 'app-home',
     templateUrl: './home.component.html',
     styleUrls: ['./home.component.scss'],
+    encapsulation: ViewEncapsulation.None
 })
 export class HomeComponent implements OnInit, OnDestroy {
     appVersion = '';
@@ -58,6 +68,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     constructor(
         private dateService: DateTimeService,
         private electron: ElectronService,
+        private ffrService: FfrService,
         private fileService: FileService,
         private modalService: NgbModal,
         private router: Router,
@@ -128,6 +139,17 @@ export class HomeComponent implements OnInit, OnDestroy {
     exposeFormControlHasError(formControl: FormControl, error: string): boolean {
         return formControl.dirty && formControl.hasError(error);
     }
+
+    searchTeams: OperatorFunction<string, readonly string[]> = (text$: Observable<string>) =>
+        text$.pipe(
+            debounceTime(300),
+            distinctUntilChanged(),
+            switchMap(term =>
+                this.ffrService.searchTeams(term).pipe(
+                    catchError(() => of([]))
+                )
+            )
+        );
 
     exposeFormGroupIsInvalid(formGroup: FormGroup): boolean {
         const isFormGroupDirty = Object.values(formGroup.controls).every(control => control.dirty);

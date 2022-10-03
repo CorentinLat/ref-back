@@ -17,6 +17,10 @@ $footer-padding-y: 10px;
     .form-container {
         margin-bottom: $footer-height + $footer-padding-y * 2;
 
+        .dropdown-menu.show {
+            min-width: calc(100% - 41px) !important;
+        }
+
         .score {
             margin-bottom: 20px;
 
