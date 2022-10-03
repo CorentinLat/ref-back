@@ -1,13 +1,23 @@
-import { Component, HostListener, NgZone, OnDestroy, OnInit } from '@angular/core';
+import {
+    Component,
+    HostListener,
+    NgZone,
+    OnDestroy,
+    OnInit,
+    ViewEncapsulation,
+} from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { Subscription } from 'rxjs';
+import { Observable, of, OperatorFunction, Subscription } from 'rxjs';
+import { catchError, debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 
 import { GameNumberExistingModalComponent } from '../../component/modal/game-number-existing-modal/game-number-existing-modal.component';
 import { LoadGamesExistingModalComponent } from '../../component/modal/load-games-existing-modal/load-games-existing-modal.component';
 
-import CommunicationService from '../../service/CommunicationService';
+import { DateTimeService } from '../../service/DateTimeService';
+import { ElectronService } from '../../service/ElectronService';
+import { FfrService } from '../../service/FfrService';
 import { FileService } from '../../service/FileService';
 import { ToastService } from '../../service/ToastService';
 
@@ -15,6 +25,7 @@ import { ToastService } from '../../service/ToastService';
     selector: 'app-home',
     templateUrl: './home.component.html',
     styleUrls: ['./home.component.scss'],
+    encapsulation: ViewEncapsulation.None
 })
 export class HomeComponent implements OnInit, OnDestroy {
     appVersion = '';
@@ -25,7 +36,22 @@ export class HomeComponent implements OnInit, OnDestroy {
             '',
             [Validators.required, Validators.pattern('^\\d{2}\\s\\d{4}\\s\\d{4}$')]
         ),
-        video: new FormControl(null, [Validators.required]),
+        date: new FormControl(this.dateService.getLastSundayDate(), Validators.required),
+        teams: new FormGroup({
+            local: new FormControl('', Validators.required),
+            visitor: new FormControl('', Validators.required),
+        }),
+        score: new FormGroup({
+            local: new FormControl(
+                0,
+                [Validators.required, Validators.pattern('^\\d{1,3}$')]
+            ),
+            visitor: new FormControl(
+                0,
+                [Validators.required, Validators.pattern('^\\d{1,3}$')]
+            ),
+        }),
+        video: new FormControl(null, Validators.required),
     });
 
     readonly gameNumberPrefix = '202223';
@@ -40,7 +66,9 @@ export class HomeComponent implements OnInit, OnDestroy {
     private videoProgressSubscription$!: Subscription;
 
     constructor(
-        private communication: CommunicationService,
+        private dateService: DateTimeService,
+        private electron: ElectronService,
+        private ffrService: FfrService,
         private fileService: FileService,
         private modalService: NgbModal,
         private router: Router,
@@ -49,6 +77,13 @@ export class HomeComponent implements OnInit, OnDestroy {
     ) {}
 
     get gameNumberControl(): FormControl { return this.gameForm.get('gameNumber') as FormControl; }
+    get dateControl(): FormControl { return this.gameForm.get('date') as FormControl; }
+    get teamsGroup(): FormGroup { return this.gameForm.get('teams') as FormGroup; }
+    get localTeamControl(): FormControl { return this.teamsGroup.get('local') as FormControl; }
+    get visitorTeamControl(): FormControl { return this.teamsGroup.get('visitor') as FormControl; }
+    get scoreGroup(): FormGroup { return this.gameForm.get('score') as FormGroup; }
+    get localScoreControl(): FormControl { return this.scoreGroup.get('local') as FormControl; }
+    get visitorScoreControl(): FormControl { return this.scoreGroup.get('visitor') as FormControl; }
     get videoControl(): FormControl { return this.gameForm.get('video') as FormControl; }
 
     @HostListener('change', ['$event.target.files'])
@@ -79,14 +114,14 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this.communication
+        this.electron
             .initApp()
-            .then(({ appVersion, gameNumbers }) => {
+            .then(({ appVersion, games }) => {
                 this.appVersion = appVersion;
-                this.hasExistingGames = gameNumbers.length > 0;
+                this.hasExistingGames = games.length > 0;
             });
 
-        this.videoProgressSubscription$ = this.communication
+        this.videoProgressSubscription$ = this.electron
             .getProcessVideoProgress()
             .subscribe(progress => this.zone.run(() => this.progress = Math.round(progress)));
     }
@@ -95,18 +130,30 @@ export class HomeComponent implements OnInit, OnDestroy {
         this.videoProgressSubscription$.unsubscribe();
     }
 
-    exposeClassNameForGameNumberInput(): string {
-        if (this.gameNumberControl.pristine || this.gameNumberControl.untouched) {
-            return 'form-control';
-        }
-        return this.isGameNumberControlValid() ? 'form-control is-valid' : 'form-control is-invalid';
+    exposeClassNameForFormControl(formControl: FormControl): string {
+        return !formControl || formControl.pristine || formControl.valid
+            ? 'form-control'
+            : 'form-control is-invalid';
     }
 
-    exposeClassNameForVideoInput(): string {
-        if (this.videoControl.pristine) {
-            return 'form-control';
-        }
-        return this.isVideoControlValid() ? 'form-control is-valid' : 'form-control is-invalid';
+    exposeFormControlHasError(formControl: FormControl, error: string): boolean {
+        return formControl.dirty && formControl.hasError(error);
+    }
+
+    searchTeams: OperatorFunction<string, readonly string[]> = (text$: Observable<string>) =>
+        text$.pipe(
+            debounceTime(300),
+            distinctUntilChanged(),
+            switchMap(term =>
+                this.ffrService.searchTeams(term).pipe(
+                    catchError(() => of([]))
+                )
+            )
+        );
+
+    exposeFormGroupIsInvalid(formGroup: FormGroup): boolean {
+        const isFormGroupDirty = Object.values(formGroup.controls).every(control => control.dirty);
+        return isFormGroupDirty && formGroup.invalid;
     }
 
     exposeErrorFileNames(): string[] {
@@ -118,11 +165,16 @@ export class HomeComponent implements OnInit, OnDestroy {
             return;
         }
 
+        const { video, ...gameInformation } = this.gameForm.value;
         const videoPaths = this.files.map(({ path }) => path);
 
         this.isProcessingVideos = true;
         try {
-            const gameNumber = await this.communication.createNewGame(force, this.getGameNumber(), videoPaths);
+            const gameNumber = await this.electron.createNewGame(
+                force,
+                { ...gameInformation, gameNumber: this.getGameNumber() },
+                videoPaths,
+            );
             this.navigateToMatchAnalysisPage(gameNumber);
         } catch (error) {
             this.handleProcessVideosFailed(error);
@@ -141,7 +193,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     };
 
     handleOpenUrlInBrowser(url: string) {
-        this.communication.openUrlInBrowser(url);
+        this.electron.openUrlInBrowser(url);
     }
 
     private handleProcessVideosFailed = (error: any) => {
@@ -166,14 +218,6 @@ export class HomeComponent implements OnInit, OnDestroy {
             this.toastService.showError('TOAST.ERROR.PROCESS_VIDEO_FAILED');
         }
     };
-
-    private isGameNumberControlValid(): boolean {
-        return this.gameNumberControl.valid;
-    }
-
-    private isVideoControlValid(): boolean {
-        return this.videoControl.valid || (this.videoControl.invalid && this.videoControl.errors?.required);
-    }
 
     private getGameNumber(): string {
         return `${this.gameNumberPrefix} ${this.gameNumberControl.value} ${this.gameNumberSuffix}`;

@@ -11,7 +11,7 @@ et ce projet suit la [Gestion sémantique de version](https://semver.org/spec/v2
 - Pouvoir se connecter à l'application
 - Pouvoir récupérer automatiquement les données de la rencontre
 
-## [1.1.0] - 2022-09-
+## [1.1.0] - 2022-09-20
 ### Ajouté
 - Possibilité de mettre à jour automatiquement l'application
 ### Mis à jour

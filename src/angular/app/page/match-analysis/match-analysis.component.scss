@@ -1,5 +1,5 @@
 $match-analysis-component-margin: 20px;
-$header-height: 30px;
+$header-height: 50px;
 $header-margin-bottom: 20px;
 
 .match-analysis-component {
@@ -10,20 +10,68 @@ $header-margin-bottom: 20px;
         align-items: center;
         height: $header-height;
         margin-bottom: $header-margin-bottom;
-        gap: 20px;
 
         .back-button-container {
-            flex-grow: 1;
+            min-width: 120px;
         }
 
-        .title {
-            flex-grow: 3;
-            margin: 0;
-            text-align: center;
+        .game-information-container {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            width: 100%;
+            overflow: hidden;
+
+            .teams-scores {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 20px;
+
+                .team {
+                    flex-basis: 0;
+                    flex-grow: 1;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                    font-weight: bold;
+
+                    &.local { text-align: right; }
+                    &.visitor { text-align: left; }
+                }
+
+                .scores {
+                    display: flex;
+                    gap: 16px;
+                }
+            }
+
+            .date-number {
+                display: flex;
+                align-items: center;
+                gap: 40px;
+
+                .date {
+                    font-weight: bold;
+                    text-align: right;
+                }
+
+                .date, .number {
+                    flex-basis: 0;
+                    flex-grow: 1;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                }
+            }
+
+            h4, h5 {
+                margin: 0;
+            }
         }
 
         .collapse-btn-container {
-            flex-grow: 1;
+            min-width: 120px;
             text-align: right;
 
             .btn { margin-right: 31px; }

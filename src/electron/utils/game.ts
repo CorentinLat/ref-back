@@ -17,23 +17,27 @@ export type Action = {
     comment?: string;
 };
 export type NewAction = Omit<Action, 'id'>;
+
+export type GameInformation = {
+    gameNumber: string;
+    date: string;
+    teams: { local: string; visitor: string };
+    score: { local: number; visitor: number };
+    videoPath: string;
+};
+export type NewGameInformation = Omit<GameInformation, 'videoPath'>;
+
 export type Game = {
     actions: Action[];
-    information: {
-        gameNumber: string;
-        videoPath: string;
-    };
+    information: GameInformation;
 };
 
-export function createNewGameFile(gameNumber: string, videoPath: string): void {
-    const gameFile = path.join(workPath, gameNumber, 'game.json');
+export function createNewGameFile(gameInformation: GameInformation): void {
+    const gameFile = path.join(workPath, gameInformation.gameNumber, 'game.json');
 
     const game: Game = {
         actions: [],
-        information: {
-            gameNumber,
-            videoPath,
-        },
+        information: gameInformation,
     };
 
     fs.writeFileSync(gameFile, JSON.stringify(game));
@@ -49,6 +53,14 @@ export function getGame(gameNumber: string): Game|null {
         logger.error(`error getGame: ${error}`);
         return null;
     }
+}
+
+export function getGamesInformation(gameNumbers: string[]): GameInformation[] {
+    return gameNumbers.reduce<GameInformation[]>((games, gameNumber) => {
+        const game = getGame(gameNumber);
+
+        return game ? [...games, game.information] : games;
+    }, []);
 }
 
 export function removeGame(gameNumber: string): boolean {

@@ -2,7 +2,7 @@ import { Component, Input } from '@angular/core';
 
 import { Action } from '../../../../domain/game';
 
-import CommunicationService from '../../../../service/CommunicationService';
+import { ElectronService } from '../../../../service/ElectronService';
 import { ToastService } from '../../../../service/ToastService';
 
 @Component({
@@ -20,7 +20,7 @@ export class FullDisplayActionsComponent {
     @Input() putVideoAtSecond!: (second: number) => void;
 
     constructor(
-        private communication: CommunicationService,
+        private electron: ElectronService,
         private toastService: ToastService,
     ) {}
 
@@ -41,7 +41,7 @@ export class FullDisplayActionsComponent {
         if (actionIndex === -1) { return; }
 
         try {
-            await this.communication.removeActionFromGame(actionId, this.gameNumber);
+            await this.electron.removeActionFromGame(actionId, this.gameNumber);
             this.actions.splice(actionIndex, 1);
         } catch (_) {
             this.toastService.showError('TOAST.ERROR.PROCESS_ACTION_REMOVE_FAILED');

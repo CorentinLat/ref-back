@@ -1,31 +1,61 @@
+$footer-height: 26px;
+$footer-padding-y: 10px;
+
 .home-component {
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
+    header {
+        position: relative;
+        text-align: center;
 
-    .errors-container {
-        min-height: 24px;
-        margin: 10px 0;
+        .existing-games {
+            position: absolute;
+            top: 50%;
+            right: 0.75rem;
+            transform: translateY(-50%);
+        }
+    }
 
-        .error {
-            margin-bottom: 0;
+    .form-container {
+        margin-bottom: $footer-height + $footer-padding-y * 2;
 
-            --bs-text-opacity: 1;
-            color: rgba(var(--bs-danger-rgb), var(--bs-text-opacity)) !important;
-            font-weight: bold;
-            text-align: center;
+        .dropdown-menu.show {
+            min-width: calc(100% - 41px) !important;
+        }
+
+        .score {
+            margin-bottom: 20px;
+
+            input { text-align: center; }
+        }
+
+        .errors-container {
+            min-height: 24px;
+            margin: 10px 0;
+
+            .error {
+                margin-bottom: 0;
+
+                --bs-text-opacity: 1;
+                color: rgba(var(--bs-danger-rgb), var(--bs-text-opacity)) !important;
+                font-weight: bold;
+                text-align: center;
+            }
         }
     }
 
     .footer {
-        display: flex;
-        align-items: center;
-        position: absolute;
+        position: fixed;
         bottom: 0;
-        left: 50%;
-        transform: translate(-50%, 0);
-        margin: 10px auto;
+        height: $footer-height + $footer-padding-y * 2;
+        width: 100%;
+        padding: $footer-padding-y 0;
+        background: white;
 
-        p { margin: 0; }
+        .footer-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            p { margin: 0; }
+        }
     }
 }

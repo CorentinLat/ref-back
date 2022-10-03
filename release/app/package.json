@@ -1,7 +1,8 @@
 {
   "name": "perf-arbitres-plus-plus",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "",
+  "repository": "https://github.com/CorentinLat/perf-arbitres-plus-plus",
   "main": "./dist/electron/main.js",
   "scripts": {
     "electron-rebuild": "node -r ts-node/register ../../.erb/scripts/electron-rebuild.js",

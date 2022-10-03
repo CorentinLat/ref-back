@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 
 import { Action, Game } from '../../domain/game';
 
-import CommunicationService from '../../service/CommunicationService';
+import { ElectronService } from '../../service/ElectronService';
 import { ToastService } from '../../service/ToastService';
 
 @Component({
@@ -18,7 +18,7 @@ export class SummaryComponent implements OnInit {
     public isDownloadingVideo = false;
 
     constructor(
-        private communication: CommunicationService,
+        private electron: ElectronService,
         private route: ActivatedRoute,
         private router: Router,
         private toastService: ToastService,
@@ -32,7 +32,7 @@ export class SummaryComponent implements OnInit {
         }
 
         this.gameNumber = gameNumber;
-        this.communication
+        this.electron
             .getGameByNumber(this.gameNumber)
             .then(game => this.game = game)
             .catch(() => {
@@ -52,7 +52,7 @@ export class SummaryComponent implements OnInit {
         this.isDownloadingVideo = true;
 
         try {
-            await this.communication.downloadVideoGame(this.gameNumber);
+            await this.electron.downloadVideoGame(this.gameNumber);
         } catch (error: any) {
             if (!error?.closed) {
                 this.toastService.showError('TOAST.ERROR.PROCESS_DOWNLOAD_GAME_FAILED');

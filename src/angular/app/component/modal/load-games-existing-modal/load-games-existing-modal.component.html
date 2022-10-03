@@ -11,20 +11,21 @@
         <section class="d-flex flex-column align-items-center gap-3">
             <article
                 class="d-flex align-items-center gap-2"
-                *ngFor="let gameNumber of gameNumbers"
+                *ngFor="let game of games"
             >
                 <button
                     class="btn btn-link"
                     type="button"
-                    (click)="modal.close(gameNumber)"
+                    (click)="modal.close(game.gameNumber)"
                 >
-                    {{ gameNumber }}
+                    {{ game.date | date: 'dd.MM.yyyy' }}
+                    {{ game.teams.local }} - {{ game.teams.visitor }}
                 </button>
 
                 <button
                     class="btn ml-2"
                     type="button"
-                    (click)="handleRemoveGame(gameNumber)"
+                    (click)="handleRemoveGame(game.gameNumber)"
                 >
                     <i class="bi bi-trash text-danger"></i>
                 </button>
