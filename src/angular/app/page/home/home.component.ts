@@ -7,6 +7,7 @@ import { Subscription } from 'rxjs';
 import { GameNumberExistingModalComponent } from '../../component/modal/game-number-existing-modal/game-number-existing-modal.component';
 import { LoadGamesExistingModalComponent } from '../../component/modal/load-games-existing-modal/load-games-existing-modal.component';
 
+import { DateTimeService } from '../../service/DateTimeService';
 import { ElectronService } from '../../service/ElectronService';
 import { FileService } from '../../service/FileService';
 import { ToastService } from '../../service/ToastService';
@@ -25,7 +26,7 @@ export class HomeComponent implements OnInit, OnDestroy {
             '',
             [Validators.required, Validators.pattern('^\\d{2}\\s\\d{4}\\s\\d{4}$')]
         ),
-        date: new FormControl('', Validators.required),
+        date: new FormControl(this.dateService.getLastSundayDate(), Validators.required),
         teams: new FormGroup({
             local: new FormControl('', Validators.required),
             visitor: new FormControl('', Validators.required),
@@ -55,6 +56,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     private videoProgressSubscription$!: Subscription;
 
     constructor(
+        private dateService: DateTimeService,
         private electron: ElectronService,
         private fileService: FileService,
         private modalService: NgbModal,

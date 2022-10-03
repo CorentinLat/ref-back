@@ -11,4 +11,11 @@ export class DateTimeService {
 
         return minutesStr + ':' + secondsStr;
     }
+
+    getLastSundayDate(): string {
+        const today = new Date();
+        const lastSunday = new Date(today.getTime() - today.getDay() * 24 * 60 * 60 * 1000);
+
+        return lastSunday.toISOString().split('T')[0];
+    }
 }
