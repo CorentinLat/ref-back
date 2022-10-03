@@ -55,6 +55,14 @@ export function getGame(gameNumber: string): Game|null {
     }
 }
 
+export function getGamesInformation(gameNumbers: string[]): GameInformation[] {
+    return gameNumbers.reduce<GameInformation[]>((games, gameNumber) => {
+        const game = getGame(gameNumber);
+
+        return game ? [...games, game.information] : games;
+    }, []);
+}
+
 export function removeGame(gameNumber: string): boolean {
     const gameFolderPath = path.join(workPath, gameNumber);
 

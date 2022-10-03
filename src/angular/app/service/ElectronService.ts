@@ -4,9 +4,9 @@ import * as childProcess from 'child_process';
 import * as fs from 'fs';
 import { Observable } from 'rxjs';
 
-import { Action, Game, NewAction, NewGameInformation } from '../domain/game';
+import { Action, Game, GameInformation, NewAction, NewGameInformation } from '../domain/game';
 
-type InitAppPayload = { appVersion: string; gameNumbers: string[] };
+type InitAppPayload = { appVersion: string; games: GameInformation[] };
 
 @Injectable({ providedIn: 'root' })
 export class ElectronService {
@@ -48,7 +48,7 @@ export class ElectronService {
         return new Promise(resolve => {
             this.ipcRenderer?.once(
                 'init_app_succeeded',
-                (_, { appVersion, gameNumbers }: InitAppPayload) => resolve({ appVersion, gameNumbers })
+                (_, { appVersion, games }: InitAppPayload) => resolve({ appVersion, games })
             );
 
             this.ipcRenderer?.send('init_app');

@@ -1,11 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
+import { GameInformation } from '../../../domain/game';
+
 import { ElectronService } from '../../../service/ElectronService';
 
 @Component({ templateUrl: './load-games-existing-modal.component.html' })
 export class LoadGamesExistingModalComponent implements OnInit {
-    gameNumbers!: string[];
+    games!: GameInformation[];
 
     constructor(
         private electron: ElectronService,
@@ -15,9 +17,9 @@ export class LoadGamesExistingModalComponent implements OnInit {
     ngOnInit(): void {
         this.electron
             .initApp()
-            .then(({ gameNumbers }) => {
-                if (!gameNumbers.length) { this.modal.dismiss({ noMoreGame: true }); }
-                this.gameNumbers = gameNumbers;
+            .then(({ games }) => {
+                if (!games.length) { this.modal.dismiss({ noMoreGame: true }); }
+                this.games = games;
             })
             .catch(() => this.modal.dismiss());
     }
@@ -26,8 +28,8 @@ export class LoadGamesExistingModalComponent implements OnInit {
         this.electron
             .removeGame(gameNumberToRemove)
             .then(() => {
-                this.gameNumbers = this.gameNumbers.filter(gameNumber => gameNumber !== gameNumberToRemove);
-                if (!this.gameNumbers.length) { this.modal.dismiss({ noMoreGame: true }); }
+                this.games = this.games.filter(({ gameNumber }) => gameNumber !== gameNumberToRemove);
+                if (!this.games.length) { this.modal.dismiss({ noMoreGame: true }); }
             })
             .catch(() => this.modal.dismiss());
     }

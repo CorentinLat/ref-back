@@ -103,9 +103,9 @@ export class HomeComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.electron
             .initApp()
-            .then(({ appVersion, gameNumbers }) => {
+            .then(({ appVersion, games }) => {
                 this.appVersion = appVersion;
-                this.hasExistingGames = gameNumbers.length > 0;
+                this.hasExistingGames = games.length > 0;
             });
 
         this.videoProgressSubscription$ = this.electron

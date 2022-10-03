@@ -9,6 +9,7 @@ import {
     addNewActionToGame,
     createNewGameFile,
     getGame,
+    getGamesInformation,
     removeActionFromGame,
     removeGame,
 } from './utils/game';
@@ -32,8 +33,9 @@ const onInitAppListener = async (event: IpcMainEvent) => {
 
     const appVersion = app.getVersion();
     const gameNumbers = await getExistingGameFolders();
+    const games = getGamesInformation(gameNumbers);
 
-    event.reply('init_app_succeeded', { appVersion, gameNumbers });
+    event.reply('init_app_succeeded', { appVersion, games });
 };
 
 type OnCreateNewGameListenerArgs = { force?: boolean; gameInformation: NewGameInformation; videoPaths: string[] };
