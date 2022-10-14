@@ -15,6 +15,7 @@ export type Action = {
     fault: string;
     precise: 'YES' | 'NO' | 'DOUBT';
     comment?: string;
+    clip?: { start: number; end: number };
 };
 export type NewAction = Omit<Action, 'id'>;
 

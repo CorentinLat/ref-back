@@ -11,6 +11,8 @@
                 </button>
             </article>
 
+            <i class="bi bi-film" *ngIf="action.clip"></i>
+
             <article class="against">
                 <i class="bi bi-house" *ngIf="action.against === 'LOCAL'"></i>
                 <i class="bi bi-airplane" *ngIf="action.against === 'VISITOR'"></i>

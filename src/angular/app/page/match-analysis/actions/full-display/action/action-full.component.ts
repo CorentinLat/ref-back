@@ -25,6 +25,16 @@ export class ActionFullComponent {
         return this.dateTimeService.convertSecondsToMMSS(this.action.second);
     }
 
+    exposeClipStartMinutes(): string {
+        // @ts-ignore Called only when this.action.clip is defined
+        return this.dateTimeService.convertSecondsToMMSS(this.action.clip?.start);
+    }
+
+    exposeClipEndMinutes(): string {
+        // @ts-ignore Called only when this.action.clip is defined
+        return this.dateTimeService.convertSecondsToMMSS(this.action.clip?.end);
+    }
+
     handleRemoveAction(): void {
         this.removeActionEvent.emit(this.action.id);
     }

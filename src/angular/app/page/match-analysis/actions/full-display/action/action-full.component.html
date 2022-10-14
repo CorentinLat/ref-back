@@ -1,16 +1,34 @@
 <section class="action-full-component">
-    <article class="box minute">
+    <section class="box minute">
         <button
             class="btn btn-link p-0"
             [ngClass]="{ yes: action.precise === 'YES', no: action.precise === 'NO', doubt: action.precise === 'DOUBT' }"
             (click)="putVideoAtSecond(action.second)"
-            *ngIf="!isSummaryDisplay"
+            *ngIf="!isSummaryDisplay && !action.clip"
         >
             {{ exposeActionMinutes() }}
         </button>
 
-        <span *ngIf="isSummaryDisplay">{{ exposeActionMinutes() }}</span>
-    </article>
+        <article class="clip-minute" *ngIf="!isSummaryDisplay && action.clip">
+            <button
+                class="btn btn-link p-0"
+                [ngClass]="{ yes: action.precise === 'YES', no: action.precise === 'NO', doubt: action.precise === 'DOUBT' }"
+                (click)="putVideoAtSecond(action.clip.start)"
+            >
+                {{ exposeClipStartMinutes() }}
+            </button>
+            <button
+                class="btn btn-link p-0"
+                [ngClass]="{ yes: action.precise === 'YES', no: action.precise === 'NO', doubt: action.precise === 'DOUBT' }"
+                (click)="putVideoAtSecond(action.clip.end)"
+            >
+                {{ exposeClipEndMinutes() }}
+            </button>
+        </article>
+
+        <span *ngIf="isSummaryDisplay && !action.clip">{{ exposeActionMinutes() }}</span>
+        <span *ngIf="isSummaryDisplay && action.clip">{{ exposeClipStartMinutes() }} - {{ exposeClipEndMinutes() }}</span>
+    </section>
     <article class="box type">
         {{ 'PAGE.MATCH_ANALYSIS.ACTIONS.ACTION.TYPE.' + action.type | translate }}
         <i class="bi bi-exclamation-square" *ngIf="action.card === 'WARNING'"></i>

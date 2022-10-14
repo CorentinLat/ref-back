@@ -194,7 +194,9 @@
           "FAULT": "Faute",
           "PRECISE": "Précis",
           "COMMENT": "Commentaire",
-          "CREATE_CLIP": "Créer un clip"
+          "CREATE_CLIP": "Créer un clip",
+          "START_CLIP": "Début",
+          "END_CLIP": "Fin"
         }
       }
     },
