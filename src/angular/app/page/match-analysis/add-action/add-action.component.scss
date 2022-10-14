@@ -6,4 +6,8 @@
         &.sector, &.fault { flex-grow: 2; }
         &.comment { flex-grow: 4; }
     }
+
+    .form-check {
+        margin: 0;
+    }
 }

@@ -103,6 +103,12 @@
         </section>
 
         <section class="d-flex align-items-center justify-content-end gap-3">
+            <article class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" role="switch" id="createClip">
+                <label class="form-check-label" for="createClip">
+                    {{ 'PAGE.MATCH_ANALYSIS.FORM.LABEL.CREATE_CLIP' | translate }}
+                </label>
+            </article>
             <article>
                 <b>{{ 'PAGE.MATCH_ANALYSIS.FORM.LABEL.SECOND' | translate }} :</b>
                 {{ exposeActionMinutes() }}

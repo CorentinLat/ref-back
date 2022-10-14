@@ -53,6 +53,8 @@ export class MatchAnalysisComponent implements OnInit {
 
     public onPlayerReady = (api: VgApiService): void => {
         this.videoApiService = api;
+        this.videoApiService.volume = 0;
+
         this.cdr.detectChanges();
     };
 

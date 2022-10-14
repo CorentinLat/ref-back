@@ -48,7 +48,7 @@ export class SummaryComponent implements OnInit {
         );
     }
 
-    async handleDownloadVideo(): Promise<void> {
+    async handleDownloadVideoGame(): Promise<void> {
         this.isDownloadingVideo = true;
 
         try {
@@ -61,6 +61,10 @@ export class SummaryComponent implements OnInit {
             this.isDownloadingVideo = false;
         }
     }
+
+    handleDownloadVideoClips(): void {}
+
+    handleDownloadVideoAll(): void {}
 
     handleExportSummary(): void {}
 

@@ -27,14 +27,23 @@
         </section>
 
         <article class="summary-buttons">
-            <button
-                class="btn btn-primary"
-                [disabled]="isDownloadingVideo"
-                (click)="handleDownloadVideo()"
-            >
-                {{ 'PAGE.SUMMARY.BUTTONS.DOWNLOAD_VIDEO' | translate }}
-                <i class="bi bi-camera-video mx-1"></i>
-            </button>
+            <div ngbDropdown class="d-inline-block">
+                <button class="btn btn-primary" [disabled]="isDownloadingVideo" ngbDropdownToggle>
+                    {{ 'PAGE.SUMMARY.BUTTONS.DOWNLOAD_VIDEO' | translate }}
+                    <i class="bi bi-camera-video mx-1"></i>
+                </button>
+                <div ngbDropdownMenu>
+                    <button ngbDropdownItem (click)="handleDownloadVideoGame()">
+                        {{ 'PAGE.SUMMARY.BUTTONS.DOWNLOAD_VIDEO_GAME' | translate }}
+                    </button>
+                    <button ngbDropdownItem (click)="handleDownloadVideoClips()">
+                        {{ 'PAGE.SUMMARY.BUTTONS.DOWNLOAD_VIDEO_CLIPS' | translate }}
+                    </button>
+                    <button ngbDropdownItem (click)="handleDownloadVideoAll()">
+                        {{ 'PAGE.SUMMARY.BUTTONS.DOWNLOAD_VIDEO_ALL' | translate }}
+                    </button>
+                </div>
+            </div>
             <button class="btn btn-primary" (click)="handleExportSummary()" disabled>
                 {{ 'PAGE.SUMMARY.BUTTONS.EXPORT_SUMMARY' | translate }}
                 <i class="bi bi-table mx-1"></i>
