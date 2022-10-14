@@ -41,6 +41,10 @@
 
                 <vg-controls>
                     <vg-play-pause></vg-play-pause>
+                    <app-vg-navigate [time]="-30" [vgApi]="videoApiService"></app-vg-navigate>
+                    <app-vg-navigate [time]="-10" [vgApi]="videoApiService"></app-vg-navigate>
+                    <app-vg-navigate [time]="10" [vgApi]="videoApiService"></app-vg-navigate>
+                    <app-vg-navigate [time]="30" [vgApi]="videoApiService"></app-vg-navigate>
                     <vg-playback-button></vg-playback-button>
 
                     <vg-time-display vgProperty="current" vgFormat="hh:mm:ss"></vg-time-display>
