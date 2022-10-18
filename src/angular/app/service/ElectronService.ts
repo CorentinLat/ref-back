@@ -140,6 +140,36 @@ export class ElectronService {
         });
     }
 
+    downloadVideoClips(gameNumber: string): Promise<void> {
+        return new Promise((resolve, reject) => {
+            this.ipcRenderer?.once('download_video_clips_succeeded', () => {
+                this.ipcRenderer?.removeAllListeners('download_video_clips_failed');
+                resolve();
+            });
+            this.ipcRenderer?.once('download_video_clips_failed', (_, error: any) => {
+                this.ipcRenderer?.removeAllListeners('download_video_clips_succeeded');
+                reject(error);
+            });
+
+            this.ipcRenderer?.send('download_video_clips', { gameNumber });
+        });
+    }
+
+    downloadAllVideos(gameNumber: string): Promise<void> {
+        return new Promise((resolve, reject) => {
+            this.ipcRenderer?.once('download_all_videos_succeeded', () => {
+                this.ipcRenderer?.removeAllListeners('download_all_videos_failed');
+                resolve();
+            });
+            this.ipcRenderer?.once('download_all_videos_failed', (_, error: any) => {
+                this.ipcRenderer?.removeAllListeners('download_all_videos_succeeded');
+                reject(error);
+            });
+
+            this.ipcRenderer?.send('download_all_videos', { gameNumber });
+        });
+    }
+
     openUrlInBrowser(url: string): void {
         this.ipcRenderer?.send('open_url_in_browser', { url });
     }

@@ -2,7 +2,7 @@ import { app, shell } from 'electron';
 import IpcMain = Electron.IpcMain;
 import IpcMainEvent = Electron.IpcMainEvent;
 
-import { askSaveVideoPath } from './utils/dialog';
+import { askSaveDirectory, askSaveVideoPath } from './utils/dialog';
 import {
     NewAction,
     NewGameInformation,
@@ -15,7 +15,13 @@ import {
 } from './utils/game';
 import logger from './utils/logger';
 import { checkGameFolderExists, getExistingGameFolders } from './utils/path';
-import { concatVideos, copyGameVideoToPath, copyVideoToUserDataPath } from './utils/video';
+import {
+    concatVideos,
+    copyGameVideoToPath,
+    copyVideoToUserDataPath,
+    downloadAllVideosGame,
+    generateGameClips,
+} from './utils/video';
 
 export default function(ipcMain: IpcMain) {
     ipcMain.on('init_app', onInitAppListener);
@@ -25,6 +31,8 @@ export default function(ipcMain: IpcMain) {
     ipcMain.on('add_action', onAddActionListener);
     ipcMain.on('remove_action', onRemoveActionListener);
     ipcMain.on('download_video_game', onDownloadVideoGameListener);
+    ipcMain.on('download_video_clips', onDownloadVideoClipsListener);
+    ipcMain.on('download_all_videos', onDownloadAllVideosListener);
     ipcMain.on('open_url_in_browser', onOpenUrlInBrowserListener);
 }
 
@@ -140,6 +148,52 @@ const onDownloadVideoGameListener = (event: IpcMainEvent, { gameNumber }: OnDown
 
     copyGameVideoToPath(game, savePath);
     event.reply('download_video_game_succeeded');
+};
+
+type OnDownloadVideoClipsListenerArgs = { gameNumber: string };
+const onDownloadVideoClipsListener = async (event: IpcMainEvent, { gameNumber }: OnDownloadVideoClipsListenerArgs) => {
+    logger.debug('OnDownloadVideoClipsListener');
+
+    const game = getGame(gameNumber);
+    if (!game) {
+        logger.debug('Game not found.');
+        event.reply('download_video_clips_failed');
+        return;
+    }
+
+    const saveDirectory = askSaveDirectory();
+    logger.debug(`Clips save directory : ${saveDirectory}`);
+    if (!saveDirectory) {
+        logger.debug('Download clips game closed');
+        event.reply('download_video_clips_failed', { closed: true });
+        return;
+    }
+
+    await generateGameClips(game, saveDirectory);
+    event.reply('download_video_clips_succeeded');
+};
+
+type OnDownloadAllVideosListenerArgs = { gameNumber: string };
+const onDownloadAllVideosListener = async (event: IpcMainEvent, { gameNumber }: OnDownloadAllVideosListenerArgs) => {
+    logger.debug('OnDownloadAllVideosListener');
+
+    const game = getGame(gameNumber);
+    if (!game) {
+        logger.debug('Game not found.');
+        event.reply('download_all_videos_failed');
+        return;
+    }
+
+    const saveDirectory = askSaveDirectory();
+    logger.debug(`All videos save directory : ${saveDirectory}`);
+    if (!saveDirectory) {
+        logger.debug('Download all videos closed');
+        event.reply('download_all_videos_failed', { closed: true });
+        return;
+    }
+
+    await downloadAllVideosGame(game, saveDirectory);
+    event.reply('download_all_videos_succeeded');
 };
 
 type OnOpenUrlInBrowserListenerArgs = { url: string };

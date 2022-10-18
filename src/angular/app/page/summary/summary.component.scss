@@ -84,11 +84,11 @@ $header-margin-bottom: 20px;
         .summary-buttons {
             display: flex;
             flex-direction: column;
+            min-width: 160px;
             gap: 10px;
 
-            button {
-                white-space: nowrap;
-            }
+            .btn.dropdown-toggle { width: 100%; }
+            button { white-space: nowrap; }
         }
     }
 

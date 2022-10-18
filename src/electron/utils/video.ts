@@ -5,7 +5,7 @@ import path from 'path';
 
 import IpcMainEvent = Electron.IpcMainEvent;
 
-import { Game } from './game';
+import { Game, getDefaultGameVideoFilename } from './game';
 import logger from './logger';
 import { copyFileToPath, extractFileExtension } from './file';
 import { workPath } from './path';
@@ -67,10 +67,51 @@ export async function copyVideoToUserDataPath(gameNumber: string, videoPath: str
     }
 }
 
+export async function downloadAllVideosGame(game: Game, destDirectory: string): Promise<void> {
+    const videoName = getDefaultGameVideoFilename(game);
+    const extension = extractFileExtension(game.information.videoPath);
+    const gameVideoPath = path.join(destDirectory, `${videoName}.${extension}`);
+    copyGameVideoToPath(game, gameVideoPath);
+
+    await generateGameClips(game, destDirectory);
+}
+
 export function copyGameVideoToPath(game: Game, destVideoPath: string): void {
     const currentVideoPath = game.information.videoPath;
 
     copyFileToPath(currentVideoPath, destVideoPath);
+}
+
+export async function generateGameClips(game: Game, destClipsDirectory: string): Promise<void> {
+    const { videoPath } = game.information;
+    const videoExtension = extractFileExtension(videoPath);
+
+    let clipsIndex = 0;
+    await Promise.all(game.actions.map(action => {
+        const { fault, clip } = action;
+        if (!clip) {
+            return Promise.resolve();
+        }
+
+        clipsIndex++;
+        const clipName = `#${clipsIndex} ${fault}.${videoExtension}`;
+        const clipPath = path.join(destClipsDirectory, clipName);
+
+        return new Promise<void>((resolve, reject) => {
+            FluentFFMPEG(videoPath)
+                .setStartTime(clip.start)
+                .setDuration(clip.end - clip.start)
+                .on('error', (err: Error) => {
+                    logger.error(`error generateGameClips: ${err}`);
+                    reject(err);
+                })
+                .on('end', () => {
+                    logger.info(`Generate clip succeeded: ${clipPath}`);
+                    resolve();
+                })
+                .save(clipPath);
+        });
+    }));
 }
 
 function generateVideoName(extension: string = 'mp4'): string {
@@ -78,8 +119,8 @@ function generateVideoName(extension: string = 'mp4'): string {
 }
 
 async function computeTotalDurationOfVideos(videoPaths: string[]): Promise<number> {
-    const durations = await Promise.all(videoPaths.map(async videoPath =>
-        await new Promise<number>((resolve, reject) => {
+    const durations = await Promise.all(videoPaths.map(videoPath =>
+        new Promise<number>((resolve, reject) => {
             FluentFFMPEG.ffprobe(videoPath, function(err: Error, data: { format: { duration?: number } }) {
                 if (err) {
                     reject(err);

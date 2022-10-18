@@ -30,7 +30,12 @@
             <div ngbDropdown class="d-inline-block">
                 <button class="btn btn-primary" [disabled]="isDownloadingVideo" ngbDropdownToggle>
                     {{ 'PAGE.SUMMARY.BUTTONS.DOWNLOAD_VIDEO' | translate }}
-                    <i class="bi bi-camera-video mx-1"></i>
+                    <i class="bi bi-camera-video mx-1" *ngIf="!isDownloadingVideo"></i>
+                    <article
+                        class="spinner-border spinner-border-sm"
+                        role="status"
+                        *ngIf="isDownloadingVideo"
+                    ></article>
                 </button>
                 <div ngbDropdownMenu>
                     <button ngbDropdownItem (click)="handleDownloadVideoGame()">

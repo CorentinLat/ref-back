@@ -110,3 +110,12 @@ export function removeActionFromGame(gameNumber: string, actionId: string): bool
         return false;
     }
 }
+
+export function getDefaultGameVideoFilename(game: Game): string {
+    const {
+        date,
+        teams: { local, visitor },
+    } = game.information;
+
+    return `${date} ${local} - ${visitor}`;
+}
