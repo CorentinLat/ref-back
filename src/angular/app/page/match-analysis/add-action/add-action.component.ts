@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { VgApiService } from '@videogular/ngx-videogular/core';
@@ -26,9 +26,10 @@ import { ToastService } from '../../../service/ToastService';
     styleUrls: ['./add-action.component.scss']
 })
 export class AddActionComponent implements OnInit, OnDestroy {
-    @Input() actions!: Action[];
     @Input() gameNumber!: string;
     @Input() videoApiService!: VgApiService;
+
+    @Output() actionAdded = new EventEmitter<Action>();
 
     displayAddActionForm = false;
     isAddingAction = false;
@@ -162,7 +163,7 @@ export class AddActionComponent implements OnInit, OnDestroy {
 
         try {
             const action = await this.electron.addActionToGame(newAction, this.gameNumber);
-            this.actions.push(action);
+            this.actionAdded.emit(action);
             this.toastService.showSuccess('TOAST.SUCCESS.PROCESS_ACTION_ADD_SUCCESS');
         } catch (_) {
             this.toastService.showError('TOAST.ERROR.PROCESS_ACTION_ADD_FAILED');

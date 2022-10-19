@@ -3,11 +3,13 @@
     [actions]="exposeActionsSortedByTime()"
     [gameNumber]="gameNumber"
     [putVideoAtSecond]="putVideoAtSecond"
+    [newActionAdded]="newActionAdded"
     *ngIf="!collapsed"
 ></app-full-display-actions>
 <app-collapse-display-actions
     class="display-actions"
     [actions]="exposeActionsSortedByTime()"
     [putVideoAtSecond]="putVideoAtSecond"
+    [newActionAdded]="newActionAdded"
     *ngIf="collapsed"
 ></app-collapse-display-actions>

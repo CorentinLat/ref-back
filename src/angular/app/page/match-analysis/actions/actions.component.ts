@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { Observable } from 'rxjs';
 
 import { Action } from '../../../domain/game';
 
@@ -11,6 +12,8 @@ export class ActionsComponent {
     @Input() actions!: Action[];
     @Input() collapsed!: boolean;
     @Input() gameNumber!: string;
+
+    @Input() newActionAdded!: Observable<Action>;
 
     @Input() putVideoAtSecond!: (second: number) => void;
 
