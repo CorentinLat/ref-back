@@ -1,4 +1,5 @@
-import { Component, Input } from '@angular/core';
+import { Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Observable, Subscription } from 'rxjs';
 
 import { Action } from '../../../../domain/game';
 
@@ -10,19 +11,41 @@ import { ToastService } from '../../../../service/ToastService';
   templateUrl: './full-display-actions.component.html',
   styleUrls: ['./full-display-actions.component.scss']
 })
-export class FullDisplayActionsComponent {
+export class FullDisplayActionsComponent implements OnInit, OnDestroy {
     @Input() actions!: Action[];
     @Input() gameNumber!: string;
 
     @Input() isSummaryDisplay = false;
     @Input() sector: string|null = null;
 
+    @Input() newActionAdded!: Observable<Action>;
+
     @Input() putVideoAtSecond!: (second: number) => void;
+
+    @ViewChild('scrollable') scrollable!: ElementRef;
+
+    private readonly actionHeightPx = 59;
+    private readonly topMarginPx = 10;
+
+    private newActionSubscription!: Subscription;
 
     constructor(
         private electron: ElectronService,
         private toastService: ToastService,
     ) {}
+
+    ngOnInit(): void {
+        this.newActionSubscription = this.newActionAdded.subscribe(action => {
+            const index = this.actions.findIndex(({ id }) => id === action.id);
+            const actionPosition = Math.max(index * this.actionHeightPx - this.topMarginPx, 0);
+
+            this.scrollable.nativeElement.scroll({ top: actionPosition, behavior: 'smooth' });
+        });
+    }
+
+    ngOnDestroy(): void {
+        this.newActionSubscription.unsubscribe();
+    }
 
     exposeIsBySectorDisplay(): boolean {
         return this.sector !== null;

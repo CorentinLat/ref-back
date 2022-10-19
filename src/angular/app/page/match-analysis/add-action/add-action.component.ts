@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { VgApiService } from '@videogular/ngx-videogular/core';
@@ -26,9 +26,10 @@ import { ToastService } from '../../../service/ToastService';
     styleUrls: ['./add-action.component.scss']
 })
 export class AddActionComponent implements OnInit, OnDestroy {
-    @Input() actions!: Action[];
     @Input() gameNumber!: string;
     @Input() videoApiService!: VgApiService;
+
+    @Output() actionAdded = new EventEmitter<Action>();
 
     displayAddActionForm = false;
     isAddingAction = false;
@@ -42,7 +43,13 @@ export class AddActionComponent implements OnInit, OnDestroy {
         fault: new FormControl('', [Validators.required]),
         precise: new FormControl('', [Validators.required]),
         comment: new FormControl(),
+        clip: new FormGroup({
+            start: new FormControl('', [Validators.required]),
+            end: new FormControl('', [Validators.required]),
+        }),
     });
+
+    createClip = false;
 
     private currentVideoTimeSubscription$!: Subscription;
 
@@ -60,6 +67,9 @@ export class AddActionComponent implements OnInit, OnDestroy {
     get sectorControl(): FormControl { return this.addActionForm.get('sector') as FormControl; }
     get faultControl(): FormControl { return this.addActionForm.get('fault') as FormControl; }
     get preciseControl(): FormControl { return this.addActionForm.get('precise') as FormControl; }
+    get clipGroup(): FormGroup { return this.addActionForm.get('clip') as FormGroup; }
+    get startClipControl(): FormControl { return this.clipGroup.get('start') as FormControl; }
+    get endClipControl(): FormControl { return this.clipGroup.get('end') as FormControl; }
 
     get actionAgainsts(): string[] { return actionAgainsts; }
     get actionCardTypes(): string[] { return actionCardTypes; }
@@ -72,7 +82,19 @@ export class AddActionComponent implements OnInit, OnDestroy {
     ngOnInit(): void {
         this.currentVideoTimeSubscription$ = this.videoApiService.getDefaultMedia()
             .subscriptions.timeUpdate
-            .subscribe(() => this.secondControl.setValue(this.getCurrentVideoTime()));
+            .subscribe(() => {
+                const currentTime = this.getCurrentVideoTime();
+
+                if (!this.createClip || this.videoApiService.state === 'paused') {
+                    this.secondControl.setValue(currentTime);
+                    this.startClipControl.setValue(currentTime);
+                    if (this.endClipControl.value < currentTime) {
+                        this.endClipControl.setValue(currentTime + 5);
+                    }
+                } else if (this.createClip && this.videoApiService.state === 'playing') {
+                    this.endClipControl.setValue(currentTime);
+                }
+            });
     }
 
     ngOnDestroy(): void {
@@ -95,6 +117,14 @@ export class AddActionComponent implements OnInit, OnDestroy {
         return this.dateTimeService.convertSecondsToMMSS(this.secondControl.value);
     }
 
+    exposeStartClipMinutes(): string {
+        return this.dateTimeService.convertSecondsToMMSS(this.startClipControl.value);
+    }
+
+    exposeEndClipMinutes(): string {
+        return this.dateTimeService.convertSecondsToMMSS(this.endClipControl.value);
+    }
+
     handleHideAddActionForm(): void {
         this.displayAddActionForm = false;
         this.addActionForm.reset();
@@ -111,13 +141,14 @@ export class AddActionComponent implements OnInit, OnDestroy {
         this.sectorControl.setValue(this.actionSectors[0]);
         this.faultControl.setValue(this.actionFaults[this.actionSectors[0]][0]);
         this.preciseControl.setValue(this.actionPrecises[0]);
+
+        this.createClip = false;
+        this.startClipControl.setValue(this.getCurrentVideoTime());
+        this.endClipControl.setValue(this.getCurrentVideoTime() + 5);
     }
 
     handleNavigateToSummary(): void {
-        this.router.navigate(
-            ['/summary'],
-            { queryParams: { gameNumber: this.gameNumber } }
-        );
+        this.router.navigate(['/summary'], { queryParams: { gameNumber: this.gameNumber } });
     }
 
     async handleSubmitAddAction(): Promise<void> {
@@ -126,10 +157,13 @@ export class AddActionComponent implements OnInit, OnDestroy {
         }
 
         const newAction: NewAction = this.addActionForm.value;
+        if (!this.createClip) {
+            delete newAction.clip;
+        }
 
         try {
             const action = await this.electron.addActionToGame(newAction, this.gameNumber);
-            this.actions.push(action);
+            this.actionAdded.emit(action);
             this.toastService.showSuccess('TOAST.SUCCESS.PROCESS_ACTION_ADD_SUCCESS');
         } catch (_) {
             this.toastService.showError('TOAST.ERROR.PROCESS_ACTION_ADD_FAILED');

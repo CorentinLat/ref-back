@@ -25,5 +25,11 @@
             overflow: visible;
             white-space: normal;
         }
+
+        .clip-minute {
+            display: flex;
+            flex-direction: column;
+            align-items: self-start;
+        }
     }
 }

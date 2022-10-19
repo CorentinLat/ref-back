@@ -1,4 +1,4 @@
-<section class="collapse-display-actions-component">
+<section class="collapse-display-actions-component" #scrollable>
     <section class="decision-card decision" *ngFor="let action of actions">
         <section class="d-flex align-items-center justify-content-between">
             <article class="second">
@@ -10,6 +10,8 @@
                     {{ exposeActionMinutes(action.second) }}
                 </button>
             </article>
+
+            <i class="bi bi-film" *ngIf="action.clip"></i>
 
             <article class="against">
                 <i class="bi bi-house" *ngIf="action.against === 'LOCAL'"></i>

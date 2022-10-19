@@ -123,7 +123,9 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: executable-mac-${{ needs.get-release-version.outputs.version }}
-          path: release/build/PerfArbitresPlusPlus-${{ needs.get-release-version.outputs.version }}.dmg
+          path: |
+            release/build/PerfArbitresPlusPlus-${{ needs.get-release-version.outputs.version }}.dmg
+            release/build/PerfArbitresPlusPlus-${{ needs.get-release-version.outputs.version }}.zip
 
   build-linux-executable:
     needs: get-release-version
@@ -196,6 +198,6 @@ jobs:
           tag: ${{ needs.get-release-version.outputs.version }}
           commit: ${{ github.sha }}
           name: Perf'Arbitres++ ${{ needs.get-release-version.outputs.version }}
-          artifacts: PerfArbitresPlusPlus Setup ${{ needs.get-release-version.outputs.version }}.exe,PerfArbitresPlusPlus-${{ needs.get-release-version.outputs.version }}.dmg,PerfArbitresPlusPlus-${{ needs.get-release-version.outputs.version }}.AppImage
+          artifacts: PerfArbitresPlusPlus Setup ${{ needs.get-release-version.outputs.version }}.exe,PerfArbitresPlusPlus-${{ needs.get-release-version.outputs.version }}.dmg,PerfArbitresPlusPlus-${{ needs.get-release-version.outputs.version }}.zip,PerfArbitresPlusPlus-${{ needs.get-release-version.outputs.version }}.AppImage
           draft: false
           token: ${{ secrets.GITHUB_TOKEN }}

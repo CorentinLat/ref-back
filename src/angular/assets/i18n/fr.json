@@ -157,6 +157,7 @@
             "SEALING": "Sealing",
             "HAND_IN_RUCK": "Talonnage à la main",
             "COLLAPSED_MAUL": "Écroulement maul",
+            "UNPRODUCTIVE_MAUL": "Maul improductif",
             "MAUL_SIDE_ENTRY": "Entrée sur côté maul",
             "FAULT_ON_JUMPER": "Faute sur sauteur",
             "THROW_TWO_TIMES": "Lancer en deux temps",
@@ -192,7 +193,10 @@
           "SECTOR": "Secteur",
           "FAULT": "Faute",
           "PRECISE": "Précis",
-          "COMMENT": "Commentaire"
+          "COMMENT": "Commentaire",
+          "CREATE_CLIP": "Créer un clip",
+          "START_CLIP": "Début",
+          "END_CLIP": "Fin"
         }
       }
     },
@@ -201,6 +205,9 @@
       "TITLE": "Récapitulatif",
       "BUTTONS": {
         "DOWNLOAD_VIDEO": "Télécharger",
+        "DOWNLOAD_VIDEO_GAME": "Match",
+        "DOWNLOAD_VIDEO_CLIPS": "Clips",
+        "DOWNLOAD_VIDEO_ALL": "Tout",
         "EXPORT_SUMMARY": "Exporter",
         "NAVIGATE_HOME": "Terminer"
       },

@@ -2,8 +2,9 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { VgApiService } from '@videogular/ngx-videogular/core';
+import { Subject } from 'rxjs';
 
-import { Game } from '../../domain/game';
+import { Action, Game } from '../../domain/game';
 
 import { ElectronService } from '../../service/ElectronService';
 import { ToastService } from '../../service/ToastService';
@@ -21,6 +22,8 @@ export class MatchAnalysisComponent implements OnInit {
     public videoApiService!: VgApiService;
 
     public areActionsCollapsed = true;
+
+    public newActionAdded = new Subject<Action>();
 
     constructor(
         private cdr: ChangeDetectorRef,
@@ -53,11 +56,19 @@ export class MatchAnalysisComponent implements OnInit {
 
     public onPlayerReady = (api: VgApiService): void => {
         this.videoApiService = api;
+        this.videoApiService.volume = 0;
+
         this.cdr.detectChanges();
     };
 
     public putVideoAtSecond = (second: number): void => {
         this.videoApiService.getDefaultMedia().currentTime = second;
+    };
+
+    public onActionAdded = (action: Action): void => {
+        this.game.actions.push(action);
+        this.game.actions = this.game.actions.sort((a, b) => a.second - b.second);
+        setTimeout(() => this.newActionAdded.next(action), 100);
     };
 
     private navigateToHome(): void {

@@ -26,6 +26,7 @@ import { StatisticsComponent } from './page/summary/statistics/statistics.compon
 import { ToastsComponent } from './component/toasts/toasts.component';
 import { GameNumberExistingModalComponent } from './component/modal/game-number-existing-modal/game-number-existing-modal.component';
 import { LoadGamesExistingModalComponent } from './component/modal/load-games-existing-modal/load-games-existing-modal.component';
+import { VgNavigateComponent } from './component/videogular/vg-go-back/vg-navigate.component';
 
 import DirectivesModule from './directive/directives.module';
 
@@ -46,6 +47,7 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader => new Transla
         StatisticsComponent,
         SummaryComponent,
         ToastsComponent,
+        VgNavigateComponent,
     ],
     imports: [
         AppRoutingModule,

@@ -103,10 +103,32 @@
         </section>
 
         <section class="d-flex align-items-center justify-content-end gap-3">
-            <article>
-                <b>{{ 'PAGE.MATCH_ANALYSIS.FORM.LABEL.SECOND' | translate }} :</b>
-                {{ exposeActionMinutes() }}
+            <article class="form-check form-switch">
+                <input
+                    id="createClip"
+                    class="form-check-input"
+                    type="checkbox"
+                    role="switch"
+                    [(ngModel)]="createClip"
+                    [ngModelOptions]="{ standalone: true }"
+                >
+                <label class="form-check-label" for="createClip">
+                    {{ 'PAGE.MATCH_ANALYSIS.FORM.LABEL.CREATE_CLIP' | translate }}
+                </label>
             </article>
+
+            <article *ngIf="!createClip">
+                <span class="minutes-label">{{ 'PAGE.MATCH_ANALYSIS.FORM.LABEL.SECOND' | translate }} :</span>
+                <span class="minutes-value">{{ exposeActionMinutes() }}</span>
+            </article>
+            <article *ngIf="createClip">
+                <span class="minutes-label">{{ 'PAGE.MATCH_ANALYSIS.FORM.LABEL.START_CLIP' | translate }} :</span>
+                <span class="minutes-value">{{ exposeStartClipMinutes() }}</span>
+
+                <span class="minutes-label">{{ 'PAGE.MATCH_ANALYSIS.FORM.LABEL.END_CLIP' | translate }} :</span>
+                <span class="minutes-value">{{ exposeEndClipMinutes() }}</span>
+            </article>
+
             <button
                 class="btn btn-danger"
                 type="button"

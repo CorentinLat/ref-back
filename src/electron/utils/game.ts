@@ -15,6 +15,7 @@ export type Action = {
     fault: string;
     precise: 'YES' | 'NO' | 'DOUBT';
     comment?: string;
+    clip?: { start: number; end: number };
 };
 export type NewAction = Omit<Action, 'id'>;
 
@@ -108,4 +109,13 @@ export function removeActionFromGame(gameNumber: string, actionId: string): bool
         logger.error(`error removeActionFromGame: ${error}`);
         return false;
     }
+}
+
+export function getDefaultGameVideoFilename(game: Game): string {
+    const {
+        date,
+        teams: { local, visitor },
+    } = game.information;
+
+    return `${date} ${local} - ${visitor}`;
 }

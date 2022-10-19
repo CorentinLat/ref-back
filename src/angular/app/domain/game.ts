@@ -8,6 +8,7 @@ export type Action = {
     fault: string;
     precise: 'YES' | 'NO' | 'DOUBT';
     comment?: string;
+    clip?: { start: number; end: number };
 };
 export type NewAction = Omit<Action, 'id'>;
 
@@ -70,6 +71,7 @@ export const actionFaults = {
     ],
     'LINE_OUT-MAUL': [
         'COLLAPSED_MAUL',
+        'UNPRODUCTIVE_MAUL',
         'MAUL_SIDE_ENTRY',
         'FAULT_ON_JUMPER',
         'THROW_TWO_TIMES',

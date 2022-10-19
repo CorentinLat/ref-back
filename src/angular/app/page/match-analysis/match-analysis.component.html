@@ -41,6 +41,10 @@
 
                 <vg-controls>
                     <vg-play-pause></vg-play-pause>
+                    <app-vg-navigate [time]="-30" [vgApi]="videoApiService"></app-vg-navigate>
+                    <app-vg-navigate [time]="-10" [vgApi]="videoApiService"></app-vg-navigate>
+                    <app-vg-navigate [time]="10" [vgApi]="videoApiService"></app-vg-navigate>
+                    <app-vg-navigate [time]="30" [vgApi]="videoApiService"></app-vg-navigate>
                     <vg-playback-button></vg-playback-button>
 
                     <vg-time-display vgProperty="current" vgFormat="hh:mm:ss"></vg-time-display>
@@ -66,6 +70,7 @@
                     [actions]="game.actions"
                     [collapsed]="areActionsCollapsed"
                     [gameNumber]="gameNumber"
+                    [newActionAdded]="newActionAdded.asObservable()"
                     [putVideoAtSecond]="putVideoAtSecond"
                 ></app-actions>
             </section>
@@ -73,9 +78,9 @@
 
         <app-add-action
             class="controls"
-            [actions]="game.actions"
             [gameNumber]="gameNumber"
             [videoApiService]="videoApiService"
+            (actionAdded)="onActionAdded($event)"
             *ngIf="videoApiService"
         ></app-add-action>
     </section>

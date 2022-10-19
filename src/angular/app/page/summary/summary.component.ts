@@ -48,11 +48,39 @@ export class SummaryComponent implements OnInit {
         );
     }
 
-    async handleDownloadVideo(): Promise<void> {
+    async handleDownloadVideoGame(): Promise<void> {
         this.isDownloadingVideo = true;
 
         try {
             await this.electron.downloadVideoGame(this.gameNumber);
+        } catch (error: any) {
+            if (!error?.closed) {
+                this.toastService.showError('TOAST.ERROR.PROCESS_DOWNLOAD_GAME_FAILED');
+            }
+        } finally {
+            this.isDownloadingVideo = false;
+        }
+    }
+
+    async handleDownloadVideoClips(): Promise<void> {
+        this.isDownloadingVideo = true;
+
+        try {
+            await this.electron.downloadVideoClips(this.gameNumber);
+        } catch (error: any) {
+            if (!error?.closed) {
+                this.toastService.showError('TOAST.ERROR.PROCESS_DOWNLOAD_GAME_FAILED');
+            }
+        } finally {
+            this.isDownloadingVideo = false;
+        }
+    }
+
+    async handleDownloadVideoAll(): Promise<void> {
+        this.isDownloadingVideo = true;
+
+        try {
+            await this.electron.downloadAllVideos(this.gameNumber);
         } catch (error: any) {
             if (!error?.closed) {
                 this.toastService.showError('TOAST.ERROR.PROCESS_DOWNLOAD_GAME_FAILED');
