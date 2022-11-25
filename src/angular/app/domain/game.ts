@@ -47,6 +47,7 @@ export const actionFaults = {
         'NO_ARM_TACKLE',
         'NECK_ROLL',
         'FOREARM_PROJECTION',
+        'SIMULTANEOUS_TACKLE',
     ],
     SPACE: [
         'IN_FRONT_OF_KICKER',
@@ -68,6 +69,8 @@ export const actionFaults = {
         'TACKLER',
         'SEALING',
         'HAND_IN_RUCK',
+        'NOT_ROLLING_AWAY',
+        'NOT_RELEASING',
     ],
     'LINE_OUT-MAUL': [
         'COLLAPSED_MAUL',
