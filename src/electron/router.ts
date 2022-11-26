@@ -15,6 +15,7 @@ import {
 } from './utils/game';
 import logger from './utils/logger';
 import { checkGameFolderExists, getExistingGameFolders } from './utils/path';
+import { generatePdfSummary } from './utils/pdf';
 import {
     concatVideos,
     copyGameVideoToPath,
@@ -33,6 +34,7 @@ export default function(ipcMain: IpcMain) {
     ipcMain.on('download_video_game', onDownloadVideoGameListener);
     ipcMain.on('download_video_clips', onDownloadVideoClipsListener);
     ipcMain.on('download_all_videos', onDownloadAllVideosListener);
+    ipcMain.on('download_pdf_summary', onDownloadPdfSummaryListener);
     ipcMain.on('open_url_in_browser', onOpenUrlInBrowserListener);
 }
 
@@ -42,6 +44,10 @@ const onInitAppListener = async (event: IpcMainEvent) => {
     const appVersion = app.getVersion();
     const gameNumbers = await getExistingGameFolders();
     const games = getGamesInformation(gameNumbers);
+    const game = getGame(games[0].gameNumber);
+    if (game) {
+        generatePdfSummary(game, '/Users/clatappy/Downloads');
+    }
 
     event.reply('init_app_succeeded', { appVersion, games });
 };
@@ -194,6 +200,34 @@ const onDownloadAllVideosListener = async (event: IpcMainEvent, { gameNumber }: 
 
     await downloadAllVideosGame(game, saveDirectory);
     event.reply('download_all_videos_succeeded');
+};
+
+type DownloadSummaryListenerArgs = { gameNumber: string };
+const onDownloadPdfSummaryListener = async (event: IpcMainEvent, { gameNumber }: DownloadSummaryListenerArgs) => {
+    logger.debug('OnDownloadPdfSummaryListener');
+
+    const game = getGame(gameNumber);
+    if (!game) {
+        logger.debug('Game not found.');
+        event.reply('download_pdf_summary_failed');
+        return;
+    }
+
+    const saveDirectory = askSaveDirectory();
+    logger.debug(`Summary save directory : ${saveDirectory}`);
+    if (!saveDirectory) {
+        logger.debug('Download PDF summary closed');
+        event.reply('download_pdf_summary_failed', { closed: true });
+        return;
+    }
+
+    try {
+        generatePdfSummary(game, saveDirectory);
+        event.reply('download_pdf_summary_succeeded');
+    } catch (error) {
+        logger.error(`Error on download pdf summary: ${error}`);
+        event.reply('download_pdf_summary_failed');
+    }
 };
 
 type OnOpenUrlInBrowserListenerArgs = { url: string };

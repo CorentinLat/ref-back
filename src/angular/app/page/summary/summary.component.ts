@@ -16,6 +16,7 @@ export class SummaryComponent implements OnInit {
     public gameNumber!: string;
 
     public isDownloadingVideo = false;
+    public isDownloadingSummary = false;
 
     constructor(
         private electron: ElectronService,
@@ -90,10 +91,28 @@ export class SummaryComponent implements OnInit {
         }
     }
 
-    handleExportSummary(): void {}
+    async handleExportSummary(): Promise<void> {
+        this.isDownloadingSummary = true;
+
+        try {
+            await this.electron.downloadPdfSummary(this.gameNumber);
+        } catch (error: any) {
+            if (!error?.closed) {
+                this.toastService.showError('TOAST.ERROR.PROCESS_DOWNLOAD_SUMMARY_FAILED');
+            }
+        } finally {
+            this.isDownloadingSummary = false;
+        }
+    }
 
     handleNavigateToHome(): void {
         this.navigateToHome();
+    }
+
+    exposeHasStatistics(): boolean {
+        return this.game.actions.some(action =>
+            action.type === 'PENALTY' || action.type === 'FREE_KICK'
+        );
     }
 
     exposeActionsSortedByTime(): Action[] {
