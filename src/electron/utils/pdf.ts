@@ -5,7 +5,8 @@ import { convertSecondsToMMSS, getLongDateString } from './date';
 import { Action, Game } from './game';
 import translate from '../translation';
 
-const A4_WIDTH = 595.28;
+const A4_HEIGHT = 841;
+const A4_WIDTH = 595;
 const MARGIN = 10;
 const LINE_WIDTH = A4_WIDTH - 2 * MARGIN;
 
@@ -22,20 +23,17 @@ const ALL_COLUMNS: ColumnStructure[] = [
     { key: 'comment', colSpan: 3 },
 ];
 
+let currentYPosition = MARGIN;
+
 export function generatePdfSummary(game: Game, saveDirectory: string): void {
     const { information: { date, gameNumber, score, teams } } = game;
     const summaryFileName = `${gameNumber}.pdf`;
 
     const doc = new PDFDocument({ margin: MARGIN, size: 'A4' });
     doc.pipe(fs.createWriteStream(`${saveDirectory}/${summaryFileName}`));
-    let currentYPosition = 20;
+    currentYPosition = MARGIN;
 
-    currentYPosition = addTwoColumnsLine(
-        doc,
-        currentYPosition,
-        getLongDateString(date),
-        gameNumber
-    );
+    addTwoColumnsLine(doc, getLongDateString(date), gameNumber);
 
     currentYPosition += MARGIN;
     currentYPosition = addThreeColumnsLine(
@@ -81,7 +79,7 @@ export function generatePdfSummary(game: Game, saveDirectory: string): void {
     doc.end();
 }
 
-function addTwoColumnsLine(doc: typeof PDFDocument, curY: number, left: string, right: string): number {
+function addTwoColumnsLine(doc: typeof PDFDocument, left: string, right: string): void {
     doc.font('Helvetica-Bold').fontSize(12);
 
     const leftString = left.toString();
@@ -89,12 +87,12 @@ function addTwoColumnsLine(doc: typeof PDFDocument, curY: number, left: string, 
 
     const sideWidth = LINE_WIDTH / 2;
     doc
-        .text(leftString, undefined, curY, { width: sideWidth, align: 'left' })
-        .text(rightString, sideWidth, curY, { width: sideWidth, align: 'right' });
+        .text(leftString, undefined, currentYPosition, { width: sideWidth, align: 'left' })
+        .text(rightString, sideWidth, currentYPosition, { width: sideWidth, align: 'right' });
 
     const leftHeight = doc.heightOfString(leftString, { width: sideWidth });
     const rightHeight = doc.heightOfString(rightString, { width: sideWidth });
-    return curY + Math.max(leftHeight, rightHeight);
+    currentYPosition += Math.max(leftHeight, rightHeight);
 }
 
 function addThreeColumnsLine(
@@ -179,6 +177,10 @@ function addTableRow(
         .stroke();
 
     return maxHeight + 12;
+}
+
+function updateCurrentYPosition(doc: typeof PDFDocument, curY: number, height: number): number {
+    return curY + height + MARGIN;
 }
 
 function formatColumnActions(action: Action, columnsStructure: ColumnStructure[]): ColumnAction[] {
