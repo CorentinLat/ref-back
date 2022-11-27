@@ -100,5 +100,6 @@
   "PENALTIES_BY_SECTORS": "Nombre de pénalités par secteur",
   "FREE_KICKS_BY_SECTORS": "Nombre de coup francs par secteur",
   "AGAINST_LOCAL": "Contre les locaux",
-  "AGAINST_VISITOR": "Contre les visiteurs"
+  "AGAINST_VISITOR": "Contre les visiteurs",
+  "CONTINUED": "Suite"
 }
