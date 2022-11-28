@@ -101,5 +101,11 @@
   "FREE_KICKS_BY_SECTORS": "Nombre de coup francs par secteur",
   "AGAINST_LOCAL": "Contre les locaux",
   "AGAINST_VISITOR": "Contre les visiteurs",
+  "AGAINST_FOUL_PLAY": "Jeu Déloyal",
+  "AGAINST_SPACE": "Espace",
+  "AGAINST_TACKLE-RUCK": "Plaquage - Ruck",
+  "AGAINST_LINE_OUT-MAUL": "Alignement - Maul",
+  "AGAINST_ADVANTAGE": "Avantage",
+  "AGAINST_SCRUM": "Mêlée",
   "CONTINUED": "Suite"
 }

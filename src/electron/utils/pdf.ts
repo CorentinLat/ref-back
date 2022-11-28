@@ -16,13 +16,13 @@ const MARGIN = 10;
 const PAGE_WIDTH = A4_WIDTH - 2 * MARGIN;
 const PAGE_HEIGHT = A4_HEIGHT - 2 * MARGIN;
 
-const COLORS = [
-    [0, 0, 255],
-    [255, 0, 0],
-    [0, 255, 0],
-    [255, 255, 0],
-    [255, 0, 255],
-    [0, 255, 255],
+const COLORS: [number, number, number][] = [
+    [52, 136, 136],
+    [34, 186, 187],
+    [158, 248, 238],
+    [255, 233, 154],
+    [250, 127, 8],
+    [242, 68, 5],
 ];
 
 const ALL_COLUMNS: ColumnStructure[] = [
@@ -167,11 +167,15 @@ function displayCircularDiagramForDecisions(
     plotWidth: number,
     textWidth: number,
 ): number {
-    const startingTextX = startingX + plotWidth;
-    doc.font('Helvetica-Bold').fontSize(13);
     const globalCount = Object.values(decisionsBy).reduce((acc, decisions) => acc + decisions.length, 0);
-    doc.text(globalCount, startingTextX, startingY, { width: textWidth });
-    const globalCountHeight = doc.heightOfString(globalCount, { width: textWidth });
+    if (globalCount === 0) {
+        return 0;
+    }
+
+    doc.font('Helvetica-Bold').fontSize(13);
+    const startingTextX = startingX + plotWidth;
+    doc.text(globalCount.toString(10), startingTextX, startingY, { width: textWidth });
+    const globalCountHeight = doc.heightOfString(globalCount.toString(10), { width: textWidth });
     startingY += globalCountHeight;
 
     doc.font('Helvetica').fontSize(11);
@@ -186,16 +190,19 @@ function displayCircularDiagramForDecisions(
 
     let elementHeight = globalCountHeight + globalLabelHeight + globalMarginHeight;
     Object.entries(decisionsBy).forEach(([team, decisions], index) => {
-        const count = decisions.length;
+        const startingLegendX = startingX + plotWidth + (index % 2) * textWidth / 2;
+        const width = textWidth / 2 - MARGIN;
+
+        const count = decisions.length.toString(10);
         doc.font('Helvetica-Bold').fontSize(11).fillColor('black');
-        doc.text(count, startingTextX + 10, startingY, { width: textWidth });
-        const countHeight = doc.heightOfString(count, { width: textWidth });
+        doc.text(count, startingLegendX + 10, startingY, { width });
+        const countHeight = doc.heightOfString(count, { width });
         startingY += countHeight;
 
         const label = translate(`AGAINST_${team}`);
         doc.font('Helvetica').fontSize(8).fillColor('gray');
-        doc.text(label, startingTextX + 10, startingY, { width: textWidth });
-        const labelHeight = doc.heightOfString(label, { width: textWidth });
+        doc.text(label, startingLegendX + 10, startingY, { width });
+        const labelHeight = doc.heightOfString(label, { width });
         startingY += labelHeight;
 
         const legendHeight = countHeight + labelHeight;
@@ -203,13 +210,17 @@ function displayCircularDiagramForDecisions(
         doc
             .strokeColor(COLORS[index])
             .lineWidth(4)
-            .moveTo(startingTextX + 4, legendYPosition)
-            .lineTo(startingTextX + 4, legendYPosition + legendHeight - 2)
+            .moveTo(startingLegendX + 4, legendYPosition)
+            .lineTo(startingLegendX + 4, legendYPosition + legendHeight - 2)
             .stroke();
 
-        doc.moveDown(0.5);
-        const marginHeight = doc.heightOfString('') * 0.5;
-        elementHeight += legendHeight + marginHeight;
+        if (index % 2 === 0) {
+            startingY -= legendHeight;
+        } else {
+            doc.moveDown(0.5);
+            const marginHeight = doc.heightOfString('') * 0.5;
+            elementHeight += legendHeight + marginHeight;
+        }
     });
     doc.fillColor('black').strokeColor('black');
 
