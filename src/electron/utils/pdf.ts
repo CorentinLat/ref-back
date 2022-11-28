@@ -110,9 +110,7 @@ function addStatistics(doc: typeof PDFDocument, actions: Action[]): void {
     const penaltiesBySector = getDecisionsBy('sector', penalties);
     const freeKicksBySector = getDecisionsBy('sector', freeKicks);
 
-    const sideWidth = PAGE_WIDTH / 2;
-    const plotWidth = sideWidth * 0.4;
-    const textWidth = sideWidth - plotWidth;
+    const diagramWidth = PAGE_WIDTH / 2;
 
     let startingY = currentYPosition;
     const penaltiesByTeamHeight = displayCircularDiagramForDecisions(
@@ -121,17 +119,15 @@ function addStatistics(doc: typeof PDFDocument, actions: Action[]): void {
         'PENALTIES_NUMBER',
         0,
         startingY,
-        plotWidth,
-        textWidth
+        diagramWidth
     );
     const freeKicksByTeamHeight = displayCircularDiagramForDecisions(
         doc,
         freeKicksByTeam,
         'FREE_KICKS_NUMBER',
-        sideWidth,
+        diagramWidth,
         startingY,
-        plotWidth,
-        textWidth
+        diagramWidth
     );
 
     let heightAdded = Math.max(penaltiesByTeamHeight, freeKicksByTeamHeight) + MARGIN;
@@ -142,16 +138,14 @@ function addStatistics(doc: typeof PDFDocument, actions: Action[]): void {
         'PENALTIES_BY_SECTORS',
         0,
         startingY,
-        plotWidth,
-        textWidth
+        diagramWidth
     );
     const freeKicksBySectorHeight = displayCircularDiagramForDecisions(doc,
         freeKicksBySector,
         'FREE_KICKS_BY_SECTORS',
-        sideWidth,
+        diagramWidth,
         startingY,
-        plotWidth,
-        textWidth
+        diagramWidth
     );
 
     heightAdded = Math.max(penaltiesBySectorHeight, freeKicksBySectorHeight) + MARGIN;
@@ -164,67 +158,178 @@ function displayCircularDiagramForDecisions(
     titleKey: string,
     startingX: number,
     startingY: number,
-    plotWidth: number,
-    textWidth: number,
+    width: number
 ): number {
-    const globalCount = Object.values(decisionsBy).reduce((acc, decisions) => acc + decisions.length, 0);
-    if (globalCount === 0) {
+    const decisionsCount = Object.values(decisionsBy).reduce((acc, decisions) => acc + decisions.length, 0);
+    if (decisionsCount === 0) {
         return 0;
     }
 
+    const plotWidth = width * 0.4;
+    const legendWidth = width - plotWidth;
+
+    const plotHeight = addCircularDiagramPlot(doc, decisionsCount, decisionsBy, startingX, startingY, plotWidth);
+    const legendHeight = addCircularDiagramLegend(
+        doc,
+        decisionsCount.toString(10),
+        titleKey,
+        decisionsBy,
+        startingX + plotWidth,
+        startingY,
+        legendWidth
+    );
+
+    return Math.max(plotHeight, legendHeight);
+}
+
+function addCircularDiagramPlot(
+    doc: typeof PDFDocument,
+    totalDecisionsCount: number,
+    decisionsBy: DecisionsBy,
+    startingX: number,
+    startingY: number,
+    width: number
+): number {
+    const plotRadius = (width - 4 * MARGIN) / 2;
+    const plotCenterX = startingX + 2 * MARGIN + plotRadius;
+    const plotCenterY = startingY + MARGIN / 2 + plotRadius;
+    const decisionAngle = 360 / totalDecisionsCount;
+
+    let startingAngle = 0;
+    doc.lineWidth(6);
+    Object.values(decisionsBy).forEach((decisions, index) => {
+        const decisionsCount = decisions.length;
+        const currentAngle = decisionAngle * decisionsCount;
+        const endingAngle = startingAngle + currentAngle;
+
+        doc
+            .path(describeArc(plotCenterX, plotCenterY, plotRadius, startingAngle, endingAngle))
+            .strokeColor(COLORS[index])
+            .stroke();
+
+        startingAngle = endingAngle;
+    });
+
+    return plotRadius * 2 + MARGIN;
+}
+
+function describeArc(x: number, y: number, radius: number, startAngle: number, endAngle: number): string {
+    const start = polarToCartesian(x, y, radius, endAngle);
+    const end = polarToCartesian(x, y, radius, startAngle);
+
+    const largeArcFlag = endAngle - startAngle <= 180 ? '0' : '1';
+
+    return [
+        'M', start.x, start.y,
+        'A', radius, radius, 0, largeArcFlag, 0, end.x, end.y
+    ].join(' ');
+}
+
+function polarToCartesian(centerX: number, centerY: number, radius: number, angleInDegrees: number): { x: number; y: number } {
+    const angleInRadians = (angleInDegrees-90) * Math.PI / 180.0;
+
+    return {
+        x: centerX + (radius * Math.cos(angleInRadians)),
+        y: centerY + (radius * Math.sin(angleInRadians))
+    };
+}
+
+function addCircularDiagramLegend(
+    doc: typeof PDFDocument,
+    count: string,
+    titleKey: string,
+    decisionsBy: DecisionsBy,
+    startingX: number,
+    startingY: number,
+    width: number
+): number {
+    const legendTopHeight = addCircularDiagramLegendTop(
+        doc,
+        count,
+        titleKey,
+        startingX,
+        startingY,
+        width
+    );
+    const legendTopBottom = addCircularDiagramLegendBottom(
+        doc,
+        decisionsBy,
+        startingX + 4,
+        startingY + legendTopHeight,
+        width
+    );
+
+    return legendTopHeight + legendTopBottom;
+}
+
+function addCircularDiagramLegendTop(
+    doc: typeof PDFDocument,
+    count: string,
+    titleKey: string,
+    startingX: number,
+    startingY: number,
+    width: number
+): number {
     doc.font('Helvetica-Bold').fontSize(13);
-    const startingTextX = startingX + plotWidth;
-    doc.text(globalCount.toString(10), startingTextX, startingY, { width: textWidth });
-    const globalCountHeight = doc.heightOfString(globalCount.toString(10), { width: textWidth });
-    startingY += globalCountHeight;
+    doc.text(count, startingX, startingY, { width });
+    const countHeight = doc.heightOfString(count, { width });
 
     doc.font('Helvetica').fontSize(11);
     const globalLabel = translate(titleKey);
-    doc.text(globalLabel, { width: textWidth });
-    const globalLabelHeight = doc.heightOfString(globalLabel, { width: textWidth });
-    startingY += globalLabelHeight;
+    doc.text(globalLabel, { width });
+    const labelHeight = doc.heightOfString(globalLabel, { width });
 
     doc.moveDown(0.5);
-    const globalMarginHeight = doc.heightOfString('') * 0.5;
-    startingY += globalMarginHeight;
+    const marginHeight = doc.heightOfString('') * 0.5;
 
-    let elementHeight = globalCountHeight + globalLabelHeight + globalMarginHeight;
-    Object.entries(decisionsBy).forEach(([team, decisions], index) => {
-        const startingLegendX = startingX + plotWidth + (index % 2) * textWidth / 2;
-        const width = textWidth / 2 - MARGIN;
+    return countHeight + labelHeight + marginHeight;
+}
+
+function addCircularDiagramLegendBottom(
+    doc: typeof PDFDocument,
+    decisionsBy: DecisionsBy,
+    startingX: number,
+    startingY: number,
+    width: number
+): number {
+    let diagramLegendBottomHeight = 0;
+    let positionY = startingY;
+    Object.entries(decisionsBy).forEach(([key, decisions], index) => {
+        const itemPositionX = startingX + (index % 2) * width / 2;
+        const itemWidth = width / 2 - MARGIN;
 
         const count = decisions.length.toString(10);
         doc.font('Helvetica-Bold').fontSize(11).fillColor('black');
-        doc.text(count, startingLegendX + 10, startingY, { width });
-        const countHeight = doc.heightOfString(count, { width });
-        startingY += countHeight;
+        doc.text(count, itemPositionX + 6, positionY, { width: itemWidth });
+        const countHeight = doc.heightOfString(count, { width: itemWidth });
+        positionY += countHeight;
 
-        const label = translate(`AGAINST_${team}`);
+        const label = translate(`AGAINST_${key}`);
         doc.font('Helvetica').fontSize(8).fillColor('gray');
-        doc.text(label, startingLegendX + 10, startingY, { width });
-        const labelHeight = doc.heightOfString(label, { width });
-        startingY += labelHeight;
+        doc.text(label, itemPositionX + 6, positionY, { width: itemWidth });
+        const labelHeight = doc.heightOfString(label, { width: itemWidth });
+        positionY += labelHeight;
 
-        const legendHeight = countHeight + labelHeight;
-        const legendYPosition = startingY - legendHeight;
+        const itemHeight = countHeight + labelHeight;
+        const strokeYPosition = positionY - itemHeight;
         doc
             .strokeColor(COLORS[index])
             .lineWidth(4)
-            .moveTo(startingLegendX + 4, legendYPosition)
-            .lineTo(startingLegendX + 4, legendYPosition + legendHeight - 2)
+            .moveTo(itemPositionX, strokeYPosition)
+            .lineTo(itemPositionX, strokeYPosition + itemHeight - 2)
             .stroke();
 
         if (index % 2 === 0) {
-            startingY -= legendHeight;
+            positionY -= itemHeight;
         } else {
             doc.moveDown(0.5);
             const marginHeight = doc.heightOfString('') * 0.5;
-            elementHeight += legendHeight + marginHeight;
+            diagramLegendBottomHeight += itemHeight + marginHeight;
         }
     });
-    doc.fillColor('black').strokeColor('black');
+    doc.fillColor('black').lineWidth(1).strokeColor('black');
 
-    return elementHeight;
+    return diagramLegendBottomHeight;
 }
 
 function getDecisionsBy(key: 'against'|'sector', actions: Action[]): DecisionsBy {

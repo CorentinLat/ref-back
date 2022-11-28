@@ -44,10 +44,6 @@ const onInitAppListener = async (event: IpcMainEvent) => {
     const appVersion = app.getVersion();
     const gameNumbers = await getExistingGameFolders();
     const games = getGamesInformation(gameNumbers);
-    const game = getGame(games[0].gameNumber);
-    if (game) {
-        generatePdfSummary(game, '/Users/clatappy/Downloads');
-    }
 
     event.reply('init_app_succeeded', { appVersion, games });
 };
