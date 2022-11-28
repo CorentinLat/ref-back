@@ -5,15 +5,26 @@ import { convertSecondsToMMSS, getLongDateString } from './date';
 import { Action, Game } from './game';
 import translate from '../translation';
 
+type Key = 'second' | 'type' | 'against' | 'sector' | 'fault' | 'precise' | 'comment';
+type ColumnAction = { content: string; colSpan: number };
+type ColumnStructure = { key: Key; colSpan: number };
+type DecisionsBy = { [key: string]: Action[] };
+
 const A4_HEIGHT = 841;
 const A4_WIDTH = 595;
 const MARGIN = 10;
 const PAGE_WIDTH = A4_WIDTH - 2 * MARGIN;
 const PAGE_HEIGHT = A4_HEIGHT - 2 * MARGIN;
 
-type Key = 'second' | 'type' | 'against' | 'sector' | 'fault' | 'precise' | 'comment';
-type ColumnAction = { content: string; colSpan: number };
-type ColumnStructure = { key: Key; colSpan: number };
+const COLORS = [
+    [0, 0, 255],
+    [255, 0, 0],
+    [0, 255, 0],
+    [255, 255, 0],
+    [255, 0, 255],
+    [0, 255, 255],
+];
+
 const ALL_COLUMNS: ColumnStructure[] = [
     { key: 'second', colSpan: 1 },
     { key: 'type', colSpan: 2 },
@@ -40,6 +51,8 @@ export function generatePdfSummary(game: Game, saveDirectory: string): void {
     addThreeColumnsLine(doc, 'Helvetica', score.local, '', score.visitor);
 
     const decisions = getActionsSortedByTime(game.actions);
+
+    addStatistics(doc, decisions);
 
     addDecisionsTable(doc, 'ALL_ACTIONS', ALL_COLUMNS, decisions);
 
@@ -85,6 +98,130 @@ function addThreeColumnsLine(doc: typeof PDFDocument, font: string, left: string
     const leftHeight = doc.heightOfString(leftString, { width: sideWidth });
     const rightHeight = doc.heightOfString(rightString, { width: sideWidth });
     currentYPosition += Math.max(leftHeight, rightHeight);
+}
+
+function addStatistics(doc: typeof PDFDocument, actions: Action[]): void {
+    addSection(doc, 'STATISTICS');
+
+    const penalties = actions.filter(action => action.type === 'PENALTY');
+    const freeKicks = actions.filter(action => action.type === 'FREE_KICK');
+    const penaltiesByTeam = getDecisionsBy('against', penalties);
+    const freeKicksByTeam = getDecisionsBy('against', freeKicks);
+    const penaltiesBySector = getDecisionsBy('sector', penalties);
+    const freeKicksBySector = getDecisionsBy('sector', freeKicks);
+
+    const sideWidth = PAGE_WIDTH / 2;
+    const plotWidth = sideWidth * 0.4;
+    const textWidth = sideWidth - plotWidth;
+
+    let startingY = currentYPosition;
+    const penaltiesByTeamHeight = displayCircularDiagramForDecisions(
+        doc,
+        penaltiesByTeam,
+        'PENALTIES_NUMBER',
+        0,
+        startingY,
+        plotWidth,
+        textWidth
+    );
+    const freeKicksByTeamHeight = displayCircularDiagramForDecisions(
+        doc,
+        freeKicksByTeam,
+        'FREE_KICKS_NUMBER',
+        sideWidth,
+        startingY,
+        plotWidth,
+        textWidth
+    );
+
+    let heightAdded = Math.max(penaltiesByTeamHeight, freeKicksByTeamHeight) + MARGIN;
+    currentYPosition += heightAdded;
+    startingY += heightAdded;
+    const penaltiesBySectorHeight = displayCircularDiagramForDecisions(doc,
+        penaltiesBySector,
+        'PENALTIES_BY_SECTORS',
+        0,
+        startingY,
+        plotWidth,
+        textWidth
+    );
+    const freeKicksBySectorHeight = displayCircularDiagramForDecisions(doc,
+        freeKicksBySector,
+        'FREE_KICKS_BY_SECTORS',
+        sideWidth,
+        startingY,
+        plotWidth,
+        textWidth
+    );
+
+    heightAdded = Math.max(penaltiesBySectorHeight, freeKicksBySectorHeight) + MARGIN;
+    currentYPosition += heightAdded;
+}
+
+function displayCircularDiagramForDecisions(
+    doc: typeof PDFDocument,
+    decisionsBy: DecisionsBy,
+    titleKey: string,
+    startingX: number,
+    startingY: number,
+    plotWidth: number,
+    textWidth: number,
+): number {
+    const startingTextX = startingX + plotWidth;
+    doc.font('Helvetica-Bold').fontSize(13);
+    const globalCount = Object.values(decisionsBy).reduce((acc, decisions) => acc + decisions.length, 0);
+    doc.text(globalCount, startingTextX, startingY, { width: textWidth });
+    const globalCountHeight = doc.heightOfString(globalCount, { width: textWidth });
+    startingY += globalCountHeight;
+
+    doc.font('Helvetica').fontSize(11);
+    const globalLabel = translate(titleKey);
+    doc.text(globalLabel, { width: textWidth });
+    const globalLabelHeight = doc.heightOfString(globalLabel, { width: textWidth });
+    startingY += globalLabelHeight;
+
+    doc.moveDown(0.5);
+    const globalMarginHeight = doc.heightOfString('') * 0.5;
+    startingY += globalMarginHeight;
+
+    let elementHeight = globalCountHeight + globalLabelHeight + globalMarginHeight;
+    Object.entries(decisionsBy).forEach(([team, decisions], index) => {
+        const count = decisions.length;
+        doc.font('Helvetica-Bold').fontSize(11).fillColor('black');
+        doc.text(count, startingTextX + 10, startingY, { width: textWidth });
+        const countHeight = doc.heightOfString(count, { width: textWidth });
+        startingY += countHeight;
+
+        const label = translate(`AGAINST_${team}`);
+        doc.font('Helvetica').fontSize(8).fillColor('gray');
+        doc.text(label, startingTextX + 10, startingY, { width: textWidth });
+        const labelHeight = doc.heightOfString(label, { width: textWidth });
+        startingY += labelHeight;
+
+        const legendHeight = countHeight + labelHeight;
+        const legendYPosition = startingY - legendHeight;
+        doc
+            .strokeColor(COLORS[index])
+            .lineWidth(4)
+            .moveTo(startingTextX + 4, legendYPosition)
+            .lineTo(startingTextX + 4, legendYPosition + legendHeight - 2)
+            .stroke();
+
+        doc.moveDown(0.5);
+        const marginHeight = doc.heightOfString('') * 0.5;
+        elementHeight += legendHeight + marginHeight;
+    });
+    doc.fillColor('black').strokeColor('black');
+
+    return elementHeight;
+}
+
+function getDecisionsBy(key: 'against'|'sector', actions: Action[]): DecisionsBy {
+    return actions.reduce((decisionsBy, action) => {
+        const keyValue = action[key];
+        decisionsBy[keyValue] = [...(decisionsBy[keyValue] || []), action];
+        return decisionsBy;
+    }, {} as { [key: string]: Action[] });
 }
 
 function addDecisionsTable(doc: typeof PDFDocument, title: string, columnsStructure: ColumnStructure[], actions: Action[]): void {
