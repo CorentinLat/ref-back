@@ -29,13 +29,19 @@ export function checkGameFolderExists(gameNumber: string, force?: boolean) {
             return true;
         }
 
-        fs.rmSync(gameFolderPath, { recursive: true });
-        logger.info(`Game folder forced removed: ${gameFolderPath}`);
+        removeGameFolder(gameFolderPath);
     }
 
     fs.mkdirSync(gameFolderPath, { recursive: true });
     logger.info(`Game folder created: ${gameFolderPath}`);
     return false;
+}
+
+export function removeGameFolder(gameFolderPath: string): void {
+    if (fs.existsSync(gameFolderPath)) {
+        fs.rmSync(gameFolderPath, { recursive: true });
+        logger.info(`Game folder removed: ${gameFolderPath}`);
+    }
 }
 
 export async function getExistingGameFolders(): Promise<string[]> {

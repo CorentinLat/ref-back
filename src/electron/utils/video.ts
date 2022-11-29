@@ -59,7 +59,6 @@ export async function copyVideoToUserDataPath(gameNumber: string, videoPath: str
         const outputFileName = path.join(workPath, gameNumber, videoName);
 
         copyFileToPath(videoPath, outputFileName);
-        logger.info(`Copy video succeeded: ${outputFileName}`);
         return Promise.resolve(outputFileName);
     } else {
         logger.info(`Format not supported: ${currentVideoExtension}. Converting to mp4...`);

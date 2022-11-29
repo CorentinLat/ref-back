@@ -16,6 +16,7 @@ import {
 import logger from './utils/logger';
 import { checkGameFolderExists, getExistingGameFolders } from './utils/path';
 import { generatePdfSummary } from './utils/pdf';
+import hasEnoughRemainingSpaceForFilePaths from './utils/storage';
 import {
     concatVideos,
     copyGameVideoToPath,
@@ -57,8 +58,14 @@ const onCreateNewGameListener = async (event: IpcMainEvent, { force, gameInforma
         event.reply('create_new_game_failed');
     }
 
+    const { gameNumber } = gameInformation;
     try {
-        const { gameNumber } = gameInformation;
+        const hasEnoughSpace = await hasEnoughRemainingSpaceForFilePaths(videoPaths);
+        if (!hasEnoughSpace) {
+            event.reply('create_new_game_failed', { notEnoughSpace: true });
+            return;
+        }
+
         const alreadyExisting = checkGameFolderExists(gameNumber, force);
         if (alreadyExisting) {
             event.reply('create_new_game_failed', { alreadyExisting: true });
@@ -76,6 +83,7 @@ const onCreateNewGameListener = async (event: IpcMainEvent, { force, gameInforma
 
         event.reply('create_new_game_succeeded', gameNumber);
     } catch (error) {
+        removeGame(gameNumber);
         logger.error(`error OnCreateNewGameListener: ${error}`);
         event.reply('create_new_game_failed', error);
     }

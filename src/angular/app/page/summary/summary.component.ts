@@ -109,6 +109,10 @@ export class SummaryComponent implements OnInit {
         this.navigateToHome();
     }
 
+    exposeHasDecisions(): boolean {
+        return Boolean(this.game?.actions?.length);
+    }
+
     exposeHasStatistics(): boolean {
         return this.game.actions.some(action =>
             action.type === 'PENALTY' || action.type === 'FREE_KICK'

@@ -10,6 +10,7 @@
     "link-modules": "node -r ts-node/register ../../.erb/scripts/link-modules.ts"
   },
   "dependencies": {
+    "check-disk-space": "^3.3.1",
     "ffmpeg-static-electron": "^2.0.3",
     "ffprobe-static-electron": "^2.0.2",
     "fluent-ffmpeg": "^2.1.2",

@@ -47,6 +47,9 @@
                     <p class="error" *ngIf="exposeFormControlHasError(gameNumberControl, 'required')">
                         {{ 'PAGE.HOME.ERROR.GAME_NUMBER.REQUIRED' | translate }}
                     </p>
+                    <p class="error" *ngIf="exposeFormControlHasError(gameNumberControl, 'alreadyExisting')">
+                        {{ 'PAGE.HOME.ERROR.GAME_NUMBER.EXISTING' | translate }}
+                    </p>
                 </article>
             </section>
 
@@ -156,6 +159,9 @@
                     </p>
                     <p class="error" *ngIf="videoControl.errors?.multipleVideoFormat">
                         {{ 'PAGE.HOME.ERROR.VIDEO.MULTIPLE_FORMAT' | translate }}
+                    </p>
+                    <p class="error" *ngIf="videoControl.errors?.notEnoughSpace">
+                        {{ 'PAGE.HOME.ERROR.VIDEO.NOT_ENOUGH_SPACE' | translate }}
                     </p>
                     <p class="error" *ngIf="videoControl.errors?.processVideoFailed">
                         {{ 'PAGE.HOME.ERROR.VIDEO.PROCESS_FAILED' | translate }}
