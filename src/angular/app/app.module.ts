@@ -6,6 +6,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
+import { VgBufferingModule } from '@videogular/ngx-videogular/buffering';
 import { VgCoreModule } from '@videogular/ngx-videogular/core';
 import { VgControlsModule } from '@videogular/ngx-videogular/controls';
 import { VgOverlayPlayModule } from '@videogular/ngx-videogular/overlay-play';
@@ -67,6 +68,7 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader => new Transla
                 deps: [HttpClient],
             },
         }),
+        VgBufferingModule,
         VgCoreModule,
         VgControlsModule,
         VgOverlayPlayModule,
