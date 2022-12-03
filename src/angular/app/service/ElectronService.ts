@@ -170,6 +170,21 @@ export class ElectronService {
         });
     }
 
+    downloadPdfSummary(gameNumber: string): Promise<void> {
+        return new Promise((resolve, reject) => {
+            this.ipcRenderer?.once('download_pdf_summary_succeeded', () => {
+                this.ipcRenderer?.removeAllListeners('download_pdf_summary_failed');
+                resolve();
+            });
+            this.ipcRenderer?.once('download_pdf_summary_failed', (_, error: any) => {
+                this.ipcRenderer?.removeAllListeners('download_pdf_summary_succeeded');
+                reject(error);
+            });
+
+            this.ipcRenderer?.send('download_pdf_summary', { gameNumber });
+        });
+    }
+
     openUrlInBrowser(url: string): void {
         this.ipcRenderer?.send('open_url_in_browser', { url });
     }

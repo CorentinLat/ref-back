@@ -15,6 +15,8 @@ import {
 } from './utils/game';
 import logger from './utils/logger';
 import { checkGameFolderExists, getExistingGameFolders } from './utils/path';
+import { generatePdfSummary } from './utils/pdf';
+import hasEnoughRemainingSpaceForFilePaths from './utils/storage';
 import {
     concatVideos,
     copyGameVideoToPath,
@@ -33,6 +35,7 @@ export default function(ipcMain: IpcMain) {
     ipcMain.on('download_video_game', onDownloadVideoGameListener);
     ipcMain.on('download_video_clips', onDownloadVideoClipsListener);
     ipcMain.on('download_all_videos', onDownloadAllVideosListener);
+    ipcMain.on('download_pdf_summary', onDownloadPdfSummaryListener);
     ipcMain.on('open_url_in_browser', onOpenUrlInBrowserListener);
 }
 
@@ -55,8 +58,14 @@ const onCreateNewGameListener = async (event: IpcMainEvent, { force, gameInforma
         event.reply('create_new_game_failed');
     }
 
+    const { gameNumber } = gameInformation;
     try {
-        const { gameNumber } = gameInformation;
+        const hasEnoughSpace = await hasEnoughRemainingSpaceForFilePaths(videoPaths);
+        if (!hasEnoughSpace) {
+            event.reply('create_new_game_failed', { notEnoughSpace: true });
+            return;
+        }
+
         const alreadyExisting = checkGameFolderExists(gameNumber, force);
         if (alreadyExisting) {
             event.reply('create_new_game_failed', { alreadyExisting: true });
@@ -74,6 +83,7 @@ const onCreateNewGameListener = async (event: IpcMainEvent, { force, gameInforma
 
         event.reply('create_new_game_succeeded', gameNumber);
     } catch (error) {
+        removeGame(gameNumber);
         logger.error(`error OnCreateNewGameListener: ${error}`);
         event.reply('create_new_game_failed', error);
     }
@@ -194,6 +204,34 @@ const onDownloadAllVideosListener = async (event: IpcMainEvent, { gameNumber }: 
 
     await downloadAllVideosGame(game, saveDirectory);
     event.reply('download_all_videos_succeeded');
+};
+
+type DownloadSummaryListenerArgs = { gameNumber: string };
+const onDownloadPdfSummaryListener = async (event: IpcMainEvent, { gameNumber }: DownloadSummaryListenerArgs) => {
+    logger.debug('OnDownloadPdfSummaryListener');
+
+    const game = getGame(gameNumber);
+    if (!game) {
+        logger.debug('Game not found.');
+        event.reply('download_pdf_summary_failed');
+        return;
+    }
+
+    const saveDirectory = askSaveDirectory();
+    logger.debug(`Summary save directory : ${saveDirectory}`);
+    if (!saveDirectory) {
+        logger.debug('Download PDF summary closed');
+        event.reply('download_pdf_summary_failed', { closed: true });
+        return;
+    }
+
+    try {
+        generatePdfSummary(game, saveDirectory);
+        event.reply('download_pdf_summary_succeeded');
+    } catch (error) {
+        logger.error(`Error on download pdf summary: ${error}`);
+        event.reply('download_pdf_summary_failed');
+    }
 };
 
 type OnOpenUrlInBrowserListenerArgs = { url: string };

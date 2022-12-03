@@ -5,9 +5,12 @@ Le format est basé sur [Tenez un Changelog](https://keepachangelog.com/en/1.0.0
 et ce projet suit la [Gestion sémantique de version](https://semver.org/spec/v2.0.0.html).
 
 ## [À venir]
-- Pouvoir exporter le résumé de la rencontre en EXCEL/PDF
 - Pouvoir se connecter à l'application
 - Pouvoir récupérer automatiquement les données de la rencontre
+
+## [1.4.0] - 2022-12-03
+### Ajouté
+- Pouvoir exporter le résumé de la rencontre en PDF
 
 ## [1.3.0] - 2022-10-19
 ### Ajouté

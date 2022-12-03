@@ -33,6 +33,8 @@
     <section class="match-analysis-body" *ngIf="game">
         <section class="video-and-actions" [ngClass]="{ collapsed: areActionsCollapsed }">
             <vg-player class="video" (onPlayerReady)="onPlayerReady($event)">
+                <vg-buffering></vg-buffering>
+
                 <vg-overlay-play></vg-overlay-play>
 
                 <vg-scrub-bar>

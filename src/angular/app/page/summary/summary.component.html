@@ -49,9 +49,18 @@
                     </button>
                 </div>
             </div>
-            <button class="btn btn-primary" (click)="handleExportSummary()" disabled>
+            <button
+                class="btn btn-primary"
+                [disabled]="isDownloadingSummary || !exposeHasDecisions()"
+                (click)="handleExportSummary()"
+            >
                 {{ 'PAGE.SUMMARY.BUTTONS.EXPORT_SUMMARY' | translate }}
-                <i class="bi bi-table mx-1"></i>
+                <i class="bi bi-table mx-1" *ngIf="!isDownloadingSummary"></i>
+                <article
+                    class="spinner-border spinner-border-sm"
+                    role="status"
+                    *ngIf="isDownloadingSummary"
+                ></article>
             </button>
             <button class="btn btn-danger" (click)="handleNavigateToHome()">
                 {{ 'PAGE.SUMMARY.BUTTONS.NAVIGATE_HOME' | translate }}
@@ -64,9 +73,13 @@
         class="summary-body"
         [closeOthers]="true"
         activeIds="statistics"
-        *ngIf="game?.actions?.length"
+        *ngIf="exposeHasDecisions()"
     >
-        <ngb-panel id="statistics" title="{{ 'PAGE.SUMMARY.PANEL.STATISTICS' | translate }}">
+        <ngb-panel
+            id="statistics"
+            title="{{ 'PAGE.SUMMARY.PANEL.STATISTICS' | translate }}"
+            *ngIf="exposeHasStatistics()"
+        >
             <ng-template ngbPanelContent>
                 <app-summary-statistics [actions]="game.actions"></app-summary-statistics>
             </ng-template>
@@ -97,4 +110,8 @@
             </ng-template>
         </ngb-panel>
     </ngb-accordion>
+
+    <article class="no-summary" *ngIf="!exposeHasDecisions()">
+        {{ 'PAGE.SUMMARY.NO_DECISION' | translate }}
+    </article>
 </section>

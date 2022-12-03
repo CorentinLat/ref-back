@@ -1,0 +1,16 @@
+<section>
+    <article class="modal-header">
+        <h5 class="modal-title">{{ 'MODAL.NOT_ENOUGH_REMAINING_SPACE.TITLE' | translate }}</h5>
+        <button type="button" class="btn-close" (click)="modal.dismiss()"></button>
+    </article>
+
+    <article class="modal-body text-center">
+        <p class="text-danger">{{ 'MODAL.NOT_ENOUGH_REMAINING_SPACE.INFORMATION' | translate }}</p>
+    </article>
+
+    <article class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" (click)="modal.dismiss()">
+            {{ 'MODAL.NOT_ENOUGH_REMAINING_SPACE.CLOSE' | translate }}
+        </button>
+    </article>
+</section>

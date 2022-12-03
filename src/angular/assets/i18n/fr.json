@@ -15,6 +15,11 @@
       "TITLE": "Charger des rencontres existantes",
       "EXPLANATION_1": "Les rencontres suivantes ont été trouvées :",
       "EXPLANATION_2": "Vous pouvez les charger en cliquant dessus."
+    },
+    "NOT_ENOUGH_REMAINING_SPACE": {
+      "TITLE": "Import impossible",
+      "INFORMATION": "Vous ne disposez pas de suffisament de stockage afin d'ajouter vos vidéos.",
+      "CLOSE": "Fermer"
     }
   },
   "PAGE": {
@@ -38,6 +43,7 @@
       },
       "ERROR" : {
         "GAME_NUMBER": {
+          "EXISTING": "Le numéro de rencontre est déjà utilisé.",
           "PATTERN": "Le numéro de rencontre n'est pas au bon format.",
           "REQUIRED": "Le numéro de rencontre doit être saisi."
         },
@@ -53,6 +59,7 @@
         "VIDEO": {
           "IMPORT_INVALID": "Les fichiers suivants ne sont pas supportés :",
           "MULTIPLE_FORMAT": "Les vidéos doivent être au même format.",
+          "NOT_ENOUGH_SPACE": "Stockage disponible insuffisant.",
           "PROCESS_FAILED": "Une erreur est survenue lors du traitement.",
           "REQUIRED": "Vous devez sélectionner au moins une vidéo."
         }
@@ -140,6 +147,7 @@
             "NO_ARM_TACKLE": "Plaquage sans les bras",
             "NECK_ROLL": "Prise au cou",
             "FOREARM_PROJECTION": "Projection avant-bras / coude",
+            "SIMULTANEOUS_TACKLE": "Plaquage à 2 simultanée",
             "IN_FRONT_OF_KICKER":  "Départ devant botteur",
             "KNOCK_ON":  "En-avant",
             "FORWARD_PASS":  "En-avant de passe",
@@ -156,6 +164,8 @@
             "TACKLER": "Plaqueur",
             "SEALING": "Sealing",
             "HAND_IN_RUCK": "Talonnage à la main",
+            "NOT_ROLLING_AWAY": "Plaqueur ne sort pas",
+            "NOT_RELEASING": "Ballon conservé",
             "COLLAPSED_MAUL": "Écroulement maul",
             "UNPRODUCTIVE_MAUL": "Maul improductif",
             "MAUL_SIDE_ENTRY": "Entrée sur côté maul",
@@ -203,6 +213,7 @@
     "SUMMARY": {
       "BACK_MATCH_ANALYSIS": "Retour à l'Analyse",
       "TITLE": "Récapitulatif",
+      "NO_DECISION": "Aucune décision n'a été ajoutée pour le moment.",
       "BUTTONS": {
         "DOWNLOAD_VIDEO": "Télécharger",
         "DOWNLOAD_VIDEO_GAME": "Match",
@@ -247,6 +258,7 @@
       "PROCESS_ACTION_EDIT_FAILED": "Impossible d'éditer cette action...",
       "PROCESS_ACTION_REMOVE_FAILED": "Impossible de supprimer cette action...",
       "PROCESS_DOWNLOAD_GAME_FAILED": "Impossible de télécharger la vidéo...",
+      "PROCESS_DOWNLOAD_SUMMARY_FAILED": "Impossible d'exporter le résumé...",
       "PROCESS_GAME_FAILED": "Impossible de charger le match...",
       "PROCESS_VIDEO_FAILED": "Impossible de traiter les vidéos..."
     },

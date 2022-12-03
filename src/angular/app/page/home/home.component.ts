@@ -14,6 +14,7 @@ import { catchError, debounceTime, distinctUntilChanged, switchMap } from 'rxjs/
 
 import { GameNumberExistingModalComponent } from '../../component/modal/game-number-existing-modal/game-number-existing-modal.component';
 import { LoadGamesExistingModalComponent } from '../../component/modal/load-games-existing-modal/load-games-existing-modal.component';
+import { NotEnoughRemainingSpaceModalComponent } from '../../component/modal/not-enough-remaining-space-modal/not-enough-remaining-space-modal.component';
 
 import { DateTimeService } from '../../service/DateTimeService';
 import { ElectronService } from '../../service/ElectronService';
@@ -213,6 +214,9 @@ export class HomeComponent implements OnInit, OnDestroy {
                 },
                 () => this.gameNumberControl.setErrors({ alreadyExisting: true }),
             );
+        } else if (error?.notEnoughSpace) {
+            this.modalService.open(NotEnoughRemainingSpaceModalComponent, { centered: true });
+            this.videoControl.setErrors({ notEnoughSpace: true });
         } else {
             this.videoControl.setErrors({ processVideoFailed: true });
             this.toastService.showError('TOAST.ERROR.PROCESS_VIDEO_FAILED');

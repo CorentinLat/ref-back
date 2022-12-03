@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { v4 as uuidv4 } from 'uuid';
 
+import { removeGameFolder } from './path';
 import logger from './logger';
 import { workPath } from './path';
 
@@ -68,7 +69,7 @@ export function removeGame(gameNumber: string): boolean {
     const gameFolderPath = path.join(workPath, gameNumber);
 
     try {
-        fs.rmSync(gameFolderPath, { recursive: true });
+        removeGameFolder(gameFolderPath);
         return true;
     } catch (error) {
         logger.error(`error removeGame: ${error}`);
