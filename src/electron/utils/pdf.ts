@@ -6,7 +6,7 @@ import { Action, Game } from './game';
 import translate from '../translation';
 
 type Key = 'second' | 'type' | 'against' | 'sector' | 'fault' | 'precise' | 'comment';
-type ColumnAction = { content: string; colSpan: number };
+type ColumnAction = { content: string; colSpan: number; color: string };
 type ColumnStructure = { key: Key; colSpan: number };
 type DecisionsBy = { [key: string]: Action[] };
 
@@ -343,7 +343,7 @@ function getDecisionsBy(key: 'against'|'sector', actions: Action[]): DecisionsBy
 function addDecisionsTable(doc: typeof PDFDocument, title: string, columnsStructure: ColumnStructure[], actions: Action[]): void {
     addSection(doc, title);
 
-    const headerColumns = columnsStructure.map(({ colSpan, key }) => ({ colSpan, content: translate(key) }));
+    const headerColumns = columnsStructure.map(({ colSpan, key }) => ({ colSpan, content: translate(key), color: 'black' }));
     addTableRow(doc, true, headerColumns);
 
     actions.forEach(action => {
@@ -387,9 +387,10 @@ function addTableRow(doc: typeof PDFDocument, isHeader: boolean, columns: Column
     if (currentYPosition + maxHeight > PAGE_HEIGHT) { return false; }
 
     let curX = MARGIN;
-    columns.forEach(({ content, colSpan }) => {
+    columns.forEach(({ content, colSpan, color }) => {
         const width = colSpanWidth * colSpan;
 
+        doc.fillColor(color);
         doc.text(content, curX, currentYPosition, { width });
         curX += width;
     });
@@ -408,6 +409,8 @@ function addTableRow(doc: typeof PDFDocument, isHeader: boolean, columns: Column
 function formatColumnActions(action: Action, columnsStructure: ColumnStructure[]): ColumnAction[] {
     return columnsStructure.map(({ colSpan, key }) => {
         let content;
+        let color = 'black';
+
         if (key === 'second') {
             content = convertSecondsToMMSS(action.second);
         } else if (key === 'comment') {
@@ -420,7 +423,17 @@ function formatColumnActions(action: Action, columnsStructure: ColumnStructure[]
             content = translate(action[key]);
         }
 
-        return { content, colSpan };
+        if (key === 'precise') {
+            if (action.precise === 'YES') {
+                color = '#20c997';
+            } else if (action.precise === 'NO') {
+                color = '#dc3545';
+            } else {
+                color = '#ffc107';
+            }
+        }
+
+        return { content, colSpan, color };
     });
 }
 

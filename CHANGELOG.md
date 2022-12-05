@@ -8,6 +8,10 @@ et ce projet suit la [Gestion sémantique de version](https://semver.org/spec/v2
 - Pouvoir se connecter à l'application
 - Pouvoir récupérer automatiquement les données de la rencontre
 
+## [1.4.1] - 2022-12-05
+### Mis à jour
+- Ajout d'une couleur sur la précision des décisions sur l'export en PDF
+
 ## [1.4.0] - 2022-12-03
 ### Ajouté
 - Pouvoir exporter le résumé de la rencontre en PDF
