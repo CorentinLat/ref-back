@@ -1,0 +1,18 @@
+<section class="handle-match-analysis-component">
+    <section *ngIf="!displayAddActionForm">
+        <button class="btn btn-primary" (click)="handleDisplayAddActionForm()">
+            <i class="bi bi-plus"></i> {{ 'PAGE.MATCH_ANALYSIS.FORM.ADD_DECISION' | translate }}
+        </button>
+
+        <button class="btn btn-success ms-3" (click)="handleNavigateToSummary()">
+            {{ 'PAGE.MATCH_ANALYSIS.FORM.NAVIGATE_TO_SUMMARY' | translate }} <i class="bi bi-arrow-right"></i>
+        </button>
+    </section>
+
+    <app-add-edit-action
+        [gameNumber]="game.information.gameNumber"
+        [videoApiService]="videoApiService"
+        (actionSubmitted)="handleActionSubmitted($event)"
+        *ngIf="displayAddActionForm"
+    ></app-add-edit-action>
+</section>

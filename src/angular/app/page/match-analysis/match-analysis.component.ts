@@ -66,8 +66,6 @@ export class MatchAnalysisComponent implements OnInit {
     };
 
     public onActionAdded = (action: Action): void => {
-        this.game.actions.push(action);
-        this.game.actions = this.game.actions.sort((a, b) => a.second - b.second);
         setTimeout(() => this.newActionAdded.next(action), 100);
     };
 

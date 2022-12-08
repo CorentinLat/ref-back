@@ -1,6 +1,5 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
 import { VgApiService } from '@videogular/ngx-videogular/core';
 import { Subscription } from 'rxjs';
 
@@ -14,25 +13,22 @@ import {
     actionSectors,
     actionTypes,
     actionPrecises,
-} from '../../../domain/game';
+} from '../../../../domain/game';
 
-import { ElectronService } from '../../../service/ElectronService';
-import { DateTimeService } from '../../../service/DateTimeService';
-import { ToastService } from '../../../service/ToastService';
+import { DateTimeService } from '../../../../service/DateTimeService';
+import { ElectronService } from '../../../../service/ElectronService';
+import { ToastService } from '../../../../service/ToastService';
 
 @Component({
-    selector: 'app-add-action',
-    templateUrl: './add-action.component.html',
-    styleUrls: ['./add-action.component.scss']
+    selector: 'app-add-edit-action',
+    templateUrl: './add-edit-action.component.html',
+    styleUrls: ['./add-edit-action.component.scss'],
 })
-export class AddActionComponent implements OnInit, OnDestroy {
+export class AddEditActionComponent implements OnInit, OnDestroy {
     @Input() gameNumber!: string;
     @Input() videoApiService!: VgApiService;
 
-    @Output() actionAdded = new EventEmitter<Action>();
-
-    displayAddActionForm = false;
-    isAddingAction = false;
+    @Output() actionSubmitted = new EventEmitter<Action|null>();
 
     addActionForm = new FormGroup({
         second: new FormControl('', [Validators.required]),
@@ -48,15 +44,14 @@ export class AddActionComponent implements OnInit, OnDestroy {
             end: new FormControl('', [Validators.required]),
         }),
     });
-
     createClip = false;
+    isAddingAction = false;
 
     private currentVideoTimeSubscription$!: Subscription;
 
     constructor(
-        private electron: ElectronService,
         private dateTimeService: DateTimeService,
-        private router: Router,
+        private electron: ElectronService,
         private toastService: ToastService,
     ) {}
 
@@ -95,61 +90,21 @@ export class AddActionComponent implements OnInit, OnDestroy {
                     this.endClipControl.setValue(currentTime);
                 }
             });
+
+        this.initActionForm();
     }
 
     ngOnDestroy(): void {
         this.currentVideoTimeSubscription$.unsubscribe();
     }
 
-    exposeDisplayCardInput(): boolean {
-        return this.actionCardTypes.includes(this.typeControl.value);
-    }
+    exposeActionMinutes = (): string => this.dateTimeService.convertSecondsToMMSS(this.secondControl.value);
+    exposeDisplayCardInput = (): boolean => this.actionCardTypes.includes(this.typeControl.value);
+    exposeFaultOptions = (): string[] => this.actionFaults[this.sectorControl.value];
+    exposeEndClipMinutes = (): string => this.dateTimeService.convertSecondsToMMSS(this.endClipControl.value);
+    exposeStartClipMinutes = (): string => this.dateTimeService.convertSecondsToMMSS(this.startClipControl.value);
 
-    handleSectorChange(): void {
-        this.faultControl.setValue(this.actionFaults[this.sectorControl.value][0]);
-    }
-
-    exposeFaultOptions(): string[] {
-        return this.actionFaults[this.sectorControl.value];
-    }
-
-    exposeActionMinutes(): string {
-        return this.dateTimeService.convertSecondsToMMSS(this.secondControl.value);
-    }
-
-    exposeStartClipMinutes(): string {
-        return this.dateTimeService.convertSecondsToMMSS(this.startClipControl.value);
-    }
-
-    exposeEndClipMinutes(): string {
-        return this.dateTimeService.convertSecondsToMMSS(this.endClipControl.value);
-    }
-
-    handleHideAddActionForm(): void {
-        this.displayAddActionForm = false;
-        this.addActionForm.reset();
-    }
-
-    handleDisplayAddActionForm(): void {
-        this.displayAddActionForm = true;
-
-        this.addActionForm.reset();
-        this.secondControl.setValue(this.getCurrentVideoTime());
-        this.typeControl.setValue(this.actionTypes[0]);
-        this.cardControl.setValue('');
-        this.againstControl.setValue(this.actionAgainsts[0]);
-        this.sectorControl.setValue(this.actionSectors[0]);
-        this.faultControl.setValue(this.actionFaults[this.actionSectors[0]][0]);
-        this.preciseControl.setValue(this.actionPrecises[0]);
-
-        this.createClip = false;
-        this.startClipControl.setValue(this.getCurrentVideoTime());
-        this.endClipControl.setValue(this.getCurrentVideoTime() + 5);
-    }
-
-    handleNavigateToSummary(): void {
-        this.router.navigate(['/summary'], { queryParams: { gameNumber: this.gameNumber } });
-    }
+    handleSectorChange = (): void => this.faultControl.setValue(this.actionFaults[this.sectorControl.value][0]);
 
     async handleSubmitAddAction(): Promise<void> {
         if (this.addActionForm.invalid) {
@@ -161,18 +116,29 @@ export class AddActionComponent implements OnInit, OnDestroy {
             delete newAction.clip;
         }
 
+        let action: Action|null = null;
         try {
-            const action = await this.electron.addActionToGame(newAction, this.gameNumber);
-            this.actionAdded.emit(action);
+            action = await this.electron.addActionToGame(newAction, this.gameNumber);
             this.toastService.showSuccess('TOAST.SUCCESS.PROCESS_ACTION_ADD_SUCCESS');
         } catch (_) {
             this.toastService.showError('TOAST.ERROR.PROCESS_ACTION_ADD_FAILED');
         } finally {
-            this.handleHideAddActionForm();
+            this.actionSubmitted.emit(action);
         }
     }
 
-    private getCurrentVideoTime(): number {
-        return this.videoApiService.currentTime;
+    private initActionForm(): void {
+        this.secondControl.setValue(this.getCurrentVideoTime());
+        this.typeControl.setValue(this.actionTypes[0]);
+        this.cardControl.setValue('');
+        this.againstControl.setValue(this.actionAgainsts[0]);
+        this.sectorControl.setValue(this.actionSectors[0]);
+        this.faultControl.setValue(this.actionFaults[this.actionSectors[0]][0]);
+        this.preciseControl.setValue(this.actionPrecises[0]);
+
+        this.startClipControl.setValue(this.getCurrentVideoTime());
+        this.endClipControl.setValue(this.getCurrentVideoTime() + 5);
     }
+
+    private getCurrentVideoTime = (): number => this.videoApiService.currentTime;
 }

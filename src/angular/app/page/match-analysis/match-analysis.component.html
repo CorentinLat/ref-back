@@ -78,12 +78,12 @@
             </section>
         </section>
 
-        <app-add-action
+        <app-handle-match-analysis
             class="controls"
-            [gameNumber]="gameNumber"
+            [game]="game"
             [videoApiService]="videoApiService"
             (actionAdded)="onActionAdded($event)"
             *ngIf="videoApiService"
-        ></app-add-action>
+        ></app-handle-match-analysis>
     </section>
 </section>

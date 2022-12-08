@@ -20,7 +20,8 @@ import { ActionsComponent } from './page/match-analysis/actions/actions.componen
 import { CollapseDisplayActionsComponent } from './page/match-analysis/actions/collapse-display/collapse-display-actions.component';
 import { FullDisplayActionsComponent } from './page/match-analysis/actions/full-display/full-display-actions.component';
 import { ActionFullComponent } from './page/match-analysis/actions/full-display/action/action-full.component';
-import { AddActionComponent } from './page/match-analysis/add-action/add-action.component';
+import { HandleMatchAnalysisComponent } from './page/match-analysis/handle-match-analysis/handle-match-analysis.component';
+import { AddEditActionComponent } from './page/match-analysis/handle-match-analysis/add-action/add-edit-action.component';
 import { SummaryComponent } from './page/summary/summary.component';
 import { StatisticsComponent } from './page/summary/statistics/statistics.component';
 
@@ -38,11 +39,12 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader => new Transla
     declarations: [
         ActionFullComponent,
         ActionsComponent,
-        AddActionComponent,
+        AddEditActionComponent,
         AppComponent,
         CollapseDisplayActionsComponent,
         FullDisplayActionsComponent,
         GameNumberExistingModalComponent,
+        HandleMatchAnalysisComponent,
         HomeComponent,
         LoadGamesExistingModalComponent,
         MatchAnalysisComponent,
