@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 import { Action } from '../../../../../domain/game';
 
+import { CommunicationService } from '../../../../../service/CommunicationService';
 import { DateTimeService } from '../../../../../service/DateTimeService';
 
 @Component({
@@ -19,7 +20,10 @@ export class ActionFullComponent {
 
     @Output() removeActionEvent = new EventEmitter<string>();
 
-    constructor(private dateTimeService: DateTimeService) {}
+    constructor(
+        private communicationService: CommunicationService,
+        private dateTimeService: DateTimeService,
+    ) {}
 
     exposeActionMinutes(): string {
         return this.dateTimeService.convertSecondsToMMSS(this.action.second);
@@ -33,6 +37,11 @@ export class ActionFullComponent {
     exposeClipEndMinutes(): string {
         // @ts-ignore Called only when this.action.clip is defined
         return this.dateTimeService.convertSecondsToMMSS(this.action.clip?.end);
+    }
+
+    handleEditAction(): void {
+        this.putVideoAtSecond(this.action.second);
+        this.communicationService.editAction.next(this.action);
     }
 
     handleRemoveAction(): void {

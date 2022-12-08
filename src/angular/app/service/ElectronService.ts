@@ -110,6 +110,21 @@ export class ElectronService {
         });
     }
 
+    editActionFromGame(actionToEdit: Action, gameNumber: string): Promise<Action> {
+        return new Promise<Action>((resolve, reject) => {
+            this.ipcRenderer?.once('edit_action_succeeded', (_, action: Action) => {
+                this.ipcRenderer?.removeAllListeners('edit_action_failed');
+                resolve(action);
+            });
+            this.ipcRenderer?.once('edit_action_failed', () => {
+                this.ipcRenderer?.removeAllListeners('edit_action_succeeded');
+                reject();
+            });
+
+            this.ipcRenderer?.send('edit_action', { actionToEdit, gameNumber });
+        });
+    }
+
     removeActionFromGame(actionId: string, gameNumber: string): Promise<void> {
         return new Promise((resolve, reject) => {
             this.ipcRenderer?.once('remove_action_succeeded', () => {

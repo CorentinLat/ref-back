@@ -4,10 +4,12 @@ import IpcMainEvent = Electron.IpcMainEvent;
 
 import { askSaveDirectory, askSaveVideoPath } from './utils/dialog';
 import {
+    Action,
     NewAction,
     NewGameInformation,
     addNewActionToGame,
     createNewGameFile,
+    editActionFromGame,
     getGame,
     getGamesInformation,
     removeActionFromGame,
@@ -31,6 +33,7 @@ export default function(ipcMain: IpcMain) {
     ipcMain.on('get_game', onGetGameListener);
     ipcMain.on('remove_game', onRemoveGameListener);
     ipcMain.on('add_action', onAddActionListener);
+    ipcMain.on('edit_action', onEditActionListener);
     ipcMain.on('remove_action', onRemoveActionListener);
     ipcMain.on('download_video_game', onDownloadVideoGameListener);
     ipcMain.on('download_video_clips', onDownloadVideoClipsListener);
@@ -122,6 +125,18 @@ const onAddActionListener = (event: IpcMainEvent, { newAction, gameNumber }: OnA
         event.reply('add_action_succeeded', action);
     } else {
         event.reply('add_action_failed');
+    }
+};
+
+type OnEditActionListenerArgs = { actionToEdit: Action; gameNumber: string };
+const onEditActionListener = (event: IpcMainEvent, { actionToEdit, gameNumber }: OnEditActionListenerArgs) => {
+    logger.debug('OnEditActionListener');
+
+    const action = editActionFromGame(gameNumber, actionToEdit);
+    if (action) {
+        event.reply('edit_action_succeeded', action);
+    } else {
+        event.reply('edit_action_failed');
     }
 };
 

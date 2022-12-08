@@ -15,6 +15,7 @@ import {
     actionPrecises,
 } from '../../../../domain/game';
 
+import { CommunicationService } from '../../../../service/CommunicationService';
 import { DateTimeService } from '../../../../service/DateTimeService';
 import { ElectronService } from '../../../../service/ElectronService';
 import { ToastService } from '../../../../service/ToastService';
@@ -25,12 +26,15 @@ import { ToastService } from '../../../../service/ToastService';
     styleUrls: ['./add-edit-action.component.scss'],
 })
 export class AddEditActionComponent implements OnInit, OnDestroy {
+    @Input() action?: Action;
     @Input() gameNumber!: string;
     @Input() videoApiService!: VgApiService;
 
-    @Output() actionSubmitted = new EventEmitter<Action|null>();
+    @Output() actionAdded = new EventEmitter<Action>();
+    @Output() actionEdited = new EventEmitter<Action>();
+    @Output() actionCancelled = new EventEmitter();
 
-    addActionForm = new FormGroup({
+    actionForm = new FormGroup({
         second: new FormControl('', [Validators.required]),
         type: new FormControl('', [Validators.required]),
         card: new FormControl(),
@@ -45,24 +49,27 @@ export class AddEditActionComponent implements OnInit, OnDestroy {
         }),
     });
     createClip = false;
-    isAddingAction = false;
+    isSubmittingAction = false;
 
-    private currentVideoTimeSubscription$!: Subscription;
+    private currentVideoTimeSubscription$?: Subscription;
+    private editActionSubscription$?: Subscription;
 
     constructor(
+        private communicationService: CommunicationService,
         private dateTimeService: DateTimeService,
         private electron: ElectronService,
         private toastService: ToastService,
     ) {}
 
-    get secondControl(): FormControl { return this.addActionForm.get('second') as FormControl; }
-    get typeControl(): FormControl { return this.addActionForm.get('type') as FormControl; }
-    get cardControl(): FormControl { return this.addActionForm.get('card') as FormControl; }
-    get againstControl(): FormControl { return this.addActionForm.get('against') as FormControl; }
-    get sectorControl(): FormControl { return this.addActionForm.get('sector') as FormControl; }
-    get faultControl(): FormControl { return this.addActionForm.get('fault') as FormControl; }
-    get preciseControl(): FormControl { return this.addActionForm.get('precise') as FormControl; }
-    get clipGroup(): FormGroup { return this.addActionForm.get('clip') as FormGroup; }
+    get secondControl(): FormControl { return this.actionForm.get('second') as FormControl; }
+    get typeControl(): FormControl { return this.actionForm.get('type') as FormControl; }
+    get cardControl(): FormControl { return this.actionForm.get('card') as FormControl; }
+    get againstControl(): FormControl { return this.actionForm.get('against') as FormControl; }
+    get sectorControl(): FormControl { return this.actionForm.get('sector') as FormControl; }
+    get faultControl(): FormControl { return this.actionForm.get('fault') as FormControl; }
+    get preciseControl(): FormControl { return this.actionForm.get('precise') as FormControl; }
+    get commentControl(): FormControl { return this.actionForm.get('comment') as FormControl; }
+    get clipGroup(): FormGroup { return this.actionForm.get('clip') as FormGroup; }
     get startClipControl(): FormControl { return this.clipGroup.get('start') as FormControl; }
     get endClipControl(): FormControl { return this.clipGroup.get('end') as FormControl; }
 
@@ -90,12 +97,17 @@ export class AddEditActionComponent implements OnInit, OnDestroy {
                     this.endClipControl.setValue(currentTime);
                 }
             });
+        this.editActionSubscription$ = this.communicationService.editAction.subscribe(action => {
+            this.action = action;
+            this.fillActionForm();
+        });
 
-        this.initActionForm();
+        this.fillActionForm();
     }
 
     ngOnDestroy(): void {
-        this.currentVideoTimeSubscription$.unsubscribe();
+        this.currentVideoTimeSubscription$?.unsubscribe();
+        this.editActionSubscription$?.unsubscribe();
     }
 
     exposeActionMinutes = (): string => this.dateTimeService.convertSecondsToMMSS(this.secondControl.value);
@@ -106,39 +118,56 @@ export class AddEditActionComponent implements OnInit, OnDestroy {
 
     handleSectorChange = (): void => this.faultControl.setValue(this.actionFaults[this.sectorControl.value][0]);
 
-    async handleSubmitAddAction(): Promise<void> {
-        if (this.addActionForm.invalid) {
-            return;
-        }
+    async handleActionSubmitted(): Promise<void> {
+        if (this.actionForm.invalid) {return;}
 
-        const newAction: NewAction = this.addActionForm.value;
+        const newAction: NewAction = this.actionForm.value;
         if (!this.createClip) {
             delete newAction.clip;
         }
 
-        let action: Action|null = null;
-        try {
-            action = await this.electron.addActionToGame(newAction, this.gameNumber);
-            this.toastService.showSuccess('TOAST.SUCCESS.PROCESS_ACTION_ADD_SUCCESS');
-        } catch (_) {
-            this.toastService.showError('TOAST.ERROR.PROCESS_ACTION_ADD_FAILED');
-        } finally {
-            this.actionSubmitted.emit(action);
-        }
+        return this.action ? this.editAction(newAction) : this.addAction(newAction);
     }
 
-    private initActionForm(): void {
-        this.secondControl.setValue(this.getCurrentVideoTime());
-        this.typeControl.setValue(this.actionTypes[0]);
-        this.cardControl.setValue('');
-        this.againstControl.setValue(this.actionAgainsts[0]);
-        this.sectorControl.setValue(this.actionSectors[0]);
-        this.faultControl.setValue(this.actionFaults[this.actionSectors[0]][0]);
-        this.preciseControl.setValue(this.actionPrecises[0]);
+    private fillActionForm(): void {
+        this.secondControl.setValue(this.action ? this.action.second : this.getCurrentVideoTime());
+        this.typeControl.setValue(this.action ? this.action.type : this.actionTypes[0]);
+        this.cardControl.setValue(this.action ? this.action.card : '');
+        this.againstControl.setValue(this.action ? this.action.against : this.actionAgainsts[0]);
+        this.sectorControl.setValue(this.action ? this.action.sector : this.actionSectors[0]);
+        this.faultControl.setValue(this.action ? this.action.fault : this.actionFaults[this.actionSectors[0]][0]);
+        this.preciseControl.setValue(this.action ? this.action.precise : this.actionPrecises[0]);
+        this.commentControl.setValue(this.action ? this.action.comment : '');
+        this.startClipControl.setValue(this.action?.clip?.start ? this.action.clip.start : this.getCurrentVideoTime());
+        this.endClipControl.setValue(this.action?.clip?.end ? this.action.clip.end : this.getCurrentVideoTime() + 5);
 
-        this.startClipControl.setValue(this.getCurrentVideoTime());
-        this.endClipControl.setValue(this.getCurrentVideoTime() + 5);
+        this.createClip = this.action?.clip !== undefined;
     }
 
     private getCurrentVideoTime = (): number => this.videoApiService.currentTime;
+
+    private async addAction(newAction: NewAction): Promise<void> {
+        try {
+            const action = await this.electron.addActionToGame(newAction, this.gameNumber);
+            this.toastService.showSuccess('TOAST.SUCCESS.PROCESS_ACTION_ADD_SUCCESS');
+            this.actionAdded.emit(action);
+        } catch (_) {
+            this.toastService.showError('TOAST.ERROR.PROCESS_ACTION_ADD_FAILED');
+            this.actionCancelled.emit();
+        }
+    }
+
+    private async editAction(newAction: NewAction): Promise<void> {
+        if (!this.action) {return;}
+
+        try {
+            const actionToEdit = { id: this.action.id, ...newAction };
+            const actionEdited = await this.electron.editActionFromGame(actionToEdit, this.gameNumber);
+            this.toastService.showSuccess('TOAST.SUCCESS.PROCESS_ACTION_EDIT_SUCCESS');
+            this.actionEdited.emit(actionEdited);
+        } catch (_) {
+            this.toastService.showError('TOAST.ERROR.PROCESS_ACTION_EDIT_FAILED');
+            this.actionCancelled.emit();
+        }
+    }
 }

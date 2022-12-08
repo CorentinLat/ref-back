@@ -1,5 +1,5 @@
 <section class="match-analysis-component">
-    <header class="match-analysis-header">
+    <header class="match-analysis-header" *ngIf="game">
         <article class="back-button-container">
             <button class="btn btn-link" [routerLink]="['/']">
                 <i class="bi bi-house"></i> {{ 'PAGE.MATCH_ANALYSIS.BACK_HOME' | translate }}

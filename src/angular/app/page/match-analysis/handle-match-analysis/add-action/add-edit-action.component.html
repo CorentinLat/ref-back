@@ -1,7 +1,7 @@
 <form
     class="add-edit-action-component d-flex flex-column gap-3"
-    [formGroup]="addActionForm"
-    (ngSubmit)="handleSubmitAddAction()"
+    [formGroup]="actionForm"
+    (ngSubmit)="handleActionSubmitted()"
     novalidate
 >
     <section class="d-flex gap-3">
@@ -120,17 +120,18 @@
         <button
             class="btn btn-danger"
             type="button"
-            [disabled]="isAddingAction"
-            (click)="actionSubmitted.emit()"
+            [disabled]="isSubmittingAction"
+            (click)="actionCancelled.emit()"
         >
             {{ 'PAGE.MATCH_ANALYSIS.FORM.CANCEL' | translate }}
         </button>
         <button
             class="btn btn-success"
             type="submit"
-            [disabled]="addActionForm.invalid || isAddingAction"
+            [disabled]="actionForm.invalid || isSubmittingAction"
         >
-            {{ 'PAGE.MATCH_ANALYSIS.FORM.ADD' | translate }}
+            <span *ngIf="!action">{{ 'PAGE.MATCH_ANALYSIS.FORM.ADD' | translate }}</span>
+            <span *ngIf="action">{{ 'PAGE.MATCH_ANALYSIS.FORM.UPDATE' | translate }}</span>
         </button>
     </section>
 </form>

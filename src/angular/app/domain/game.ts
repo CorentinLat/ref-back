@@ -106,4 +106,6 @@ export type NewGameInformation = Omit<GameInformation, 'videoPath'>;
 export type Game = {
     actions: Action[];
     information: GameInformation;
+    gameDescription?: string;
+    globalPerformance?: string;
 };

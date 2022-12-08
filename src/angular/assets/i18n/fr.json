@@ -195,6 +195,7 @@
         "NAVIGATE_TO_SUMMARY": "Accéder au récapitulatif",
         "ADD": "Ajouter",
         "CANCEL": "Annuler",
+        "UPDATE": "Mettre à jour",
         "LABEL": {
           "SECOND": "Minutage",
           "TYPE": "Décision",
@@ -263,7 +264,8 @@
       "PROCESS_VIDEO_FAILED": "Impossible de traiter les vidéos..."
     },
     "SUCCESS": {
-      "PROCESS_ACTION_ADD_SUCCESS": "Action ajoutée !"
+      "PROCESS_ACTION_ADD_SUCCESS": "Action ajoutée !",
+      "PROCESS_ACTION_EDIT_SUCCESS": "Action mise à jour !"
     }
   }
 }

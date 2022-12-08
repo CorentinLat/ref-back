@@ -32,6 +32,8 @@ export type NewGameInformation = Omit<GameInformation, 'videoPath'>;
 export type Game = {
     actions: Action[];
     information: GameInformation;
+    gameDescription?: string;
+    globalPerformance?: string;
 };
 
 export function createNewGameFile(gameInformation: GameInformation): void {
@@ -67,7 +69,6 @@ export function getGamesInformation(gameNumbers: string[]): GameInformation[] {
 
 export function removeGame(gameNumber: string): boolean {
     const gameFolderPath = path.join(workPath, gameNumber);
-
     try {
         removeGameFolder(gameFolderPath);
         return true;
@@ -78,11 +79,10 @@ export function removeGame(gameNumber: string): boolean {
 }
 
 export function addNewActionToGame(gameNumber: string, newAction: NewAction): Action|null {
-    const gameFile = path.join(workPath, gameNumber, 'game.json');
-
     const game = getGame(gameNumber);
     if (!game) { return null; }
 
+    const gameFile = path.join(workPath, gameNumber, 'game.json');
     try {
         const action: Action = { ...newAction, id: uuidv4() };
         game.actions.push(action);
@@ -95,12 +95,27 @@ export function addNewActionToGame(gameNumber: string, newAction: NewAction): Ac
     }
 }
 
-export function removeActionFromGame(gameNumber: string, actionId: string): boolean {
-    const gameFile = path.join(workPath, gameNumber, 'game.json');
+export function editActionFromGame(gameNumber: string, actionToEdit: Action): Action|null {
+    const game = getGame(gameNumber);
+    if (!game) { return null; }
 
+    const gameFile = path.join(workPath, gameNumber, 'game.json');
+    try {
+        game.actions = game.actions.map(action => (action.id === actionToEdit.id ? actionToEdit : action));
+        fs.writeFileSync(gameFile, JSON.stringify(game));
+
+        return game.actions.find(({ id }) => id === actionToEdit.id) || null;
+    } catch (error) {
+        logger.error(`error addNewActionToGame: ${error}`);
+        return null;
+    }
+}
+
+export function removeActionFromGame(gameNumber: string, actionId: string): boolean {
     const game = getGame(gameNumber);
     if (!game) { return false; }
 
+    const gameFile = path.join(workPath, gameNumber, 'game.json');
     try {
         game.actions = game.actions.filter(action => action.id !== actionId);
         fs.writeFileSync(gameFile, JSON.stringify(game));

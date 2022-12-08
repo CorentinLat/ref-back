@@ -1,4 +1,4 @@
-<section class="summary-component">
+<section class="summary-component" *ngIf="game">
     <header class="summary-header row">
         <article class="col-3">
             <button class="btn btn-link" (click)="handleNavigateToMatchAnalysis()">
@@ -10,7 +10,7 @@
     </header>
 
     <section class="summary-game-and-buttons">
-        <section class="game-information-container" *ngIf="game">
+        <section class="game-information-container">
             <article class="teams-scores">
                 <h4 class="team local">{{ game.information.teams.local }}</h4>
                 <h5 class="scores">

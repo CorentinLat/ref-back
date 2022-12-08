@@ -1,6 +1,6 @@
 <section class="handle-match-analysis-component">
-    <section *ngIf="!displayAddActionForm">
-        <button class="btn btn-primary" (click)="handleDisplayAddActionForm()">
+    <section *ngIf="!displayActionForm">
+        <button class="btn btn-primary" (click)="handleDisplayActionForm()">
             <i class="bi bi-plus"></i> {{ 'PAGE.MATCH_ANALYSIS.FORM.ADD_DECISION' | translate }}
         </button>
 
@@ -10,9 +10,12 @@
     </section>
 
     <app-add-edit-action
+        [action]="currentAction"
         [gameNumber]="game.information.gameNumber"
         [videoApiService]="videoApiService"
-        (actionSubmitted)="handleActionSubmitted($event)"
-        *ngIf="displayAddActionForm"
+        (actionAdded)="handleActionAdded($event)"
+        (actionEdited)="handleActionEdited($event)"
+        (actionCancelled)="handleActionCancelled()"
+        *ngIf="displayActionForm"
     ></app-add-edit-action>
 </section>
