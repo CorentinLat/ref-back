@@ -50,6 +50,8 @@ export function generatePdfSummary(game: Game, saveDirectory: string): void {
     addThreeColumnsLine(doc, 'Helvetica-Bold', teams.local, '-', teams.visitor);
     addThreeColumnsLine(doc, 'Helvetica', score.local, '', score.visitor);
 
+    addGameComments(doc, game);
+
     const decisions = getActionsSortedByTime(game.actions);
 
     addStatistics(doc, decisions);
@@ -98,6 +100,24 @@ function addThreeColumnsLine(doc: typeof PDFDocument, font: string, left: string
     const leftHeight = doc.heightOfString(leftString, { width: sideWidth });
     const rightHeight = doc.heightOfString(rightString, { width: sideWidth });
     currentYPosition += Math.max(leftHeight, rightHeight);
+}
+
+function addGameComments(doc: typeof PDFDocument, game: Game): void {
+    if (game.gameDescription) {
+        addSection(doc, 'GAME_DESCRIPTION');
+        addParagraph(doc, game.gameDescription);
+    }
+
+    if (game.globalPerformance) {
+        addSection(doc, 'GLOBAL_PERFORMANCE');
+        addParagraph(doc, game.globalPerformance);
+    }
+}
+
+function addParagraph(doc: typeof PDFDocument, text: string): void {
+    doc.font('Helvetica').fontSize(10);
+    doc.text(text, MARGIN, currentYPosition, { align: 'justify' });
+    currentYPosition += doc.heightOfString(text, { align: 'justify' }) + MARGIN;
 }
 
 function addStatistics(doc: typeof PDFDocument, actions: Action[]): void {

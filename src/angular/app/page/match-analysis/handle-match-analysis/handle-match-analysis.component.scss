@@ -1,1 +1,56 @@
-.handle-match-analysis-component {}
+.handle-match-analysis-component {
+    display: flex;
+    width: 100%;
+
+    .comments-container {
+        flex-grow: 1;
+        display: flex;
+        gap: 2rem;
+
+        .match-analysis-comment {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+
+            .comment-title {
+                min-height: 30px;
+                margin-bottom: 0.25rem;
+                padding-bottom: 0;
+                border-bottom: 1px solid #e0e0e0;
+
+                button {
+                    padding: 0;
+                }
+            }
+
+            .comment-text {
+                margin: 0;
+                overflow: auto;
+                text-align: justify;
+                white-space: pre-wrap;
+            }
+
+            .no-comment {
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+
+                p { margin: 0; }
+            }
+        }
+    }
+
+    .buttons-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        gap: 1rem;
+        min-width: 250px;
+
+        .collapse-btn {
+            align-self: flex-end;
+        }
+    }
+}

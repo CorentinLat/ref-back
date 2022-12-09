@@ -14,6 +14,7 @@ import {
     getGamesInformation,
     removeActionFromGame,
     removeGame,
+    updateGameComment,
 } from './utils/game';
 import logger from './utils/logger';
 import { checkGameFolderExists, getExistingGameFolders } from './utils/path';
@@ -31,6 +32,7 @@ export default function(ipcMain: IpcMain) {
     ipcMain.on('init_app', onInitAppListener);
     ipcMain.on('create_new_game', onCreateNewGameListener);
     ipcMain.on('get_game', onGetGameListener);
+    ipcMain.on('update_game_comment', onUpdateGameCommentListener);
     ipcMain.on('remove_game', onRemoveGameListener);
     ipcMain.on('add_action', onAddActionListener);
     ipcMain.on('edit_action', onEditActionListener);
@@ -101,6 +103,18 @@ const onGetGameListener = (event: IpcMainEvent, { gameNumber }: OnGetGameListene
         event.reply('get_game_succeeded', game);
     } else {
         event.reply('get_game_failed');
+    }
+};
+
+type OnUpdateGameCommentListenerArgs = { gameNumber: string; comment: string; key: 'gameDescription'|'globalPerformance' };
+const onUpdateGameCommentListener = (event: IpcMainEvent, { gameNumber, comment, key }: OnUpdateGameCommentListenerArgs) => {
+    logger.debug('OnUpdateGameCommentListener');
+
+    const isUpdated = updateGameComment(gameNumber, comment, key);
+    if (isUpdated) {
+        event.reply('update_game_comment_succeeded');
+    } else {
+        event.reply('update_game_comment_failed');
     }
 };
 

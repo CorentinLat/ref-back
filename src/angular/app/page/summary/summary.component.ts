@@ -37,7 +37,7 @@ export class SummaryComponent implements OnInit {
             .getGameByNumber(this.gameNumber)
             .then(game => this.game = game)
             .catch(() => {
-                this.toastService.showError('TOAST.ERROR.PROCESS_GAME_FAILED');
+                this.toastService.showError('TOAST.ERROR.PROCESS_GAME');
                 this.navigateToHome();
             });
     }
@@ -56,7 +56,7 @@ export class SummaryComponent implements OnInit {
             await this.electron.downloadVideoGame(this.gameNumber);
         } catch (error: any) {
             if (!error?.closed) {
-                this.toastService.showError('TOAST.ERROR.PROCESS_DOWNLOAD_GAME_FAILED');
+                this.toastService.showError('TOAST.ERROR.PROCESS_DOWNLOAD_GAME');
             }
         } finally {
             this.isDownloadingVideo = false;
@@ -70,7 +70,7 @@ export class SummaryComponent implements OnInit {
             await this.electron.downloadVideoClips(this.gameNumber);
         } catch (error: any) {
             if (!error?.closed) {
-                this.toastService.showError('TOAST.ERROR.PROCESS_DOWNLOAD_GAME_FAILED');
+                this.toastService.showError('TOAST.ERROR.PROCESS_DOWNLOAD_GAME');
             }
         } finally {
             this.isDownloadingVideo = false;
@@ -84,7 +84,7 @@ export class SummaryComponent implements OnInit {
             await this.electron.downloadAllVideos(this.gameNumber);
         } catch (error: any) {
             if (!error?.closed) {
-                this.toastService.showError('TOAST.ERROR.PROCESS_DOWNLOAD_GAME_FAILED');
+                this.toastService.showError('TOAST.ERROR.PROCESS_DOWNLOAD_GAME');
             }
         } finally {
             this.isDownloadingVideo = false;
@@ -98,7 +98,7 @@ export class SummaryComponent implements OnInit {
             await this.electron.downloadPdfSummary(this.gameNumber);
         } catch (error: any) {
             if (!error?.closed) {
-                this.toastService.showError('TOAST.ERROR.PROCESS_DOWNLOAD_SUMMARY_FAILED');
+                this.toastService.showError('TOAST.ERROR.PROCESS_DOWNLOAD_SUMMARY');
             }
         } finally {
             this.isDownloadingSummary = false;

@@ -67,7 +67,7 @@ export class FullDisplayActionsComponent implements OnInit, OnDestroy {
             await this.electron.removeActionFromGame(actionId, this.gameNumber);
             this.actions.splice(actionIndex, 1);
         } catch (_) {
-            this.toastService.showError('TOAST.ERROR.PROCESS_ACTION_REMOVE_FAILED');
+            this.toastService.showError('TOAST.ERROR.PROCESS_ACTION_REMOVED');
         }
     }
 }

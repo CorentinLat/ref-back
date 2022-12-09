@@ -219,7 +219,7 @@ export class HomeComponent implements OnInit, OnDestroy {
             this.videoControl.setErrors({ notEnoughSpace: true });
         } else {
             this.videoControl.setErrors({ processVideoFailed: true });
-            this.toastService.showError('TOAST.ERROR.PROCESS_VIDEO_FAILED');
+            this.toastService.showError('TOAST.ERROR.PROCESS_VIDEO');
         }
     };
 

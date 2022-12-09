@@ -80,6 +80,21 @@ export class ElectronService {
         });
     }
 
+    updateGameComment(gameNumber: string, comment: string, key: string): Promise<void> {
+        return new Promise((resolve, reject) => {
+            this.ipcRenderer?.once('update_game_comment_succeeded', () => {
+                this.ipcRenderer?.removeAllListeners('update_game_comment_failed');
+                resolve();
+            });
+            this.ipcRenderer?.once('update_game_comment_failed', () => {
+                this.ipcRenderer?.removeAllListeners('update_game_comment_succeeded');
+                reject();
+            });
+
+            this.ipcRenderer?.send('update_game_comment', { gameNumber, comment, key });
+        });
+    }
+
     removeGame(gameNumber: string): Promise<void> {
         return new Promise((resolve, reject) => {
             this.ipcRenderer?.once('remove_game_succeeded', () => {

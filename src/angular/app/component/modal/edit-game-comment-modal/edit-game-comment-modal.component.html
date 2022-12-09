@@ -1,0 +1,19 @@
+<form [formGroup]="form" (ngSubmit)="handleUpdateGameComment()" novalidate>
+    <article class="modal-header">
+        <h5 class="modal-title">{{ 'MODAL.EDIT_GAME_COMMENT.TITLE.' + keyToEdit | translate }}</h5>
+        <button type="button" class="btn-close" (click)="modal.dismiss()"></button>
+    </article>
+
+    <section class="modal-body text-center">
+        <textarea class="form-control" formControlName="gameComment" rows="10"></textarea>
+    </section>
+
+    <article class="modal-footer">
+        <button type="button" class="btn btn-outline-danger" (click)="modal.dismiss()">
+            {{ 'MODAL.EDIT_GAME_COMMENT.CANCEL' | translate }}
+        </button>
+        <button type="submit" class="btn btn-success">
+            {{ 'MODAL.EDIT_GAME_COMMENT.SAVE' | translate }}
+        </button>
+    </article>
+</form>

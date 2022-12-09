@@ -1,15 +1,68 @@
 <section class="handle-match-analysis-component">
-    <section *ngIf="!displayActionForm">
-        <button class="btn btn-primary" (click)="handleDisplayActionForm()">
-            <i class="bi bi-plus"></i> {{ 'PAGE.MATCH_ANALYSIS.FORM.ADD_DECISION' | translate }}
-        </button>
+    <section class="d-flex gap-5" *ngIf="!displayActionForm">
+        <section class="comments-container">
+            <section class="match-analysis-comment">
+                <h5 class="comment-title">
+                    {{ 'PAGE.MATCH_ANALYSIS.FORM.GAME_DESCRIPTION.TITLE' | translate }}
+                    <button
+                        class="btn text-warning"
+                        *ngIf="game.gameDescription"
+                        (click)="handleUpdateGameDescription()"
+                    >
+                        <i class="bi bi-pen"></i>
+                    </button>
+                </h5>
 
-        <button class="btn btn-success ms-3" (click)="handleNavigateToSummary()">
-            {{ 'PAGE.MATCH_ANALYSIS.FORM.NAVIGATE_TO_SUMMARY' | translate }} <i class="bi bi-arrow-right"></i>
-        </button>
+                <p class="comment-text" *ngIf="game.gameDescription">{{ game.gameDescription }}</p>
+
+                <article class="no-comment" *ngIf="!game.gameDescription">
+                    <p>{{ 'PAGE.MATCH_ANALYSIS.FORM.GAME_DESCRIPTION.NO' | translate }}</p>
+                    <button class="btn btn-link" (click)="handleUpdateGameDescription()">
+                        {{ 'PAGE.MATCH_ANALYSIS.FORM.ADD' | translate }}
+                    </button>
+                </article>
+            </section>
+            <section class="match-analysis-comment">
+                <h5 class="comment-title">
+                    {{ 'PAGE.MATCH_ANALYSIS.FORM.GLOBAL_PERFORMANCE.TITLE' | translate }}
+                    <button
+                        class="btn text-warning"
+                        *ngIf="game.globalPerformance"
+                        (click)="handleUpdateGlobalPerformance()"
+                    >
+                        <i class="bi bi-pen"></i>
+                    </button>
+                </h5>
+
+                <p class="comment-text" *ngIf="game.globalPerformance">{{ game.globalPerformance }}</p>
+
+                <article class="no-comment" *ngIf="!game.globalPerformance">
+                    <p>{{ 'PAGE.MATCH_ANALYSIS.FORM.GLOBAL_PERFORMANCE.NO' | translate }}</p>
+                    <button class="btn btn-link" (click)="handleUpdateGlobalPerformance()">
+                        {{ 'PAGE.MATCH_ANALYSIS.FORM.ADD' | translate }}
+                    </button>
+                </article>
+            </section>
+        </section>
+
+        <article class="buttons-container">
+            <button class="btn btn-primary" (click)="handleDisplayActionForm()">
+                <i class="bi bi-plus"></i> {{ 'PAGE.MATCH_ANALYSIS.FORM.ADD_DECISION' | translate }}
+            </button>
+
+            <button class="btn btn-success" (click)="handleNavigateToSummary()">
+                {{ 'PAGE.MATCH_ANALYSIS.FORM.NAVIGATE_TO_SUMMARY' | translate }} <i class="bi bi-arrow-right"></i>
+            </button>
+
+            <button class="collapse-btn btn btn-outline-dark" (click)="collapse.actions = !collapse.actions">
+                <i class="bi bi-chevron-right" *ngIf="!collapse.actions"></i>
+                <i class="bi bi-chevron-left" *ngIf="collapse.actions"></i>
+            </button>
+        </article>
     </section>
 
     <app-add-edit-action
+        class="w-100 d-flex align-items-center justify-content-center"
         [action]="currentAction"
         [gameNumber]="game.information.gameNumber"
         [videoApiService]="videoApiService"

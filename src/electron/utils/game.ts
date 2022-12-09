@@ -67,6 +67,22 @@ export function getGamesInformation(gameNumbers: string[]): GameInformation[] {
     }, []);
 }
 
+export function updateGameComment(gameNumber: string, comment: string, key: 'gameDescription'|'globalPerformance'): boolean {
+    const game = getGame(gameNumber);
+    if (!game) { return false; }
+
+    const gameFile = path.join(workPath, gameNumber, 'game.json');
+    try {
+        game[key] = comment;
+        fs.writeFileSync(gameFile, JSON.stringify(game));
+
+        return true;
+    } catch (error) {
+        logger.error(`error updateGameComment: ${error}`);
+        return false;
+    }
+}
+
 export function removeGame(gameNumber: string): boolean {
     const gameFolderPath = path.join(workPath, gameNumber);
     try {
@@ -106,7 +122,7 @@ export function editActionFromGame(gameNumber: string, actionToEdit: Action): Ac
 
         return game.actions.find(({ id }) => id === actionToEdit.id) || null;
     } catch (error) {
-        logger.error(`error addNewActionToGame: ${error}`);
+        logger.error(`error editActionFromGame: ${error}`);
         return null;
     }
 }

@@ -21,7 +21,7 @@ export class MatchAnalysisComponent implements OnInit {
 
     public videoApiService!: VgApiService;
 
-    public areActionsCollapsed = true;
+    public collapse = { actions: true };
 
     public newActionAdded = new Subject<Action>();
 
@@ -49,7 +49,7 @@ export class MatchAnalysisComponent implements OnInit {
                 this.videoPath = this.sanitizer.bypassSecurityTrustResourceUrl(`video://${game.information.videoPath}`);
             })
             .catch(() => {
-                this.toastService.showError('TOAST.ERROR.PROCESS_GAME_FAILED');
+                this.toastService.showError('TOAST.ERROR.PROCESS_GAME');
                 this.navigateToHome();
             });
     }

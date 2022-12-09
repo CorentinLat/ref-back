@@ -23,7 +23,6 @@ $header-margin-bottom: 20px;
 
     .summary-game-and-buttons {
         display: flex;
-        align-items: center;
         gap: 20px;
 
         .game-information-container {
@@ -73,6 +72,30 @@ $header-margin-bottom: 20px;
                     overflow: hidden;
                     text-overflow: ellipsis;
                     white-space: nowrap;
+                }
+            }
+
+            .game-comments {
+                display: flex;
+                margin: 1rem 1rem 0 1rem;
+                gap: 2rem;
+
+                .game-comment {
+                    flex-basis: 0;
+                    flex-grow: 1;
+                    text-align: justify;
+                    white-space: pre-wrap;
+
+                    .comment-title {
+                        margin-bottom: 0.25rem;
+                        padding-bottom: 0.25rem;
+                        border-bottom: 1px solid #e0e0e0;
+                    }
+
+                    .comment-text {
+                        max-height: 150px;
+                        overflow: auto;
+                    }
                 }
             }
 

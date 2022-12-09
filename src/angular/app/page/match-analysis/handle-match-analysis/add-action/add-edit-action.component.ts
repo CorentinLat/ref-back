@@ -149,10 +149,10 @@ export class AddEditActionComponent implements OnInit, OnDestroy {
     private async addAction(newAction: NewAction): Promise<void> {
         try {
             const action = await this.electron.addActionToGame(newAction, this.gameNumber);
-            this.toastService.showSuccess('TOAST.SUCCESS.PROCESS_ACTION_ADD_SUCCESS');
+            this.toastService.showSuccess('TOAST.SUCCESS.PROCESS_ACTION_ADDED');
             this.actionAdded.emit(action);
         } catch (_) {
-            this.toastService.showError('TOAST.ERROR.PROCESS_ACTION_ADD_FAILED');
+            this.toastService.showError('TOAST.ERROR.PROCESS_ACTION_ADDED');
             this.actionCancelled.emit();
         }
     }
@@ -163,10 +163,10 @@ export class AddEditActionComponent implements OnInit, OnDestroy {
         try {
             const actionToEdit = { id: this.action.id, ...newAction };
             const actionEdited = await this.electron.editActionFromGame(actionToEdit, this.gameNumber);
-            this.toastService.showSuccess('TOAST.SUCCESS.PROCESS_ACTION_EDIT_SUCCESS');
+            this.toastService.showSuccess('TOAST.SUCCESS.PROCESS_ACTION_EDITED');
             this.actionEdited.emit(actionEdited);
         } catch (_) {
-            this.toastService.showError('TOAST.ERROR.PROCESS_ACTION_EDIT_FAILED');
+            this.toastService.showError('TOAST.ERROR.PROCESS_ACTION_EDITED');
             this.actionCancelled.emit();
         }
     }
