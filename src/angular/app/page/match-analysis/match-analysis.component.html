@@ -1,5 +1,5 @@
 <section class="match-analysis-component">
-    <header class="match-analysis-header">
+    <header class="match-analysis-header" *ngIf="game">
         <article class="back-button-container">
             <button class="btn btn-link" [routerLink]="['/']">
                 <i class="bi bi-house"></i> {{ 'PAGE.MATCH_ANALYSIS.BACK_HOME' | translate }}
@@ -21,17 +21,19 @@
                 <h5 class="number">{{ gameNumber }}</h5>
             </article>
         </section>
-
-        <article class="collapse-btn-container">
-            <button class="btn btn-outline-dark" (click)="areActionsCollapsed = !areActionsCollapsed">
-                <i class="bi bi-chevron-right" *ngIf="!areActionsCollapsed"></i>
-                <i class="bi bi-chevron-left" *ngIf="areActionsCollapsed"></i>
-            </button>
-        </article>
     </header>
 
     <section class="match-analysis-body" *ngIf="game">
-        <section class="video-and-actions" [ngClass]="{ collapsed: areActionsCollapsed }">
+        <app-handle-match-analysis
+            class="controls"
+            [collapse]="collapse"
+            [game]="game"
+            [videoApiService]="videoApiService"
+            (actionAdded)="onActionAdded($event)"
+            *ngIf="videoApiService"
+        ></app-handle-match-analysis>
+
+        <section class="video-and-actions" [ngClass]="{ collapsed: collapse.actions }">
             <vg-player class="video" (onPlayerReady)="onPlayerReady($event)">
                 <vg-buffering></vg-buffering>
 
@@ -70,20 +72,12 @@
                 <app-actions
                     class="actions"
                     [actions]="game.actions"
-                    [collapsed]="areActionsCollapsed"
+                    [collapsed]="collapse.actions"
                     [gameNumber]="gameNumber"
                     [newActionAdded]="newActionAdded.asObservable()"
                     [putVideoAtSecond]="putVideoAtSecond"
                 ></app-actions>
             </section>
         </section>
-
-        <app-add-action
-            class="controls"
-            [gameNumber]="gameNumber"
-            [videoApiService]="videoApiService"
-            (actionAdded)="onActionAdded($event)"
-            *ngIf="videoApiService"
-        ></app-add-action>
     </section>
 </section>

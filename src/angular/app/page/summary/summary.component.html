@@ -1,4 +1,4 @@
-<section class="summary-component">
+<section class="summary-component" *ngIf="game">
     <header class="summary-header row">
         <article class="col-3">
             <button class="btn btn-link" (click)="handleNavigateToMatchAnalysis()">
@@ -10,7 +10,7 @@
     </header>
 
     <section class="summary-game-and-buttons">
-        <section class="game-information-container" *ngIf="game">
+        <section class="game-information-container">
             <article class="teams-scores">
                 <h4 class="team local">{{ game.information.teams.local }}</h4>
                 <h5 class="scores">
@@ -24,6 +24,17 @@
                 <h5 class="date">{{ game.information.date | date: 'dd/MM/yyyy' }}</h5>
                 <h5 class="number">{{ gameNumber }}</h5>
             </article>
+
+            <section class="game-comments" *ngIf="game.gameDescription || game.globalPerformance">
+                <article class="game-comment" *ngIf="game.gameDescription">
+                    <h5 class="comment-title">{{ 'PAGE.SUMMARY.COMMENTS.GAME_DESCRIPTION' | translate }}</h5>
+                    <p class="comment-text">{{ game.gameDescription }}</p>
+                </article>
+                <article class="game-comment" *ngIf="game.globalPerformance">
+                    <h5 class="comment-title">{{ 'PAGE.SUMMARY.COMMENTS.GLOBAL_PERFORMANCE' | translate }}</h5>
+                    <p class="comment-text">{{ game.globalPerformance }}</p>
+                </article>
+            </section>
         </section>
 
         <article class="summary-buttons">

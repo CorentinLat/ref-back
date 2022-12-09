@@ -4,14 +4,17 @@ import IpcMainEvent = Electron.IpcMainEvent;
 
 import { askSaveDirectory, askSaveVideoPath } from './utils/dialog';
 import {
+    Action,
     NewAction,
     NewGameInformation,
     addNewActionToGame,
     createNewGameFile,
+    editActionFromGame,
     getGame,
     getGamesInformation,
     removeActionFromGame,
     removeGame,
+    updateGameComment,
 } from './utils/game';
 import logger from './utils/logger';
 import { checkGameFolderExists, getExistingGameFolders } from './utils/path';
@@ -29,8 +32,10 @@ export default function(ipcMain: IpcMain) {
     ipcMain.on('init_app', onInitAppListener);
     ipcMain.on('create_new_game', onCreateNewGameListener);
     ipcMain.on('get_game', onGetGameListener);
+    ipcMain.on('update_game_comment', onUpdateGameCommentListener);
     ipcMain.on('remove_game', onRemoveGameListener);
     ipcMain.on('add_action', onAddActionListener);
+    ipcMain.on('edit_action', onEditActionListener);
     ipcMain.on('remove_action', onRemoveActionListener);
     ipcMain.on('download_video_game', onDownloadVideoGameListener);
     ipcMain.on('download_video_clips', onDownloadVideoClipsListener);
@@ -101,6 +106,18 @@ const onGetGameListener = (event: IpcMainEvent, { gameNumber }: OnGetGameListene
     }
 };
 
+type OnUpdateGameCommentListenerArgs = { gameNumber: string; comment: string; key: 'gameDescription'|'globalPerformance' };
+const onUpdateGameCommentListener = (event: IpcMainEvent, { gameNumber, comment, key }: OnUpdateGameCommentListenerArgs) => {
+    logger.debug('OnUpdateGameCommentListener');
+
+    const isUpdated = updateGameComment(gameNumber, comment, key);
+    if (isUpdated) {
+        event.reply('update_game_comment_succeeded');
+    } else {
+        event.reply('update_game_comment_failed');
+    }
+};
+
 type OnRemoveGameListenerArgs = { gameNumber: string };
 const onRemoveGameListener = (event: IpcMainEvent, { gameNumber }: OnRemoveGameListenerArgs) => {
     logger.debug('OnRemoveGameListener');
@@ -122,6 +139,18 @@ const onAddActionListener = (event: IpcMainEvent, { newAction, gameNumber }: OnA
         event.reply('add_action_succeeded', action);
     } else {
         event.reply('add_action_failed');
+    }
+};
+
+type OnEditActionListenerArgs = { actionToEdit: Action; gameNumber: string };
+const onEditActionListener = (event: IpcMainEvent, { actionToEdit, gameNumber }: OnEditActionListenerArgs) => {
+    logger.debug('OnEditActionListener');
+
+    const action = editActionFromGame(gameNumber, actionToEdit);
+    if (action) {
+        event.reply('edit_action_succeeded', action);
+    } else {
+        event.reply('edit_action_failed');
     }
 };
 

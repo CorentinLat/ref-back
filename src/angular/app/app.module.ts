@@ -20,11 +20,13 @@ import { ActionsComponent } from './page/match-analysis/actions/actions.componen
 import { CollapseDisplayActionsComponent } from './page/match-analysis/actions/collapse-display/collapse-display-actions.component';
 import { FullDisplayActionsComponent } from './page/match-analysis/actions/full-display/full-display-actions.component';
 import { ActionFullComponent } from './page/match-analysis/actions/full-display/action/action-full.component';
-import { AddActionComponent } from './page/match-analysis/add-action/add-action.component';
+import { HandleMatchAnalysisComponent } from './page/match-analysis/handle-match-analysis/handle-match-analysis.component';
+import { AddEditActionComponent } from './page/match-analysis/handle-match-analysis/add-action/add-edit-action.component';
 import { SummaryComponent } from './page/summary/summary.component';
 import { StatisticsComponent } from './page/summary/statistics/statistics.component';
 
 import { ToastsComponent } from './component/toasts/toasts.component';
+import { EditGameCommentModalComponent } from './component/modal/edit-game-comment-modal/edit-game-comment-modal.component';
 import { GameNumberExistingModalComponent } from './component/modal/game-number-existing-modal/game-number-existing-modal.component';
 import { LoadGamesExistingModalComponent } from './component/modal/load-games-existing-modal/load-games-existing-modal.component';
 import { NotEnoughRemainingSpaceModalComponent } from './component/modal/not-enough-remaining-space-modal/not-enough-remaining-space-modal.component';
@@ -38,11 +40,13 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader => new Transla
     declarations: [
         ActionFullComponent,
         ActionsComponent,
-        AddActionComponent,
+        AddEditActionComponent,
         AppComponent,
         CollapseDisplayActionsComponent,
+        EditGameCommentModalComponent,
         FullDisplayActionsComponent,
         GameNumberExistingModalComponent,
+        HandleMatchAnalysisComponent,
         HomeComponent,
         LoadGamesExistingModalComponent,
         MatchAnalysisComponent,

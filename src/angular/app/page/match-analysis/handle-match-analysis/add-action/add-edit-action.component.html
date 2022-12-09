@@ -1,0 +1,137 @@
+<form
+    class="add-edit-action-component d-flex flex-column gap-3"
+    [formGroup]="actionForm"
+    (ngSubmit)="handleActionSubmitted()"
+    novalidate
+>
+    <section class="d-flex gap-3">
+        <section class="input type">
+            <label for="type" class="form-label">
+                {{ 'PAGE.MATCH_ANALYSIS.FORM.LABEL.TYPE' | translate }} :
+            </label>
+            <select class="form-select" id="type" formControlName="type">
+                <option *ngFor="let type of actionTypes" [value]="type">
+                    {{ 'PAGE.MATCH_ANALYSIS.ACTIONS.ACTION.TYPE.' + type | translate }}
+                </option>
+            </select>
+        </section>
+
+        <section class="input decision-card" *ngIf="exposeDisplayCardInput()">
+            <label for="card" class="form-label">
+                {{ 'PAGE.MATCH_ANALYSIS.FORM.LABEL.CARD' | translate }} :
+            </label>
+            <select class="form-select" id="card" formControlName="card">
+                <option value="" selected>--</option>
+                <option *ngFor="let card of actionCards" [value]="card">
+                    {{ 'PAGE.MATCH_ANALYSIS.ACTIONS.ACTION.CARD.' + card | translate }}
+                </option>
+            </select>
+        </section>
+
+        <section class="input against">
+            <label for="against" class="form-label">
+                {{ 'PAGE.MATCH_ANALYSIS.FORM.LABEL.AGAINST' | translate }} :
+            </label>
+            <select class="form-select" id="against" formControlName="against">
+                <option *ngFor="let against of actionAgainsts" [value]="against">
+                    {{ 'PAGE.MATCH_ANALYSIS.ACTIONS.ACTION.AGAINST.' + against | translate }}
+                </option>
+            </select>
+        </section>
+
+        <section class="input sector">
+            <label for="sector" class="form-label">
+                {{ 'PAGE.MATCH_ANALYSIS.FORM.LABEL.SECTOR' | translate }} :
+            </label>
+            <select
+                class="form-select"
+                id="sector"
+                formControlName="sector"
+                (change)="handleSectorChange()"
+            >
+                <option *ngFor="let sector of actionSectors" [value]="sector">
+                    {{ 'PAGE.MATCH_ANALYSIS.ACTIONS.ACTION.SECTOR.' + sector | translate }}
+                </option>
+            </select>
+        </section>
+
+        <section class="input fault">
+            <label for="fault" class="form-label">
+                {{ 'PAGE.MATCH_ANALYSIS.FORM.LABEL.FAULT' | translate }} :
+            </label>
+            <select class="form-select" id="fault" formControlName="fault">
+                <option *ngFor="let fault of exposeFaultOptions()" [value]="fault">
+                    {{ 'PAGE.MATCH_ANALYSIS.ACTIONS.ACTION.FAULT.' + fault | translate }}
+                </option>
+            </select>
+        </section>
+
+        <section class="input precise">
+            <label for="precise" class="form-label">
+                {{ 'PAGE.MATCH_ANALYSIS.FORM.LABEL.PRECISE' | translate }} :
+            </label>
+            <select class="form-select" id="precise" formControlName="precise">
+                <option *ngFor="let precise of actionPrecises" [value]="precise">
+                    {{ 'PAGE.MATCH_ANALYSIS.ACTIONS.ACTION.PRECISE.' + precise | translate }}
+                </option>
+            </select>
+        </section>
+
+        <section class="input comment">
+            <label for="comment" class="form-label">
+                {{ 'PAGE.MATCH_ANALYSIS.FORM.LABEL.COMMENT' | translate }} :
+            </label>
+            <textarea
+                class="form-control"
+                id="comment"
+                formControlName="comment"
+                rows="1"
+            ></textarea>
+        </section>
+    </section>
+
+    <section class="d-flex align-items-center justify-content-end gap-3">
+        <article class="form-check form-switch">
+            <input
+                id="createClip"
+                class="form-check-input"
+                type="checkbox"
+                role="switch"
+                [(ngModel)]="createClip"
+                [ngModelOptions]="{ standalone: true }"
+            >
+            <label class="form-check-label" for="createClip">
+                {{ 'PAGE.MATCH_ANALYSIS.FORM.LABEL.CREATE_CLIP' | translate }}
+            </label>
+        </article>
+
+        <article *ngIf="!createClip">
+            <span class="minutes-label">{{ 'PAGE.MATCH_ANALYSIS.FORM.LABEL.SECOND' | translate }} :</span>
+            <span class="minutes-value">{{ exposeActionMinutes() }}</span>
+        </article>
+        <article *ngIf="createClip">
+            <span class="minutes-label">{{ 'PAGE.MATCH_ANALYSIS.FORM.LABEL.START_CLIP' | translate }} :</span>
+            <span class="minutes-value">{{ exposeStartClipMinutes() }}</span>
+
+            <span class="minutes-label">{{ 'PAGE.MATCH_ANALYSIS.FORM.LABEL.END_CLIP' | translate }} :</span>
+            <span class="minutes-value">{{ exposeEndClipMinutes() }}</span>
+        </article>
+
+        <button
+            class="btn btn-danger"
+            type="button"
+            [disabled]="isSubmittingAction"
+            (click)="actionCancelled.emit()"
+        >
+            {{ 'PAGE.MATCH_ANALYSIS.FORM.CANCEL' | translate }}
+        </button>
+        <button
+            class="btn btn-success"
+            type="submit"
+            [disabled]="actionForm.invalid || isSubmittingAction"
+        >
+            <span *ngIf="!action">{{ 'PAGE.MATCH_ANALYSIS.FORM.ADD' | translate }}</span>
+            <span *ngIf="action">{{ 'PAGE.MATCH_ANALYSIS.FORM.UPDATE' | translate }}</span>
+        </button>
+    </section>
+</form>

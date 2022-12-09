@@ -70,16 +70,8 @@ $header-margin-bottom: 20px;
             }
         }
 
-        .collapse-btn-container {
-            min-width: 120px;
-            text-align: right;
-
-            .btn { margin-right: 31px; }
-        }
-
         .back-button-container,
-        .title,
-        .collapse-btn-container {
+        .title {
             flex-basis: 0;
         }
     }
@@ -125,7 +117,9 @@ $header-margin-bottom: 20px;
         }
 
         .controls {
-            min-height: 124px;
+            display: flex;
+            overflow: hidden;
+            height: 200px;
         }
     }
 }
