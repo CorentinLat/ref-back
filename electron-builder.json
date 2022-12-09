@@ -12,10 +12,7 @@
   "mac": {
     "target": {
       "target": "default",
-      "arch": [
-        "arm64",
-        "x64"
-      ]
+      "arch": ["x64"]
     },
     "category": "public.app-category.sports",
     "type": "distribution",
