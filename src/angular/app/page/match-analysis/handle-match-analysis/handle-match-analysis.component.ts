@@ -1,5 +1,4 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
-import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { VgApiService } from '@videogular/ngx-videogular/core';
 import { Subscription } from 'rxjs';
@@ -30,7 +29,6 @@ export class HandleMatchAnalysisComponent implements OnInit, OnDestroy {
     constructor(
         private communicationService: CommunicationService,
         private modalService: NgbModal,
-        private router: Router,
     ) {}
 
     ngOnInit() {
@@ -46,13 +44,6 @@ export class HandleMatchAnalysisComponent implements OnInit, OnDestroy {
 
     handleDisplayActionForm(): void {
         this.displayActionForm = true;
-    }
-
-    handleNavigateToSummary(): void {
-        this.router.navigate(
-            ['/summary'],
-            { queryParams: { gameNumber: this.game.information.gameNumber } }
-        );
     }
 
     handleUpdateGameDescription(): void {

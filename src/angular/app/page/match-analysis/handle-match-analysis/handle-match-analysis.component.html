@@ -46,17 +46,19 @@
         </section>
 
         <article class="buttons-container">
-            <button class="btn btn-primary" (click)="handleDisplayActionForm()">
-                <i class="bi bi-plus"></i> {{ 'PAGE.MATCH_ANALYSIS.FORM.ADD_DECISION' | translate }}
-            </button>
-
-            <button class="btn btn-success" (click)="handleNavigateToSummary()">
-                {{ 'PAGE.MATCH_ANALYSIS.FORM.NAVIGATE_TO_SUMMARY' | translate }} <i class="bi bi-arrow-right"></i>
+            <button class="add-decision-btn btn btn-success" (click)="handleDisplayActionForm()">
+                <i class="bi bi-plus"></i> {{ 'PAGE.MATCH_ANALYSIS.BUTTONS.ADD_DECISION' | translate }}
             </button>
 
             <button class="collapse-btn btn btn-outline-dark" (click)="collapse.actions = !collapse.actions">
-                <i class="bi bi-chevron-right" *ngIf="!collapse.actions"></i>
-                <i class="bi bi-chevron-left" *ngIf="collapse.actions"></i>
+                <span *ngIf="!collapse.actions">
+                    {{ 'PAGE.MATCH_ANALYSIS.BUTTONS.REDUCE' | translate }}
+                    <i class="bi bi-chevron-right"></i>
+                </span>
+                <span *ngIf="collapse.actions">
+                    <i class="bi bi-chevron-left"></i>
+                    {{ 'PAGE.MATCH_ANALYSIS.BUTTONS.ENLARGE' | translate }}
+                </span>
             </button>
         </article>
     </section>

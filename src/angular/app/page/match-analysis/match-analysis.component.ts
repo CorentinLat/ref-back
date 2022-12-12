@@ -54,6 +54,13 @@ export class MatchAnalysisComponent implements OnInit {
             });
     }
 
+    handleNavigateToSummary(): void {
+        this.router.navigate(
+            ['/summary'],
+            { queryParams: { gameNumber: this.game.information.gameNumber } }
+        );
+    }
+
     public onPlayerReady = (api: VgApiService): void => {
         this.videoApiService = api;
         this.videoApiService.volume = 0;

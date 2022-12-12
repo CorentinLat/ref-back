@@ -1,10 +1,8 @@
 <section class="match-analysis-component">
     <header class="match-analysis-header" *ngIf="game">
-        <article class="back-button-container">
-            <button class="btn btn-link" [routerLink]="['/']">
-                <i class="bi bi-house"></i> {{ 'PAGE.MATCH_ANALYSIS.BACK_HOME' | translate }}
-            </button>
-        </article>
+        <button class="btn btn-link" [routerLink]="['/']">
+            <i class="bi bi-house"></i> {{ 'PAGE.MATCH_ANALYSIS.BACK_HOME' | translate }}
+        </button>
 
         <section class="game-information-container" *ngIf="game">
             <article class="teams-scores">
@@ -21,6 +19,10 @@
                 <h5 class="number">{{ gameNumber }}</h5>
             </article>
         </section>
+
+        <button class="btn btn-link" (click)="handleNavigateToSummary()">
+            {{ 'PAGE.MATCH_ANALYSIS.BUTTONS.NAVIGATE_TO_SUMMARY' | translate }} <i class="bi bi-pie-chart"></i>
+        </button>
     </header>
 
     <section class="match-analysis-body" *ngIf="game">

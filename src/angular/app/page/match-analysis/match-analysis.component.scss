@@ -1,19 +1,17 @@
 $match-analysis-component-margin: 20px;
 $header-height: 50px;
-$header-margin-bottom: 20px;
+$header-gap: 20px;
 
 .match-analysis-component {
+    display: flex;
+    flex-direction: column;
+    gap: $header-gap;
     margin: $match-analysis-component-margin;
 
     .match-analysis-header {
         display: flex;
         align-items: center;
         height: $header-height;
-        margin-bottom: $header-margin-bottom;
-
-        .back-button-container {
-            min-width: 120px;
-        }
 
         .game-information-container {
             display: flex;
@@ -69,11 +67,6 @@ $header-margin-bottom: 20px;
                 margin: 0;
             }
         }
-
-        .back-button-container,
-        .title {
-            flex-basis: 0;
-        }
     }
 
     .match-analysis-body {
@@ -81,7 +74,7 @@ $header-margin-bottom: 20px;
         flex-direction: column;
         gap: 20px;
 
-        height: calc(100vh - #{$match-analysis-component-margin} * 2 - #{$header-height} - #{$header-margin-bottom});
+        height: calc(100vh - #{$match-analysis-component-margin} * 2 - #{$header-height} - #{$header-gap});
 
         .video-and-actions {
             display: flex;
