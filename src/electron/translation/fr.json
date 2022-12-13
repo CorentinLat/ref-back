@@ -109,5 +109,11 @@
   "AGAINST_SCRUM": "Mêlée",
   "CONTINUED": "Suite",
   "GAME_DESCRIPTION": "Description du Jeu",
-  "GLOBAL_PERFORMANCE": "Performance Globale"
+  "GLOBAL_PERFORMANCE": "Performance Globale",
+  "NOTIFICATION_UPDATE_AVAILABLE_TITLE": "Nouvelle mise à jour !",
+  "NOTIFICATION_UPDATE_AVAILABLE_BODY": "La nouvelle mise à jour est en cours de téléchargement...",
+  "DIALOG_UPDATE_TITLE": "Mise à jour",
+  "DIALOG_UPDATE_MESSAGE": "La nouvelle version de l'application est téléchargée. Voulez-vous redémarrer pour l'installer maintenant ?",
+  "DIALOG_UPDATE_BUTTON_RESTART": "Redémarrer",
+  "DIALOG_UPDATE_BUTTON_LATER": "Plus tard"
 }
