@@ -199,9 +199,13 @@
           }
         }
       },
-      "FORM": {
+      "BUTTONS": {
         "ADD_DECISION": "Ajouter une décision",
-        "NAVIGATE_TO_SUMMARY": "Accéder au récapitulatif",
+        "NAVIGATE_TO_SUMMARY": "Récapitulatif",
+        "ENLARGE": "Agrandir",
+        "REDUCE": "Réduire"
+      },
+      "FORM": {
         "ADD": "Ajouter",
         "CANCEL": "Annuler",
         "UPDATE": "Mettre à jour",

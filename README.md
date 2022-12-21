@@ -1,6 +1,6 @@
 # Documentation pour les Utilisateurs
 
-[Documentation](https://github.com/CorentinLat/perf-arbitres-plus-plus/wiki)
+[Documentation](https://corentin-1.gitbook.io/perfarbitres++)
 
 ---
 

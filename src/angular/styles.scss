@@ -14,3 +14,11 @@ button.btn:focus {
         border-bottom: 1px solid rgba(0, 0, 0, 0.125);
     }
 }
+
+button.btn {
+    white-space: nowrap;
+
+    &.btn-link > .bi {
+        margin: 0 5px;
+    }
+}

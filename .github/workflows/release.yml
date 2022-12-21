@@ -60,6 +60,15 @@ jobs:
       - name: Build the app
         run: npm run package
 
+      - name: Sign executable
+        uses: sslcom/actions-codesigner@develop
+        with:
+          command: sign
+          username: ${{secrets.SSL_USERNAME}}
+          password: ${{secrets.SSL_PASSWORD}}
+          totp_secret: ${{secrets.SSL_TOTP_SECRET}}
+          file_path: release/build/PerfArbitresPlusPlus Setup ${{ needs.get-release-version.outputs.version }}.exe
+
       - name: Upload windows executable
         uses: actions/upload-artifact@v2
         with:

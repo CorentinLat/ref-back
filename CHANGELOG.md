@@ -8,6 +8,10 @@ et ce projet suit la [Gestion sémantique de version](https://semver.org/spec/v2
 - Pouvoir se connecter à l'application
 - Pouvoir récupérer automatiquement les données de la rencontre
 
+## [2.0.0] - 2022-12-21
+### Mis à jour
+- Utilisation d'un nouveau système pour mettre à jour l'application
+
 ## [1.5.0] - 2022-12-09
 ### Ajouté
 - Pouvoir ajouter des commentaires sur le match et la performance globale

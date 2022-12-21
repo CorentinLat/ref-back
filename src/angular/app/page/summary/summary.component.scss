@@ -81,6 +81,8 @@ $header-margin-bottom: 20px;
                 gap: 2rem;
 
                 .game-comment {
+                    display: flex;
+                    flex-direction: column;
                     flex-basis: 0;
                     flex-grow: 1;
                     text-align: justify;
