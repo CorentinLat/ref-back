@@ -21,7 +21,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Get Package Version
         id: package-version
@@ -36,10 +36,10 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Cache node modules
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         env:
           cache-name: cache-node-modules
         with:
@@ -50,7 +50,7 @@ jobs:
             ${{ runner.os }}-build-
             ${{ runner.os }}-
       - name: Use Node.js 16
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3
         with:
           node-version: 16
 
@@ -60,28 +60,47 @@ jobs:
       - name: Build the app
         run: npm run package
 
+      - name: Upload windows executable
+        uses: actions/upload-artifact@v3
+        with:
+          name: executable-win-${{ needs.get-release-version.outputs.version }}
+          path: release/build/PerfArbitresPlusPlus Setup ${{ needs.get-release-version.outputs.version }}.exe
+
+  sign-windows-executable:
+    needs:
+      - get-release-version
+      - build-windows-executable
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download windows executable
+        uses: actions/download-artifact@v3
+        with:
+          name: executable-win-${{ needs.get-release-version.outputs.version }}
+
       - name: Sign executable
-        uses: sslcom/actions-codesigner@develop
+        uses: corentinlat/actions-codesigner@develop
         with:
           command: sign
           username: ${{secrets.SSL_USERNAME}}
           password: ${{secrets.SSL_PASSWORD}}
           totp_secret: ${{secrets.SSL_TOTP_SECRET}}
-          file_path: release/build/PerfArbitresPlusPlus Setup ${{ needs.get-release-version.outputs.version }}.exe
+          file_path: PerfArbitresPlusPlus Setup ${{ needs.get-release-version.outputs.version }}.exe
 
-      - name: Upload windows executable
-        uses: actions/upload-artifact@v2
+      - name: Upload signed windows executable
+        uses: actions/upload-artifact@v3
         with:
-          name: executable-win-${{ needs.get-release-version.outputs.version }}
-          path: release/build/PerfArbitresPlusPlus Setup ${{ needs.get-release-version.outputs.version }}.exe
+          name: executable-win-sign-${{ needs.get-release-version.outputs.version }}
+          path: signed/PerfArbitresPlusPlus Setup ${{ needs.get-release-version.outputs.version }}.exe
 
   build-macos-executable:
     needs: get-release-version
 
-    runs-on: macos-latest
+    runs-on: macos-12
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       # https://docs.github.com/en/actions/deployment/deploying-xcode-applications/installing-an-apple-certificate-on-macos-runners-for-xcode-development
       - name: Install the Apple certificate
@@ -93,21 +112,17 @@ jobs:
           # create variables
           CERTIFICATE_PATH=$RUNNER_TEMP/build_certificate.p12
           KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
-
           # import certificate and provisioning profile from secrets
           echo -n "$BUILD_CERTIFICATE_BASE64" | base64 --decode --output $CERTIFICATE_PATH
-
           # create temporary keychain
           security create-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
           security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
           security unlock-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
-
           # import certificate to keychain
           security import $CERTIFICATE_PATH -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
           security list-keychain -d user -s $KEYCHAIN_PATH
-
       - name: Cache node modules
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         env:
           cache-name: cache-node-modules
         with:
@@ -118,7 +133,7 @@ jobs:
             ${{ runner.os }}-build-
             ${{ runner.os }}-
       - name: Use Node.js 16
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3
         with:
           node-version: 16
 
@@ -129,7 +144,7 @@ jobs:
         run: USE_HARD_LINKS=false npm run package
 
       - name: Upload mac executable
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: executable-mac-${{ needs.get-release-version.outputs.version }}
           path: release/build/PerfArbitresPlusPlus-${{ needs.get-release-version.outputs.version }}-mac.zip
@@ -137,13 +152,13 @@ jobs:
   build-linux-executable:
     needs: get-release-version
 
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Cache node modules
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         env:
           cache-name: cache-node-modules
         with:
@@ -154,7 +169,7 @@ jobs:
             ${{ runner.os }}-build-
             ${{ runner.os }}-
       - name: Use Node.js 16
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3
         with:
           node-version: 16
 
@@ -169,7 +184,7 @@ jobs:
         run: USE_HARD_LINKS=false npm run package
 
       - name: Upload linux executable
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: executable-linux-${{ needs.get-release-version.outputs.version }}
           path: release/build/PerfArbitresPlusPlus-${{ needs.get-release-version.outputs.version }}.AppImage
@@ -177,7 +192,7 @@ jobs:
   create-release:
     needs:
       - get-release-version
-      - build-windows-executable
+      - sign-windows-executable
       - build-macos-executable
       - build-linux-executable
 
@@ -185,17 +200,17 @@ jobs:
 
     steps:
       - name: Download windows executable
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
-          name: executable-win-${{ needs.get-release-version.outputs.version }}
+          name: executable-win-sign-${{ needs.get-release-version.outputs.version }}
 
       - name: Download mac executable
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: executable-mac-${{ needs.get-release-version.outputs.version }}
 
       - name: Download linux executable
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: executable-linux-${{ needs.get-release-version.outputs.version }}
 
@@ -206,5 +221,5 @@ jobs:
           commit: ${{ github.sha }}
           name: Perf'Arbitres++ ${{ needs.get-release-version.outputs.version }}
           artifacts: PerfArbitresPlusPlus Setup ${{ needs.get-release-version.outputs.version }}.exe,PerfArbitresPlusPlus-${{ needs.get-release-version.outputs.version }}-mac.zip,PerfArbitresPlusPlus-${{ needs.get-release-version.outputs.version }}.AppImage
-          draft: false
+          draft: true
           token: ${{ secrets.GITHUB_TOKEN }}
