@@ -6,6 +6,8 @@ import {
     MenuItemConstructorOptions,
 } from 'electron';
 
+import checkUpdates from './utils/update';
+
 interface DarwinMenuItemConstructorOptions extends MenuItemConstructorOptions {
     selector?: string;
     submenu?: DarwinMenuItemConstructorOptions[] | Menu;
@@ -136,6 +138,13 @@ export default class MenuBuilder {
                 },
                 { type: 'separator' },
                 {
+                    label: 'Vérifier les mises à jour',
+                    click() {
+                        checkUpdates();
+                    },
+                },
+                { type: 'separator' },
+                {
                     label: 'Contribuer',
                     click() {
                         shell.openExternal('https://github.com/CorentinLat/perf-arbitres-plus-plus');
@@ -222,6 +231,12 @@ export default class MenuBuilder {
                         label: 'Documentation',
                         click() {
                             shell.openExternal('https://github.com/CorentinLat/perf-arbitres-plus-plus/wiki');
+                        },
+                    },
+                    {
+                        label: 'Vérifier les mises à jour',
+                        click() {
+                            checkUpdates();
                         },
                     },
                     {

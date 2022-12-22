@@ -19,6 +19,11 @@ export default function checkUpdates() {
             }).show();
         }
     });
+    autoUpdater.on('update-not-available', () => {
+        if (Notification.isSupported()) {
+            new Notification({ title: translate('NOTIFICATION_UPDATE_NOT_AVAILABLE_TITLE') }).show();
+        }
+    });
     autoUpdater.on('update-downloaded', (_e, _r, releaseName) => {
         const dialogOpts = {
             type: 'info',
