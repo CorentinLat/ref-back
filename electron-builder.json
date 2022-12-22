@@ -11,7 +11,7 @@
   "afterSign": ".erb/scripts/notarize.js",
   "mac": {
     "target": {
-      "target": "default",
+      "target": "zip",
       "arch": ["x64"]
     },
     "category": "public.app-category.sports",
@@ -21,29 +21,14 @@
     "entitlementsInherit": "assets/entitlements.mac.plist",
     "gatekeeperAssess": false
   },
-  "dmg": {
-    "contents": [
-      {
-        "x": 130,
-        "y": 220
-      },
-      {
-        "x": 410,
-        "y": 220,
-        "type": "link",
-        "path": "/Applications"
-      }
-    ]
-  },
   "win": {
-    "target": [
-      "nsis"
-    ]
+    "target": "nsis"
+  },
+  "nsis": {
+    "language": "040C"
   },
   "linux": {
-    "target": [
-      "AppImage"
-    ],
+    "target": "AppImage",
     "category": "Development"
   },
   "directories": {
