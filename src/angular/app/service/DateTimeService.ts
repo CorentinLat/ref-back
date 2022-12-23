@@ -18,4 +18,14 @@ export class DateTimeService {
 
         return lastSunday.toISOString().split('T')[0];
     }
+
+    getCurrentSeasonYears(): string {
+        const newSeasonStartMonth = 7;
+        const today = new Date();
+        const currentYear = today.getFullYear();
+        const currentMonth = today.getMonth() + 1;
+        const currentSeasonStartYear = currentMonth >= newSeasonStartMonth ? currentYear : currentYear - 1;
+        const currentSeasonEndYear = currentSeasonStartYear + 1;
+        return `${currentSeasonStartYear}${currentSeasonEndYear.toString().slice(-2)}`;
+    }
 }

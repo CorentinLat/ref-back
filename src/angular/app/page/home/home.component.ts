@@ -55,7 +55,7 @@ export class HomeComponent implements OnInit, OnDestroy {
         video: new FormControl(null, Validators.required),
     });
 
-    readonly gameNumberPrefix = '202223';
+    readonly gameNumberPrefix = this.dateService.getCurrentSeasonYears();
     readonly gameNumberSuffix = 'RCT';
 
     files: File[] = [];
