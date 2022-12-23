@@ -1,6 +1,6 @@
 {
   "name": "perf-arbitres-plus-plus",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "",
   "repository": "https://github.com/CorentinLat/perf-arbitres-plus-plus",
   "main": "./dist/electron/main.js",
