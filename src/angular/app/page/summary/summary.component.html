@@ -38,8 +38,8 @@
         </section>
 
         <article class="summary-buttons">
-            <div ngbDropdown class="d-inline-block">
-                <button class="btn btn-primary" [disabled]="isDownloadingVideo" ngbDropdownToggle>
+            <div ngbDropdown class="d-inline-block" *ngIf="exposeHasClips()">
+                <button ngbDropdownToggle class="btn btn-primary" [disabled]="isDownloadingVideo">
                     {{ 'PAGE.SUMMARY.BUTTONS.DOWNLOAD_VIDEO' | translate }}
                     <i class="bi bi-camera-video mx-1" *ngIf="!isDownloadingVideo"></i>
                     <article
@@ -60,6 +60,20 @@
                     </button>
                 </div>
             </div>
+            <button
+                class="btn btn-primary"
+                *ngIf="!exposeHasClips()"
+                (click)="handleDownloadVideoGame()"
+                [disabled]="isDownloadingVideo"
+            >
+                {{ 'PAGE.SUMMARY.BUTTONS.DOWNLOAD_VIDEO' | translate }}
+                <i class="bi bi-camera-video mx-1" *ngIf="!isDownloadingVideo"></i>
+                <article
+                    class="spinner-border spinner-border-sm"
+                    role="status"
+                    *ngIf="isDownloadingVideo"
+                ></article>
+            </button>
             <button
                 class="btn btn-primary"
                 [disabled]="isDownloadingSummary || !exposeHasDecisions()"

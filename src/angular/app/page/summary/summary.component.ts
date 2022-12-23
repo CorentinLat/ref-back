@@ -109,6 +109,10 @@ export class SummaryComponent implements OnInit {
         this.navigateToHome();
     }
 
+    exposeHasClips(): boolean {
+        return this.game.actions.some(action => action.clip);
+    }
+
     exposeHasDecisions(): boolean {
         return Boolean(this.game?.actions?.length);
     }
