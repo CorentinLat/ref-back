@@ -5,7 +5,8 @@ import logger from './logger';
 import translate from '../translation';
 
 export function checkUpdatesAtStart() {
-    autoUpdater.on('checking-for-update', () => logger.info('Checking for update...'));
+    autoUpdater.logger = logger;
+
     autoUpdater.on('update-available', () => {
         if (Notification.isSupported()) {
             new Notification({
@@ -44,6 +45,13 @@ export function checkUpdates(manual = false) {
             }
         });
     }
+
+    autoUpdater.setFeedURL({
+        provider: 'github',
+        owner: 'CorentinLat',
+        repo: 'perf-arbitres-plus-plus',
+        vPrefixedTagName: false,
+    });
 
     autoUpdater
         .checkForUpdates()
