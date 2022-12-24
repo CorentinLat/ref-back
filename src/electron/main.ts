@@ -5,12 +5,10 @@ import createWindow from './window';
 
 import logger from './utils/logger';
 import { checkMandatoryFolderExists } from './utils/path';
-import checkUpdates from './utils/update';
+import { checkUpdatesAtStart } from './utils/update';
 
-checkUpdates();
 checkMandatoryFolderExists();
 router(ipcMain);
-
 app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {
         app.quit();
@@ -22,6 +20,8 @@ try {
     app
         .whenReady()
         .then(() => {
+            checkUpdatesAtStart();
+
             protocol.registerFileProtocol('video', (request, callback) => {
                 const path = request.url.replace('video://', '');
                 callback({ path });

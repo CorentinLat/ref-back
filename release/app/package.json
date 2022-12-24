@@ -1,6 +1,6 @@
 {
   "name": "perf-arbitres-plus-plus",
-  "version": "2.1.0",
+  "version": "2.0.0",
   "description": "",
   "repository": "https://github.com/CorentinLat/perf-arbitres-plus-plus",
   "main": "./dist/electron/main.js",
@@ -11,10 +11,12 @@
   },
   "dependencies": {
     "check-disk-space": "^3.3.1",
+    "electron-updater": "^5.3.0",
     "ffmpeg-static-electron": "^2.0.3",
     "ffprobe-static-electron": "^2.0.2",
     "fluent-ffmpeg": "^2.1.2",
     "pdfkit": "0.13.0",
+    "rxjs": "7.5.5",
     "uuid": "^8.3.2",
     "winston": "^3.8.1"
   },
