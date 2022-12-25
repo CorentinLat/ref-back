@@ -22,7 +22,10 @@
     "gatekeeperAssess": false
   },
   "win": {
-    "target": "nsis"
+    "artifactName": "${productName}-Setup-${version}.${ext}",
+    "target": "nsis",
+    "sign": ".erb/scripts/signWindows.js",
+    "signingHashAlgorithms": ["sha256"]
   },
   "nsis": {
     "language": "1036"
