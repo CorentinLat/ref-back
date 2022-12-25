@@ -122,9 +122,9 @@ export class AddEditActionComponent implements OnInit, OnDestroy {
         if (this.actionForm.invalid) {return;}
 
         const newAction: NewAction = this.actionForm.value;
-        if (!this.createClip) {
-            delete newAction.clip;
-        }
+
+        if (!this.exposeDisplayCardInput()) { delete newAction.card; }
+        if (!this.createClip) { delete newAction.clip; }
 
         return this.action ? this.editAction(newAction) : this.addAction(newAction);
     }

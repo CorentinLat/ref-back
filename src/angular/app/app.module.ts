@@ -21,7 +21,7 @@ import { CollapseDisplayActionsComponent } from './page/match-analysis/actions/c
 import { FullDisplayActionsComponent } from './page/match-analysis/actions/full-display/full-display-actions.component';
 import { ActionFullComponent } from './page/match-analysis/actions/full-display/action/action-full.component';
 import { HandleMatchAnalysisComponent } from './page/match-analysis/handle-match-analysis/handle-match-analysis.component';
-import { AddEditActionComponent } from './page/match-analysis/handle-match-analysis/add-action/add-edit-action.component';
+import { AddEditActionComponent } from './page/match-analysis/handle-match-analysis/add-edit-action/add-edit-action.component';
 import { SummaryComponent } from './page/summary/summary.component';
 import { StatisticsComponent } from './page/summary/statistics/statistics.component';
 
