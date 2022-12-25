@@ -16,6 +16,9 @@ env:
   APPLE_ID: ${{ secrets.APPLE_ID }}
   APPLE_ID_PASS: ${{ secrets.APPLE_ID_PASS }}
   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  SSL_USERNAME: ${{ secrets.SSL_USERNAME }}
+  SSL_PASSWORD: ${{ secrets.SSL_PASSWORD }}
+  SSL_TOTP_SECRET: ${{ secrets.SSL_TOTP_SECRET }}
 
 jobs:
   get-release-version:
