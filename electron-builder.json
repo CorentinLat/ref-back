@@ -1,7 +1,7 @@
 {
   "productName": "PerfArbitresPlusPlus",
   "appId": "fr.corentinlat.perf-arbitres-plus-plus",
-  "asar": false,
+  "asar": true,
   "asarUnpack": "**\\*.{node,dll}",
   "files": [
     "dist",
@@ -22,10 +22,13 @@
     "gatekeeperAssess": false
   },
   "win": {
-    "target": "nsis"
+    "artifactName": "${productName}-Setup-${version}.${ext}",
+    "target": "nsis",
+    "sign": ".erb/scripts/signWindows.js",
+    "signingHashAlgorithms": ["sha256"]
   },
   "nsis": {
-    "language": "040C"
+    "language": "1036"
   },
   "linux": {
     "target": "AppImage",
@@ -41,7 +44,9 @@
   ],
   "publish": {
     "provider": "github",
-    "owner": "corentin.latappy",
-    "repo": "perf-arbitres-plus-plus"
+    "owner": "CorentinLat",
+    "repo": "perf-arbitres-plus-plus",
+    "private": false,
+    "vPrefixedTagName": false
   }
 }

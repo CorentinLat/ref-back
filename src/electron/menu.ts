@@ -6,7 +6,7 @@ import {
     MenuItemConstructorOptions,
 } from 'electron';
 
-import checkUpdates from './utils/update';
+import { checkUpdates } from './utils/update';
 
 interface DarwinMenuItemConstructorOptions extends MenuItemConstructorOptions {
     selector?: string;
@@ -140,7 +140,7 @@ export default class MenuBuilder {
                 {
                     label: 'Vérifier les mises à jour',
                     click() {
-                        checkUpdates();
+                        checkUpdates(true);
                     },
                 },
                 { type: 'separator' },
@@ -236,7 +236,7 @@ export default class MenuBuilder {
                     {
                         label: 'Vérifier les mises à jour',
                         click() {
-                            checkUpdates();
+                            checkUpdates(true);
                         },
                     },
                     {

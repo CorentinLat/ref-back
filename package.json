@@ -1,6 +1,6 @@
 {
   "name": "perf-arbitres-plus-plus",
-  "version": "2.1.0",
+  "version": "2.0.0",
   "description": "",
   "repository": "https://github.com/CorentinLat/perf-arbitres-plus-plus",
   "homepage": "https://github.com/CorentinLat/perf-arbitres-plus-plus",
@@ -20,7 +20,8 @@
     "angular:build": "ng build --base-href ./ -c web-production",
     "angular:serve": "ng serve -c web",
     "postinstall": "ts-node .erb/scripts/check-native-dep.js && electron-builder install-app-deps",
-    "package": "ts-node ./.erb/scripts/clean.js dist && npm run build && electron-builder build --publish never",
+    "package": "ts-node ./.erb/scripts/clean.js dist && npm run build && electron-builder build -p never",
+    "publish": "ts-node ./.erb/scripts/clean.js dist && npm run build && electron-builder build -l -m -w -p always",
     "rebuild": "electron-rebuild --parallel --types prod,dev,optional --module-dir release/app"
   },
   "dependencies": {
@@ -40,6 +41,7 @@
     "@videogular/ngx-videogular": "5.0.1",
     "bootstrap": "5.1.3",
     "bootstrap-icons": "1.9.1",
+    "electron-updater": "5.3.0",
     "rxjs": "7.5.5",
     "tslib": "^2.1.0",
     "zone.js": "~0.11.5"
@@ -74,7 +76,6 @@
     "electron-notarize": "^1.2.1",
     "electron-rebuild": "^3.2.7",
     "electron-reloader": "1.2.3",
-    "electron-updater": "^5.0.3",
     "electronmon": "^2.0.2",
     "eslint": "8.12.0",
     "eslint-plugin-import": "2.25.4",

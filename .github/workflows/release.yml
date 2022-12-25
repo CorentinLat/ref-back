@@ -15,6 +15,10 @@ env:
   CI: true
   APPLE_ID: ${{ secrets.APPLE_ID }}
   APPLE_ID_PASS: ${{ secrets.APPLE_ID_PASS }}
+  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  SSL_USERNAME: ${{ secrets.SSL_USERNAME }}
+  SSL_PASSWORD: ${{ secrets.SSL_PASSWORD }}
+  SSL_TOTP_SECRET: ${{ secrets.SSL_TOTP_SECRET }}
 
 jobs:
   get-release-version:
@@ -30,71 +34,7 @@ jobs:
     outputs:
       version: ${{ steps.package-version.outputs.current-version }}
 
-  build-windows-executable:
-    needs: get-release-version
-
-    runs-on: windows-latest
-
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Cache node modules
-        uses: actions/cache@v3
-        env:
-          cache-name: cache-node-modules
-        with:
-          path: node_modules
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}-
-            ${{ runner.os }}-build-
-            ${{ runner.os }}-
-      - name: Use Node.js 16
-        uses: actions/setup-node@v3
-        with:
-          node-version: 16
-
-      - name: Install Dependencies
-        run: npm i
-
-      - name: Build the app
-        run: npm run package
-
-      - name: Upload windows executable
-        uses: actions/upload-artifact@v3
-        with:
-          name: executable-win-${{ needs.get-release-version.outputs.version }}
-          path: release/build/PerfArbitresPlusPlus Setup ${{ needs.get-release-version.outputs.version }}.exe
-
-  sign-windows-executable:
-    needs:
-      - get-release-version
-      - build-windows-executable
-
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Download windows executable
-        uses: actions/download-artifact@v3
-        with:
-          name: executable-win-${{ needs.get-release-version.outputs.version }}
-
-      - name: Sign executable
-        uses: corentinlat/actions-codesigner@develop
-        with:
-          command: sign
-          username: ${{secrets.SSL_USERNAME}}
-          password: ${{secrets.SSL_PASSWORD}}
-          totp_secret: ${{secrets.SSL_TOTP_SECRET}}
-          file_path: PerfArbitresPlusPlus Setup ${{ needs.get-release-version.outputs.version }}.exe
-
-      - name: Upload signed windows executable
-        uses: actions/upload-artifact@v3
-        with:
-          name: executable-win-sign-${{ needs.get-release-version.outputs.version }}
-          path: signed/PerfArbitresPlusPlus Setup ${{ needs.get-release-version.outputs.version }}.exe
-
-  build-macos-executable:
+  build-application:
     needs: get-release-version
 
     runs-on: macos-12
@@ -112,15 +52,19 @@ jobs:
           # create variables
           CERTIFICATE_PATH=$RUNNER_TEMP/build_certificate.p12
           KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
+
           # import certificate and provisioning profile from secrets
           echo -n "$BUILD_CERTIFICATE_BASE64" | base64 --decode --output $CERTIFICATE_PATH
+
           # create temporary keychain
           security create-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
           security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
           security unlock-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+
           # import certificate to keychain
           security import $CERTIFICATE_PATH -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
           security list-keychain -d user -s $KEYCHAIN_PATH
+
       - name: Cache node modules
         uses: actions/cache@v3
         env:
@@ -141,85 +85,4 @@ jobs:
         run: npm i && npm i -D cli-truncate iconv-corefoundation
 
       - name: Build the app
-        run: USE_HARD_LINKS=false npm run package
-
-      - name: Upload mac executable
-        uses: actions/upload-artifact@v3
-        with:
-          name: executable-mac-${{ needs.get-release-version.outputs.version }}
-          path: release/build/PerfArbitresPlusPlus-${{ needs.get-release-version.outputs.version }}-mac.zip
-
-  build-linux-executable:
-    needs: get-release-version
-
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Cache node modules
-        uses: actions/cache@v3
-        env:
-          cache-name: cache-node-modules
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}-
-            ${{ runner.os }}-build-
-            ${{ runner.os }}-
-      - name: Use Node.js 16
-        uses: actions/setup-node@v3
-        with:
-          node-version: 16
-
-      - name: Install linux dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libgtk-3-dev webkit2gtk-4.0 libappindicator3-dev librsvg2-dev patchelf
-      - name: Install Dependencies
-        run: npm i
-
-      - name: Build the app
-        run: USE_HARD_LINKS=false npm run package
-
-      - name: Upload linux executable
-        uses: actions/upload-artifact@v3
-        with:
-          name: executable-linux-${{ needs.get-release-version.outputs.version }}
-          path: release/build/PerfArbitresPlusPlus-${{ needs.get-release-version.outputs.version }}.AppImage
-
-  create-release:
-    needs:
-      - get-release-version
-      - sign-windows-executable
-      - build-macos-executable
-      - build-linux-executable
-
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Download windows executable
-        uses: actions/download-artifact@v3
-        with:
-          name: executable-win-sign-${{ needs.get-release-version.outputs.version }}
-
-      - name: Download mac executable
-        uses: actions/download-artifact@v3
-        with:
-          name: executable-mac-${{ needs.get-release-version.outputs.version }}
-
-      - name: Download linux executable
-        uses: actions/download-artifact@v3
-        with:
-          name: executable-linux-${{ needs.get-release-version.outputs.version }}
-
-      - name: Create Release with executables
-        uses: ncipollo/release-action@v1
-        with:
-          tag: ${{ needs.get-release-version.outputs.version }}
-          commit: ${{ github.sha }}
-          name: Perf'Arbitres++ ${{ needs.get-release-version.outputs.version }}
-          artifacts: PerfArbitresPlusPlus Setup ${{ needs.get-release-version.outputs.version }}.exe,PerfArbitresPlusPlus-${{ needs.get-release-version.outputs.version }}-mac.zip,PerfArbitresPlusPlus-${{ needs.get-release-version.outputs.version }}.AppImage
-          draft: true
-          token: ${{ secrets.GITHUB_TOKEN }}
+        run: USE_HARD_LINKS=false npm run publish

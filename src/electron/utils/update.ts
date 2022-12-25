@@ -1,16 +1,12 @@
-import { Notification, app, autoUpdater, dialog } from 'electron';
+import { Notification, dialog } from 'electron';
+import { autoUpdater } from 'electron-updater';
 
 import logger from './logger';
 import translate from '../translation';
 
-export default function checkUpdates() {
-    const server = 'https://perf-arbitres-plus-plus-release-server.vercel.app';
-    const url = `${server}/update/${process.platform}/${app.getVersion()}`;
+export function checkUpdatesAtStart() {
+    autoUpdater.logger = logger;
 
-    autoUpdater.setFeedURL({ url });
-
-    autoUpdater.on('error', (err) => logger.error(err));
-    autoUpdater.on('checking-for-update', () => logger.info('Checking for update...'));
     autoUpdater.on('update-available', () => {
         if (Notification.isSupported()) {
             new Notification({
@@ -19,12 +15,7 @@ export default function checkUpdates() {
             }).show();
         }
     });
-    autoUpdater.on('update-not-available', () => {
-        if (Notification.isSupported()) {
-            new Notification({ title: translate('NOTIFICATION_UPDATE_NOT_AVAILABLE_TITLE') }).show();
-        }
-    });
-    autoUpdater.on('update-downloaded', (_e, _r, releaseName) => {
+    autoUpdater.on('update-downloaded', ({ releaseName }) => {
         const dialogOpts = {
             type: 'info',
             buttons: [
@@ -43,5 +34,26 @@ export default function checkUpdates() {
             });
     });
 
-    autoUpdater.checkForUpdates();
+    checkUpdates();
+}
+
+export function checkUpdates(manual = false) {
+    if (manual) {
+        autoUpdater.once('update-not-available', () => {
+            if (Notification.isSupported()) {
+                new Notification({ title: translate('NOTIFICATION_UPDATE_NOT_AVAILABLE_TITLE') }).show();
+            }
+        });
+    }
+
+    autoUpdater.setFeedURL({
+        provider: 'github',
+        owner: 'CorentinLat',
+        repo: 'perf-arbitres-plus-plus',
+        vPrefixedTagName: false,
+    });
+
+    autoUpdater
+        .checkForUpdates()
+        .catch((err) => logger.error(err));
 }
