@@ -1,6 +1,6 @@
 {
-  "productName": "PerfArbitresPlusPlus",
-  "appId": "fr.corentinlat.perf-arbitres-plus-plus",
+  "productName": "RefBack",
+  "appId": "fr.corentinlat.ref-back",
   "asar": true,
   "asarUnpack": "**\\*.{node,dll}",
   "files": [
@@ -45,7 +45,7 @@
   "publish": {
     "provider": "github",
     "owner": "CorentinLat",
-    "repo": "perf-arbitres-plus-plus",
+    "repo": "ref-back",
     "private": false,
     "vPrefixedTagName": false
   }

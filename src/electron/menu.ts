@@ -52,15 +52,15 @@ export default class MenuBuilder {
 
     buildDarwinTemplate(): MenuItemConstructorOptions[] {
         const subMenuAbout: DarwinMenuItemConstructorOptions = {
-            label: 'Perf\'Arbitres++',
+            label: 'Ref\'Back',
             submenu: [
                 {
-                    label: 'À propos de Perf\'Arbitres++',
+                    label: 'À propos de Ref\'Back',
                     selector: 'orderFrontStandardAboutPanel:',
                 },
                 { type: 'separator' },
                 {
-                    label: 'Masquer Perf\'Arbitres++',
+                    label: 'Masquer Ref\'Back',
                     accelerator: 'Command+H',
                     selector: 'hide:',
                 },
@@ -133,7 +133,7 @@ export default class MenuBuilder {
                 {
                     label: 'Documentation',
                     click() {
-                        shell.openExternal('https://github.com/CorentinLat/perf-arbitres-plus-plus/wiki');
+                        shell.openExternal('https://corentin-1.gitbook.io/ref-back');
                     },
                 },
                 { type: 'separator' },
@@ -147,13 +147,13 @@ export default class MenuBuilder {
                 {
                     label: 'Contribuer',
                     click() {
-                        shell.openExternal('https://github.com/CorentinLat/perf-arbitres-plus-plus');
+                        shell.openExternal('https://github.com/CorentinLat/ref-back');
                     },
                 },
                 {
                     label: 'Suggestion ?',
                     click() {
-                        shell.openExternal('https://github.com/CorentinLat/perf-arbitres-plus-plus/issues');
+                        shell.openExternal('https://github.com/CorentinLat/ref-back/issues');
                     },
                 },
             ],
@@ -230,7 +230,7 @@ export default class MenuBuilder {
                     {
                         label: 'Documentation',
                         click() {
-                            shell.openExternal('https://github.com/CorentinLat/perf-arbitres-plus-plus/wiki');
+                            shell.openExternal('https://corentin-1.gitbook.io/ref-back');
                         },
                     },
                     {
@@ -242,13 +242,13 @@ export default class MenuBuilder {
                     {
                         label: 'Contribuer',
                         click() {
-                            shell.openExternal('https://github.com/CorentinLat/perf-arbitres-plus-plus');
+                            shell.openExternal('https://github.com/CorentinLat/ref-back');
                         },
                     },
                     {
                         label: 'Suggestion ?',
                         click() {
-                            shell.openExternal('https://github.com/CorentinLat/perf-arbitres-plus-plus/issues');
+                            shell.openExternal('https://github.com/CorentinLat/ref-back/issues');
                         },
                     },
                 ],

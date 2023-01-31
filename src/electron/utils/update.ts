@@ -49,7 +49,7 @@ export function checkUpdates(manual = false) {
     autoUpdater.setFeedURL({
         provider: 'github',
         owner: 'CorentinLat',
-        repo: 'perf-arbitres-plus-plus',
+        repo: 'ref-back',
         vPrefixedTagName: false,
     });
 

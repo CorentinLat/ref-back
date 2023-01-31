@@ -1,6 +1,6 @@
 # Documentation pour les Utilisateurs
 
-[Documentation](https://corentin-1.gitbook.io/perfarbitres++)
+[Documentation](https://corentin-1.gitbook.io/ref-back)
 
 ---
 
@@ -12,7 +12,7 @@
 [![Make a pull request](https://img.shields.io/badge/PRs-welcome-red.svg)](http://makeapullrequest.com)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE.md)
 
-[![Perf'Arbitres++ Release](https://github.com/CorentinLat/perf-arbitres-plus-plus/actions/workflows/release.yml/badge.svg)](https://github.com/CorentinLat/perf-arbitres-plus-plus/actions/workflows/release.yml)
+[![Ref'Back Release](https://github.com/CorentinLat/ref-back/actions/workflows/release.yml/badge.svg)](https://github.com/CorentinLat/ref-back/actions/workflows/release.yml)
 
 ## Introduction
 
@@ -32,7 +32,7 @@ Currently runs with:
 *Clone this repository locally:*
 
 ``` bash
-git clone https://github.com/CorentinLat/perf-arbitres-plus-plus
+git clone https://github.com/CorentinLat/ref-back
 ```
 
 *Install dependencies with npm (used by Electron renderer process):*
