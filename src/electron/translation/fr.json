@@ -81,6 +81,7 @@
   "LEAVE_LINE_OUT": "Quittent alignement",
   "SACKING": "Sacking sur lifteur",
   "NOT_STRAIGHT": "Lancer pas droit",
+  "TOO_MUCH_PLAYERS": "Surnombre de joueurs",
   "NO_RETURN": "Pas de retour",
   "BAD_RETURN": "Retour erroné",
   "OTHER": "Autre faute",

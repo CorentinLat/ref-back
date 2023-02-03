@@ -18,9 +18,10 @@
             text-overflow: ellipsis;
             white-space: nowrap;
 
-            &.actions, &.against, &.minute, &.precise { flex-grow: 1; }
+            &.against, &.minute, &.precise { flex-grow: 1; }
             &.type, &.sector { flex-grow: 2; }
             &.comment, &.fault { flex-grow: 3; }
+            &.actions { min-width: 90px; }
         }
     }
 

@@ -86,6 +86,7 @@ export const actionFaults = {
         'SACKING',
         'TOUCH',
         'NOT_STRAIGHT',
+        'TOO_MUCH_PLAYERS',
     ],
     ADVANTAGE: [
         'NO_RETURN',

@@ -1,12 +1,12 @@
 {
-  "name": "perf-arbitres-plus-plus",
-  "version": "2.1.0",
+  "name": "ref-back",
+  "version": "3.0.0",
   "author": {
     "name": "Corentin LATAPPY",
     "email": "corentin.lat@gmail.com"
   },
-  "description": "L'application Perf'Arbitres++ a pour but de vous aider à réaliser vos feedbacks de match.",
-  "repository": "https://github.com/CorentinLat/perf-arbitres-plus-plus",
+  "description": "L'application Ref'Back a pour but de vous aider à réaliser vos feedbacks de match.",
+  "repository": "https://github.com/CorentinLat/ref-back",
   "main": "./dist/electron/main.js",
   "scripts": {
     "electron-rebuild": "node -r ts-node/register ../../.erb/scripts/electron-rebuild.js",
