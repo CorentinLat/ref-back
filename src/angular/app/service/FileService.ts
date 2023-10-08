@@ -3,7 +3,7 @@ import path from 'path';
 
 @Injectable({ providedIn: 'root' })
 export class FileService {
-    private readonly supportedVideoExtensions: string[] = ['mp4', 'mkv', 'mov', 'avi', 'webm', 'ogg'];
+    private readonly supportedVideoExtensions: string[] = ['mp4', 'mkv', 'mov', 'avi', 'webm', 'ogg', 'mts'];
 
     isFileSupported({ name }: File) {
         const regexResult = /\.(?<extension>[a-zA-Z\d]+)$/.exec(name);

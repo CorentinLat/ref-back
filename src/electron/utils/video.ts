@@ -113,7 +113,7 @@ export async function generateGameClips(game: Game, destClipsDirectory: string):
     }));
 }
 
-function generateVideoName(extension: string = 'mp4'): string {
+function generateVideoName(extension: string = 'webm'): string {
     return `${Date.now().toString(10)}.${extension}`;
 }
 
