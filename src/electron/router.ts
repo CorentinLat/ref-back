@@ -2,6 +2,8 @@ import { app, shell } from 'electron';
 import IpcMain = Electron.IpcMain;
 import IpcMainEvent = Electron.IpcMainEvent;
 
+import CancelVideoCommandException from './exception/CancelVideoCommandException';
+
 import { askSaveDirectory, askSaveVideoPath } from './utils/dialog';
 import {
     Action,
@@ -21,6 +23,7 @@ import { checkGameFolderExists, getExistingGameFolders } from './utils/path';
 import { generatePdfSummary } from './utils/pdf';
 import hasEnoughRemainingSpaceForFilePaths from './utils/storage';
 import {
+    cancelCurrentVideoCommand,
     concatVideos,
     copyGameVideoToPath,
     copyVideoToUserDataPath,
@@ -31,6 +34,7 @@ import {
 export default function(ipcMain: IpcMain) {
     ipcMain.on('init_app', onInitAppListener);
     ipcMain.on('create_new_game', onCreateNewGameListener);
+    ipcMain.on('cancel_game_creation', onCancelGameCreationListener);
     ipcMain.on('get_game', onGetGameListener);
     ipcMain.on('update_game_comment', onUpdateGameCommentListener);
     ipcMain.on('remove_game', onRemoveGameListener);
@@ -89,8 +93,30 @@ const onCreateNewGameListener = async (event: IpcMainEvent, { force, gameInforma
         event.reply('create_new_game_succeeded', gameNumber);
     } catch (error) {
         removeGame(gameNumber);
+
+        if (error instanceof CancelVideoCommandException) {
+            logger.info('Create new game cancelled');
+            event.reply('create_new_game_failed', { cancelled: true });
+            return;
+        }
+
         logger.error(`error OnCreateNewGameListener: ${error}`);
         event.reply('create_new_game_failed', error);
+    }
+};
+
+type OnCancelGameCreationListenerArgs = { gameNumber: string };
+const onCancelGameCreationListener = async (event: IpcMainEvent, { gameNumber }: OnCancelGameCreationListenerArgs) => {
+    logger.debug('OnCancelGameCreationListener');
+
+    try {
+        cancelCurrentVideoCommand();
+        removeGame(gameNumber);
+
+        event.reply('cancel_game_creation_succeeded');
+    } catch (error) {
+        logger.error(`error OnCancelGameCreationListener: ${error}`);
+        event.reply('cancel_game_creation_failed', error);
     }
 };
 

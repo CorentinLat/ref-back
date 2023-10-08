@@ -289,6 +289,9 @@
       "PROCESS_GAME_COMMENT": "Impossible de mettre à jour le commentaire...",
       "PROCESS_VIDEO": "Impossible de traiter les vidéos..."
     },
+    "INFO": {
+      "PROCESS_VIDEO_CANCELLED": "Import annulé !"
+    },
     "SUCCESS": {
       "PROCESS_ACTION_ADDED": "Action ajoutée !",
       "PROCESS_ACTION_EDITED": "Action mise à jour !",

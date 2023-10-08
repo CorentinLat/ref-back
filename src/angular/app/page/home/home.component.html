@@ -182,7 +182,7 @@
             </button>
         </article>
 
-        <article class="d-flex flex-column align-items-center mt-3" *ngIf="isProcessingVideos">
+        <article class="d-flex flex-row align-items-center gap-3 mt-3" *ngIf="isProcessingVideos">
             <ngb-progressbar
                 class="w-100"
                 type="success"
@@ -193,6 +193,10 @@
             >
                 <i>{{ progress }}%</i>
             </ngb-progressbar>
+
+            <button class="btn btn-outline-danger" (click)="handleCancelGameCreation()">
+                <i class="bi bi-x-lg"></i>
+            </button>
         </article>
     </form>
 

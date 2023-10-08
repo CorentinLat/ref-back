@@ -10,45 +10,67 @@ import logger from './logger';
 import { copyFileToPath, extractFileExtension } from './file';
 import { workPath } from './path';
 
+import CancelVideoCommandException from '../exception/CancelVideoCommandException';
+
 FluentFFMPEG.setFfmpegPath(ffmpegElectron.path);
 FluentFFMPEG.setFfprobePath(ffprobeElectron.path);
 
 const SUPPORTED_HTML_VIDEO_EXTENSIONS = ['mp4', 'webm', 'ogg'];
+
+let currentCommand: FluentFFMPEG.FfmpegCommand | null = null;
 
 export async function concatVideos(gameNumber: string, videoPaths: string[], event: IpcMainEvent): Promise<string> {
     logger.info(`Concat videos: ${videoPaths.join(', ')}`);
 
     const videoExtensions = new Set<string>();
     videoPaths.forEach(videoPath => videoExtensions.add(extractFileExtension(videoPath)));
-    if (videoExtensions.size > 1) {
-        throw new Error();
-    }
+    if (videoExtensions.size > 1) { throw new Error(); }
 
     const videoName: string = generateVideoName();
     const outputFileName = path.join(workPath, gameNumber, videoName);
 
     const totalDuration = await computeTotalDurationOfVideos(videoPaths);
 
-    const command = FluentFFMPEG();
-    videoPaths.forEach(videoPath => command.input(videoPath));
+    currentCommand = FluentFFMPEG();
+
+    // @ts-ignore
+    videoPaths.forEach(videoPath => currentCommand.input(videoPath));
     return new Promise((resolve, reject) => {
-        command
+        // @ts-ignore
+        currentCommand
             .on('progress', (progress: { timemark: string }) => {
                 const currentSeconds = extractNumberOfSecondsFromTimeMark(progress.timemark);
                 const percentageDone = Math.min(currentSeconds / totalDuration * 100, 100);
                 event.reply('videos_progress', percentageDone);
             })
             .on('error', (err: Error) => {
+                if (!currentCommand) { return; }
+                currentCommand = null;
+
+                if (err.message.includes('SIGKILL')) {
+                    logger.info(`Concat videos cancelled: ${outputFileName}`);
+                    reject(new CancelVideoCommandException());
+                }
+
                 logger.error(`error concatVideos: ${err}`);
                 reject(err);
             })
             .on('end', () => {
                 logger.info(`Concat videos succeeded: ${outputFileName}`);
+
+                currentCommand = null;
                 resolve(outputFileName);
             })
             .videoBitrate('4600k')
             .mergeToFile(outputFileName);
     });
+}
+
+export function cancelCurrentVideoCommand(): void {
+    if (currentCommand) {
+        currentCommand.kill('SIGKILL');
+        currentCommand = null;
+    }
 }
 
 export async function copyVideoToUserDataPath(gameNumber: string, videoPath: string, event: IpcMainEvent): Promise<string> {

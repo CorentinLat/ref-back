@@ -197,6 +197,12 @@ export class HomeComponent implements OnInit, OnDestroy {
         this.electron.openUrlInBrowser(url);
     }
 
+    handleCancelGameCreation() {
+        if (!this.isProcessingVideos) { return; }
+
+        this.electron.cancelGameCreation(this.getGameNumber());
+    }
+
     private handleProcessVideosFailed = (error: any) => {
         this.isProcessingVideos = false;
 
@@ -217,6 +223,8 @@ export class HomeComponent implements OnInit, OnDestroy {
         } else if (error?.notEnoughSpace) {
             this.modalService.open(NotEnoughRemainingSpaceModalComponent, { centered: true });
             this.videoControl.setErrors({ notEnoughSpace: true });
+        } else if (error?.cancelled) {
+            this.toastService.showInfo('TOAST.INFO.PROCESS_VIDEO_CANCELLED');
         } else {
             this.videoControl.setErrors({ processVideoFailed: true });
             this.toastService.showError('TOAST.ERROR.PROCESS_VIDEO');
