@@ -6,6 +6,7 @@ import {
     MenuItemConstructorOptions,
 } from 'electron';
 
+import { logsPath } from './utils/path';
 import { checkUpdates } from './utils/update';
 
 interface DarwinMenuItemConstructorOptions extends MenuItemConstructorOptions {
@@ -136,6 +137,12 @@ export default class MenuBuilder {
                         shell.openExternal('https://corentin-1.gitbook.io/ref-back');
                     },
                 },
+                {
+                    label: 'Dossier logs',
+                    click() {
+                        shell.openPath(logsPath);
+                    },
+                },
                 { type: 'separator' },
                 {
                     label: 'Vérifier les mises à jour',
@@ -231,6 +238,12 @@ export default class MenuBuilder {
                         label: 'Documentation',
                         click() {
                             shell.openExternal('https://corentin-1.gitbook.io/ref-back');
+                        },
+                    },
+                    {
+                        label: 'Dossier logs',
+                        click() {
+                            shell.openPath(logsPath);
                         },
                     },
                     {
