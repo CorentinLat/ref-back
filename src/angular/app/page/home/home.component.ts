@@ -63,6 +63,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
     isProcessingVideos = false;
     progress = 0;
+    remainingTime = 0;
 
     private videoProgressSubscription$!: Subscription;
 
@@ -124,7 +125,10 @@ export class HomeComponent implements OnInit, OnDestroy {
 
         this.videoProgressSubscription$ = this.electron
             .getProcessVideoProgress()
-            .subscribe(progress => this.zone.run(() => this.progress = Math.round(progress)));
+            .subscribe(({ percentage, remaining }) => this.zone.run(() => {
+                this.progress = Math.round(percentage);
+                this.remainingTime = remaining;
+            }));
     }
 
     ngOnDestroy() {
@@ -161,6 +165,14 @@ export class HomeComponent implements OnInit, OnDestroy {
         return this.notSupportedFiles.map(({ name }) => name);
     }
 
+    exposeRemainingTime(): string {
+        const minutes = Math.floor(this.remainingTime / 60);
+
+        return minutes === 0
+            ? `${this.remainingTime}s`
+            : `${minutes}m ${this.remainingTime % 60}s`;
+    }
+
     async submit(force: boolean = false) {
         if (this.gameForm.invalid) {
             return;
@@ -182,6 +194,7 @@ export class HomeComponent implements OnInit, OnDestroy {
         } finally {
             this.isProcessingVideos = false;
             this.progress = 0;
+            this.remainingTime = 0;
         }
     }
 

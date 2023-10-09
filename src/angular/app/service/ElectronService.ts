@@ -74,10 +74,10 @@ export class ElectronService {
         });
     }
 
-    getProcessVideoProgress(): Observable<number> {
+    getProcessVideoProgress(): Observable<{ percentage: number; remaining: number }> {
         return new Observable(observer => {
             if (this.ipcRenderer?.listeners('videos_progress').length === 0) {
-                this.ipcRenderer?.on('videos_progress', (_, progress: number) => {
+                this.ipcRenderer?.on('videos_progress', (_, progress: { percentage: number; remaining: number }) => {
                     observer.next(progress);
                 });
             }

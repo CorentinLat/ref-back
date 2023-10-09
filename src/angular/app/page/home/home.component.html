@@ -182,22 +182,28 @@
             </button>
         </article>
 
-        <article class="d-flex flex-row align-items-center gap-3 mt-3" *ngIf="isProcessingVideos">
-            <ngb-progressbar
-                class="w-100"
-                type="success"
-                height="20px"
-                [value]="progress"
-                [striped]="true"
-                [animated]="true"
-            >
-                <i>{{ progress }}%</i>
-            </ngb-progressbar>
+        <section class="mt-3 text-center" *ngIf="isProcessingVideos">
+            <article class="d-flex align-items-center gap-3">
+                <ngb-progressbar
+                    class="w-100"
+                    type="success"
+                    height="20px"
+                    [value]="progress"
+                    [animated]="true"
+                >
+                    <i>{{ progress }}%</i>
+                </ngb-progressbar>
 
-            <button class="btn btn-outline-danger" type="button" (click)="handleCancelGameCreation()">
-                <i class="bi bi-x-lg"></i>
-            </button>
-        </article>
+                <button class="btn btn-outline-danger btn-sm" type="button" (click)="handleCancelGameCreation()">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </article>
+
+            <article class="d-flex gap-1">
+                <p class="w-50 text-end"><b>{{ 'PAGE.HOME.REMAINING_TIME' | translate }}</b></p>
+                <p class="w-50 text-start">{{ exposeRemainingTime() }}</p>
+            </article>
+        </section>
     </form>
 
     <footer class="footer">

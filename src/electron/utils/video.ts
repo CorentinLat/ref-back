@@ -30,6 +30,7 @@ export async function concatVideos(gameNumber: string, videoPaths: string[], eve
     const totalDuration = await computeTotalDurationOfVideos(videoPaths);
 
     currentCommand = FluentFFMPEG();
+    const startTime = Date.now();
 
     // @ts-ignore
     videoPaths.forEach(videoPath => currentCommand.input(videoPath));
@@ -39,7 +40,11 @@ export async function concatVideos(gameNumber: string, videoPaths: string[], eve
             .on('progress', (progress: { timemark: string }) => {
                 const currentSeconds = extractNumberOfSecondsFromTimeMark(progress.timemark);
                 const percentageDone = Math.min(currentSeconds / totalDuration * 100, 100);
-                event.reply('videos_progress', percentageDone);
+
+                const elapsedTime = Date.now() - startTime;
+                const remainingTime = Math.round(elapsedTime / percentageDone * (100 - percentageDone) / 1000);
+
+                event.reply('videos_progress', { percentage: percentageDone, remaining: remainingTime });
             })
             .on('error', (err: Error) => {
                 if (err.message.includes('SIGKILL')) {
