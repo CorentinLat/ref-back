@@ -179,6 +179,9 @@ export class HomeComponent implements OnInit, OnDestroy {
             this.navigateToMatchAnalysisPage(gameNumber);
         } catch (error) {
             this.handleProcessVideosFailed(error);
+        } finally {
+            this.isProcessingVideos = false;
+            this.progress = 0;
         }
     }
 
@@ -200,12 +203,10 @@ export class HomeComponent implements OnInit, OnDestroy {
     handleCancelGameCreation() {
         if (!this.isProcessingVideos) { return; }
 
-        this.electron.cancelGameCreation(this.getGameNumber());
+        this.electron.cancelGameCreation();
     }
 
     private handleProcessVideosFailed = (error: any) => {
-        this.isProcessingVideos = false;
-
         if (error?.alreadyExisting) {
             const gameNumber = this.getGameNumber();
             const modal = this.modalService.open(GameNumberExistingModalComponent, { centered: true, size: 'lg' });

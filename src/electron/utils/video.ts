@@ -10,8 +10,6 @@ import logger from './logger';
 import { copyFileToPath, extractFileExtension } from './file';
 import { workPath } from './path';
 
-import CancelVideoCommandException from '../exception/CancelVideoCommandException';
-
 FluentFFMPEG.setFfmpegPath(ffmpegElectron.path);
 FluentFFMPEG.setFfprobePath(ffprobeElectron.path);
 
@@ -44,12 +42,9 @@ export async function concatVideos(gameNumber: string, videoPaths: string[], eve
                 event.reply('videos_progress', percentageDone);
             })
             .on('error', (err: Error) => {
-                if (!currentCommand) { return; }
-                currentCommand = null;
-
                 if (err.message.includes('SIGKILL')) {
                     logger.info(`Concat videos cancelled: ${outputFileName}`);
-                    reject(new CancelVideoCommandException());
+                    return reject({ cancelled: true });
                 }
 
                 logger.error(`error concatVideos: ${err}`);

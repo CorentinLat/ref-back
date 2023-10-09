@@ -2,8 +2,6 @@ import { app, shell } from 'electron';
 import IpcMain = Electron.IpcMain;
 import IpcMainEvent = Electron.IpcMainEvent;
 
-import CancelVideoCommandException from './exception/CancelVideoCommandException';
-
 import { askSaveDirectory, askSaveVideoPath } from './utils/dialog';
 import {
     Action,
@@ -63,20 +61,23 @@ const onCreateNewGameListener = async (event: IpcMainEvent, { force, gameInforma
     logger.debug('OnCreateNewGameListener');
 
     if (!videoPaths.length) {
-        logger.error('No video to handle');
+        logger.error('error OnCreateNewGameListener: No video to handle');
         event.reply('create_new_game_failed');
+        return;
     }
 
     const { gameNumber } = gameInformation;
     try {
         const hasEnoughSpace = await hasEnoughRemainingSpaceForFilePaths(videoPaths);
         if (!hasEnoughSpace) {
+            logger.error('error OnCreateNewGameListener: Not enough space');
             event.reply('create_new_game_failed', { notEnoughSpace: true });
             return;
         }
 
         const alreadyExisting = checkGameFolderExists(gameNumber, force);
         if (alreadyExisting) {
+            logger.error('error OnCreateNewGameListener: Game already existing');
             event.reply('create_new_game_failed', { alreadyExisting: true });
             return;
         }
@@ -91,11 +92,11 @@ const onCreateNewGameListener = async (event: IpcMainEvent, { force, gameInforma
         createNewGameFile({ ...gameInformation, videoPath });
 
         event.reply('create_new_game_succeeded', gameNumber);
-    } catch (error) {
+    } catch (error: any) {
         removeGame(gameNumber);
 
-        if (error instanceof CancelVideoCommandException) {
-            logger.info('Create new game cancelled');
+        if (error.cancelled) {
+            logger.info('error OnCreateNewGameListener: Create new game cancelled');
             event.reply('create_new_game_failed', { cancelled: true });
             return;
         }
@@ -105,13 +106,11 @@ const onCreateNewGameListener = async (event: IpcMainEvent, { force, gameInforma
     }
 };
 
-type OnCancelGameCreationListenerArgs = { gameNumber: string };
-const onCancelGameCreationListener = async (event: IpcMainEvent, { gameNumber }: OnCancelGameCreationListenerArgs) => {
+const onCancelGameCreationListener = async (event: IpcMainEvent) => {
     logger.debug('OnCancelGameCreationListener');
 
     try {
         cancelCurrentVideoCommand();
-        removeGame(gameNumber);
 
         event.reply('cancel_game_creation_succeeded');
     } catch (error) {

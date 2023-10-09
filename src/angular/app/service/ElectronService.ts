@@ -44,8 +44,8 @@ export class ElectronService {
         });
     }
 
-    cancelGameCreation(gameNumber: string): void {
-        this.ipcRenderer?.send('cancel_game_creation', { gameNumber });
+    cancelGameCreation(): void {
+        this.ipcRenderer?.send('cancel_game_creation');
     }
 
     initApp(): Promise<InitAppPayload> {
