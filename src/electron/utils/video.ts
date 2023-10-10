@@ -1,5 +1,3 @@
-import ffmpegElectron from 'ffmpeg-static-electron';
-import ffprobeElectron from 'ffprobe-static-electron';
 import FluentFFMPEG from 'fluent-ffmpeg';
 import path from 'path';
 
@@ -8,10 +6,12 @@ import IpcMainEvent = Electron.IpcMainEvent;
 import { Game, getDefaultGameVideoFilename } from './game';
 import logger from './logger';
 import { copyFileToPath, extractFileExtension } from './file';
-import { workPath } from './path';
+import { ffmpegElectronPath, ffprobeElectronPath, workPath } from './path';
 
-FluentFFMPEG.setFfmpegPath(ffmpegElectron.path);
-FluentFFMPEG.setFfprobePath(ffprobeElectron.path);
+logger.info(`ffmpegElectronPath: ${ffmpegElectronPath}`);
+
+FluentFFMPEG.setFfmpegPath(ffmpegElectronPath);
+FluentFFMPEG.setFfprobePath(ffprobeElectronPath);
 
 const SUPPORTED_HTML_VIDEO_EXTENSIONS = ['mp4', 'webm', 'ogg'];
 
