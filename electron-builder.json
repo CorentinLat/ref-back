@@ -23,9 +23,7 @@
   },
   "win": {
     "artifactName": "${productName}-Setup-${version}.${ext}",
-    "target": "nsis",
-    "sign": ".erb/scripts/signWindows.js",
-    "signingHashAlgorithms": ["sha256"]
+    "target": "nsis"
   },
   "nsis": {
     "language": "1036"
