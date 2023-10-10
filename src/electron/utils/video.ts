@@ -3,19 +3,19 @@ import path from 'path';
 
 import IpcMainEvent = Electron.IpcMainEvent;
 
+import { copyFileToPath, extractFileExtension } from './file';
 import { Game, getDefaultGameVideoFilename } from './game';
 import logger from './logger';
-import { copyFileToPath, extractFileExtension } from './file';
 import { ffmpegElectronPath, ffprobeElectronPath, workPath } from './path';
 
-logger.info(`ffmpegElectronPath: ${ffmpegElectronPath}`);
+import translate from '../translation';
 
 FluentFFMPEG.setFfmpegPath(ffmpegElectronPath);
 FluentFFMPEG.setFfprobePath(ffprobeElectronPath);
 
 const SUPPORTED_HTML_VIDEO_EXTENSIONS = ['mp4', 'webm', 'ogg'];
 
-let currentCommand: FluentFFMPEG.FfmpegCommand | null = null;
+let currentCommands: FluentFFMPEG.FfmpegCommand[] = [];
 
 export async function concatVideos(gameNumber: string, videoPaths: string[], event: IpcMainEvent): Promise<string> {
     logger.info(`Concat videos: ${videoPaths.join(', ')}`);
@@ -29,14 +29,15 @@ export async function concatVideos(gameNumber: string, videoPaths: string[], eve
 
     const totalDuration = await computeTotalDurationOfVideos(videoPaths);
 
-    currentCommand = FluentFFMPEG();
+    const command = FluentFFMPEG().videoBitrate('4600k');
+    currentCommands.push(command);
     const startTime = Date.now();
 
     // @ts-ignore
-    videoPaths.forEach(videoPath => currentCommand.input(videoPath));
+    videoPaths.forEach(videoPath => command.input(videoPath));
     return new Promise((resolve, reject) => {
         // @ts-ignore
-        currentCommand
+        command
             .on('progress', (progress: { timemark: string }) => {
                 const currentSeconds = extractNumberOfSecondsFromTimeMark(progress.timemark);
                 const percentageDone = Math.min(currentSeconds / totalDuration * 100, 100);
@@ -58,19 +59,16 @@ export async function concatVideos(gameNumber: string, videoPaths: string[], eve
             .on('end', () => {
                 logger.info(`Concat videos succeeded: ${outputFileName}`);
 
-                currentCommand = null;
+                currentCommands = [];
                 resolve(outputFileName);
             })
-            .videoBitrate('4600k')
             .mergeToFile(outputFileName);
     });
 }
 
-export function cancelCurrentVideoCommand(): void {
-    if (currentCommand) {
-        currentCommand.kill('SIGKILL');
-        currentCommand = null;
-    }
+export function cancelCurrentVideoCommands(): void {
+    currentCommands.forEach(command => command.kill('SIGKILL'));
+    currentCommands = [];
 }
 
 export async function copyVideoToUserDataPath(gameNumber: string, videoPath: string, event: IpcMainEvent): Promise<string> {
@@ -88,13 +86,13 @@ export async function copyVideoToUserDataPath(gameNumber: string, videoPath: str
     }
 }
 
-export async function downloadAllVideosGame(game: Game, destDirectory: string): Promise<void> {
+export async function downloadAllVideosGame(game: Game, destDirectory: string, event: IpcMainEvent): Promise<void> {
     const videoName = getDefaultGameVideoFilename(game);
     const extension = extractFileExtension(game.information.videoPath);
     const gameVideoPath = path.join(destDirectory, `${videoName}.${extension}`);
     copyGameVideoToPath(game, gameVideoPath);
 
-    await generateGameClips(game, destDirectory);
+    await generateGameClips(game, destDirectory, event);
 }
 
 export function copyGameVideoToPath(game: Game, destVideoPath: string): void {
@@ -103,26 +101,43 @@ export function copyGameVideoToPath(game: Game, destVideoPath: string): void {
     copyFileToPath(currentVideoPath, destVideoPath);
 }
 
-export async function generateGameClips(game: Game, destClipsDirectory: string): Promise<void> {
+export async function generateGameClips(game: Game, destClipsDirectory: string, event: IpcMainEvent): Promise<void> {
     const { videoPath } = game.information;
     const videoExtension = extractFileExtension(videoPath);
 
-    let clipsIndex = 0;
-    await Promise.all(game.actions.map(action => {
+    await Promise.all(game.actions.map((action, index) => {
         const { fault, clip } = action;
         if (!clip) {
             return Promise.resolve();
         }
 
-        clipsIndex++;
-        const clipName = `#${clipsIndex} ${fault}.${videoExtension}`;
+        const clipName = `#${index + 1} ${translate(fault)}.${videoExtension}`;
         const clipPath = path.join(destClipsDirectory, clipName);
+        const clipDuration = clip.end - clip.start;
+
+        const command = FluentFFMPEG(videoPath)
+            .setStartTime(clip.start)
+            .setDuration(clipDuration);
+        currentCommands.push(command);
+        const startTime = Date.now();
 
         return new Promise<void>((resolve, reject) => {
-            FluentFFMPEG(videoPath)
-                .setStartTime(clip.start)
-                .setDuration(clip.end - clip.start)
+            command
+                .on('progress', (progress: any) => {
+                    const currentSeconds = extractNumberOfSecondsFromTimeMark(progress.timemark);
+                    const percentageDone = Math.round(currentSeconds / clipDuration * 100);
+
+                    const elapsedTime = Date.now() - startTime;
+                    const remainingTime = Math.round(elapsedTime / percentageDone * (100 - percentageDone) / 1000);
+
+                    event.reply('clip_progress', { clip: index, percentage: percentageDone, remaining: remainingTime });
+                })
                 .on('error', (err: Error) => {
+                    if (err.message.includes('SIGKILL')) {
+                        logger.info(`Generate clip cancelled: ${clipName}`);
+                        return reject({ cancelled: true });
+                    }
+
                     logger.error(`error generateGameClips: ${err}`);
                     reject(err);
                 })
@@ -135,7 +150,7 @@ export async function generateGameClips(game: Game, destClipsDirectory: string):
     }));
 }
 
-function generateVideoName(extension: string = 'webm'): string {
+function generateVideoName(extension: string = 'mp4'): string {
     return `${Date.now().toString(10)}.${extension}`;
 }
 

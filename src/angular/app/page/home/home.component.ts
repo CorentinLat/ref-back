@@ -1,20 +1,14 @@
-import {
-    Component,
-    HostListener,
-    NgZone,
-    OnDestroy,
-    OnInit,
-    ViewEncapsulation,
-} from '@angular/core';
+import { Component, HostListener, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { Observable, of, OperatorFunction, Subscription } from 'rxjs';
+import { Observable, of, OperatorFunction } from 'rxjs';
 import { catchError, debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 
 import { GameNumberExistingModalComponent } from '../../component/modal/game-number-existing-modal/game-number-existing-modal.component';
 import { LoadGamesExistingModalComponent } from '../../component/modal/load-games-existing-modal/load-games-existing-modal.component';
 import { NotEnoughRemainingSpaceModalComponent } from '../../component/modal/not-enough-remaining-space-modal/not-enough-remaining-space-modal.component';
+import { VideoProcessLoaderModalComponent } from '../../component/modal/process-loader/video-process-loader-modal.component';
 
 import { DateTimeService } from '../../service/DateTimeService';
 import { ElectronService } from '../../service/ElectronService';
@@ -28,7 +22,7 @@ import { ToastService } from '../../service/ToastService';
     styleUrls: ['./home.component.scss'],
     encapsulation: ViewEncapsulation.None
 })
-export class HomeComponent implements OnInit, OnDestroy {
+export class HomeComponent implements OnInit {
     appVersion = '';
     hasExistingGames = false;
 
@@ -62,10 +56,6 @@ export class HomeComponent implements OnInit, OnDestroy {
     notSupportedFiles: File[] = [];
 
     isProcessingVideos = false;
-    progress = 0;
-    remainingTime = 0;
-
-    private videoProgressSubscription$!: Subscription;
 
     constructor(
         private dateService: DateTimeService,
@@ -75,7 +65,6 @@ export class HomeComponent implements OnInit, OnDestroy {
         private modalService: NgbModal,
         private router: Router,
         private toastService: ToastService,
-        private zone: NgZone
     ) {}
 
     get gameNumberControl(): FormControl { return this.gameForm.get('gameNumber') as FormControl; }
@@ -122,17 +111,6 @@ export class HomeComponent implements OnInit, OnDestroy {
                 this.appVersion = appVersion;
                 this.hasExistingGames = games.length > 0;
             });
-
-        this.videoProgressSubscription$ = this.electron
-            .getProcessVideoProgress()
-            .subscribe(({ percentage, remaining }) => this.zone.run(() => {
-                this.progress = Math.round(percentage);
-                this.remainingTime = remaining;
-            }));
-    }
-
-    ngOnDestroy() {
-        this.videoProgressSubscription$.unsubscribe();
     }
 
     exposeClassNameForFormControl(formControl: FormControl): string {
@@ -165,14 +143,6 @@ export class HomeComponent implements OnInit, OnDestroy {
         return this.notSupportedFiles.map(({ name }) => name);
     }
 
-    exposeRemainingTime(): string {
-        const minutes = Math.floor(this.remainingTime / 60);
-
-        return minutes === 0
-            ? `${this.remainingTime}s`
-            : `${minutes}m ${this.remainingTime % 60}s`;
-    }
-
     async submit(force: boolean = false) {
         if (this.gameForm.invalid) {
             return;
@@ -182,19 +152,20 @@ export class HomeComponent implements OnInit, OnDestroy {
         const videoPaths = this.files.map(({ path }) => path);
 
         this.isProcessingVideos = true;
+        const modal = this.modalService.open(VideoProcessLoaderModalComponent, { backdrop: 'static', centered: true });
         try {
             const gameNumber = await this.electron.createNewGame(
                 force,
                 { ...gameInformation, gameNumber: this.getGameNumber() },
                 videoPaths,
             );
+
             this.navigateToMatchAnalysisPage(gameNumber);
         } catch (error) {
             this.handleProcessVideosFailed(error);
         } finally {
             this.isProcessingVideos = false;
-            this.progress = 0;
-            this.remainingTime = 0;
+            modal.close();
         }
     }
 
@@ -211,12 +182,6 @@ export class HomeComponent implements OnInit, OnDestroy {
 
     handleOpenUrlInBrowser(url: string) {
         this.electron.openUrlInBrowser(url);
-    }
-
-    handleCancelGameCreation() {
-        if (!this.isProcessingVideos) { return; }
-
-        this.electron.cancelGameCreation();
     }
 
     private handleProcessVideosFailed = (error: any) => {

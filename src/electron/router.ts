@@ -21,7 +21,7 @@ import { checkGameFolderExists, getExistingGameFolders } from './utils/path';
 import { generatePdfSummary } from './utils/pdf';
 import hasEnoughRemainingSpaceForFilePaths from './utils/storage';
 import {
-    cancelCurrentVideoCommand,
+    cancelCurrentVideoCommands,
     concatVideos,
     copyGameVideoToPath,
     copyVideoToUserDataPath,
@@ -32,7 +32,7 @@ import {
 export default function(ipcMain: IpcMain) {
     ipcMain.on('init_app', onInitAppListener);
     ipcMain.on('create_new_game', onCreateNewGameListener);
-    ipcMain.on('cancel_game_creation', onCancelGameCreationListener);
+    ipcMain.on('cancel_video_process', onCancelVideoProcessListener);
     ipcMain.on('get_game', onGetGameListener);
     ipcMain.on('update_game_comment', onUpdateGameCommentListener);
     ipcMain.on('remove_game', onRemoveGameListener);
@@ -106,17 +106,10 @@ const onCreateNewGameListener = async (event: IpcMainEvent, { force, gameInforma
     }
 };
 
-const onCancelGameCreationListener = async (event: IpcMainEvent) => {
-    logger.debug('OnCancelGameCreationListener');
+const onCancelVideoProcessListener = async () => {
+    logger.debug('OnCancelVideoProcessListener');
 
-    try {
-        cancelCurrentVideoCommand();
-
-        event.reply('cancel_game_creation_succeeded');
-    } catch (error) {
-        logger.error(`error OnCancelGameCreationListener: ${error}`);
-        event.reply('cancel_game_creation_failed', error);
-    }
+    cancelCurrentVideoCommands();
 };
 
 type OnGetGameListenerArgs = { gameNumber: string };
@@ -233,8 +226,19 @@ const onDownloadVideoClipsListener = async (event: IpcMainEvent, { gameNumber }:
         return;
     }
 
-    await generateGameClips(game, saveDirectory);
-    event.reply('download_video_clips_succeeded');
+    try {
+        await generateGameClips(game, saveDirectory, event);
+        event.reply('download_video_clips_succeeded');
+    } catch (error: any) {
+        if (error.cancelled) {
+            logger.info('error OnDownloadVideoClipsListener: Create clips cancelled');
+            event.reply('download_video_clips_failed', { cancelled: true });
+            return;
+        }
+
+        logger.error(`error OnDownloadVideoClipsListener: ${error}`);
+        event.reply('download_video_clips_failed', error);
+    }
 };
 
 type OnDownloadAllVideosListenerArgs = { gameNumber: string };
@@ -256,8 +260,19 @@ const onDownloadAllVideosListener = async (event: IpcMainEvent, { gameNumber }: 
         return;
     }
 
-    await downloadAllVideosGame(game, saveDirectory);
-    event.reply('download_all_videos_succeeded');
+    try {
+        await downloadAllVideosGame(game, saveDirectory, event);
+        event.reply('download_all_videos_succeeded');
+    } catch (error: any) {
+        if (error.cancelled) {
+            logger.info('error OnDownloadAllVideosListener: Create clips cancelled');
+            event.reply('download_all_videos_failed', { cancelled: true });
+            return;
+        }
+
+        logger.error(`error OnDownloadAllVideosListener: ${error}`);
+        event.reply('download_all_videos_failed', error);
+    }
 };
 
 type DownloadSummaryListenerArgs = { gameNumber: string };

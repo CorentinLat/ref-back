@@ -1,0 +1,27 @@
+<section>
+    <article class="modal-header">
+        <h5 class="modal-title">{{ 'MODAL.PROCESS_LOADER.TITLE' | translate }}</h5>
+    </article>
+
+    <article class="modal-body text-center">
+            <ngb-progressbar
+                class="w-100"
+                type="success"
+                height="20px"
+                [value]="progress"
+                [animated]="true"
+            >
+            </ngb-progressbar>
+
+            <article class="d-flex gap-1 mt-2">
+                <p class="w-50 text-end m-0"><b>{{ 'MODAL.PROCESS_LOADER.REMAINING_TIME' | translate }}</b></p>
+                <p class="w-50 text-start m-0">{{ exposeRemainingTime() }}</p>
+            </article>
+    </article>
+
+    <article class="modal-footer">
+        <button class="btn btn-outline-danger btn-sm" type="button" (click)="handleCancelGameCreation()">
+            {{ 'MODAL.PROCESS_LOADER.CANCEL' | translate }} <i class="bi bi-x-lg"></i>
+        </button>
+    </article>
+</section>

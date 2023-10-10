@@ -44,8 +44,8 @@ export class ElectronService {
         });
     }
 
-    cancelGameCreation(): void {
-        this.ipcRenderer?.send('cancel_game_creation');
+    cancelVideoProcess(): void {
+        this.ipcRenderer?.send('cancel_video_process');
     }
 
     initApp(): Promise<InitAppPayload> {
@@ -76,11 +76,21 @@ export class ElectronService {
 
     getProcessVideoProgress(): Observable<{ percentage: number; remaining: number }> {
         return new Observable(observer => {
-            if (this.ipcRenderer?.listeners('videos_progress').length === 0) {
-                this.ipcRenderer?.on('videos_progress', (_, progress: { percentage: number; remaining: number }) => {
-                    observer.next(progress);
-                });
-            }
+            this.ipcRenderer?.removeAllListeners('videos_progress');
+
+            this.ipcRenderer?.on('videos_progress', (_, progress: any) => {
+                observer.next(progress);
+            });
+        });
+    }
+
+    getProcessClipProgress(): Observable<{ clip: number; percentage: number; remaining: number }> {
+        return new Observable(observer => {
+            this.ipcRenderer?.removeAllListeners('clip_progress');
+
+            this.ipcRenderer?.on('clip_progress', (_, progress: any) => {
+                observer.next(progress);
+            });
         });
     }
 
