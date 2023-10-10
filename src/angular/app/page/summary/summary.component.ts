@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { Action, Game } from '../../domain/game';
+
+import { ClipProcessLoaderModalComponent } from '../../component/modal/process-loader/clip-process-loader-modal.component';
 
 import { ElectronService } from '../../service/ElectronService';
 import { ToastService } from '../../service/ToastService';
@@ -20,6 +23,7 @@ export class SummaryComponent implements OnInit {
 
     constructor(
         private electron: ElectronService,
+        private modalService: NgbModal,
         private route: ActivatedRoute,
         private router: Router,
         private toastService: ToastService,
@@ -65,29 +69,37 @@ export class SummaryComponent implements OnInit {
 
     async handleDownloadVideoClips(): Promise<void> {
         this.isDownloadingVideo = true;
+        const modal = this.modalService.open(ClipProcessLoaderModalComponent, { backdrop: 'static', centered: true });
 
         try {
             await this.electron.downloadVideoClips(this.gameNumber);
         } catch (error: any) {
-            if (!error?.closed) {
-                this.toastService.showError('TOAST.ERROR.PROCESS_DOWNLOAD_GAME');
+            if (error?.cancelled) {
+                this.toastService.showInfo('TOAST.INFO.DOWNLOAD_VIDEO_CANCELLED');
+            } else if (!error?.closed) {
+                this.toastService.showError('TOAST.ERROR.PROCESS_DOWNLOAD_CLIPS');
             }
         } finally {
             this.isDownloadingVideo = false;
+            modal.close();
         }
     }
 
     async handleDownloadVideoAll(): Promise<void> {
         this.isDownloadingVideo = true;
+        const modal = this.modalService.open(ClipProcessLoaderModalComponent, { backdrop: 'static', centered: true });
 
         try {
             await this.electron.downloadAllVideos(this.gameNumber);
         } catch (error: any) {
-            if (!error?.closed) {
-                this.toastService.showError('TOAST.ERROR.PROCESS_DOWNLOAD_GAME');
+            if (error?.cancelled) {
+                this.toastService.showInfo('TOAST.INFO.DOWNLOAD_VIDEO_CANCELLED');
+            } else if (!error?.closed) {
+                this.toastService.showError('TOAST.ERROR.PROCESS_DOWNLOAD_VIDEOS');
             }
         } finally {
             this.isDownloadingVideo = false;
+            modal.close();
         }
     }
 

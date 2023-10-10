@@ -44,6 +44,10 @@ export class ElectronService {
         });
     }
 
+    cancelVideoProcess(): void {
+        this.ipcRenderer?.send('cancel_video_process');
+    }
+
     initApp(): Promise<InitAppPayload> {
         return new Promise(resolve => {
             this.ipcRenderer?.once(
@@ -70,13 +74,23 @@ export class ElectronService {
         });
     }
 
-    getProcessVideoProgress(): Observable<number> {
+    getProcessVideoProgress(): Observable<{ percentage: number; remaining: number }> {
         return new Observable(observer => {
-            if (this.ipcRenderer?.listeners('videos_progress').length === 0) {
-                this.ipcRenderer?.on('videos_progress', (_, progress: number) => {
-                    observer.next(progress);
-                });
-            }
+            this.ipcRenderer?.removeAllListeners('videos_progress');
+
+            this.ipcRenderer?.on('videos_progress', (_, progress: any) => {
+                observer.next(progress);
+            });
+        });
+    }
+
+    getProcessClipProgress(): Observable<{ clip: number; percentage: number; remaining: number }> {
+        return new Observable(observer => {
+            this.ipcRenderer?.removeAllListeners('clip_progress');
+
+            this.ipcRenderer?.on('clip_progress', (_, progress: any) => {
+                observer.next(progress);
+            });
         });
     }
 

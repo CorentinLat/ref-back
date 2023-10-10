@@ -2,12 +2,22 @@ import { app } from 'electron';
 import fs from 'fs';
 import path from 'path';
 
+import ffmpegElectron from 'ffmpeg-static-electron';
+import ffprobeElectron from 'ffprobe-static-electron';
+
 import logger from './logger';
 
 export const downloadPath = app.getPath('downloads');
 export const userDataPath = app.getPath('userData');
 export const logsPath = path.join(userDataPath, 'logs');
 export const workPath = path.join(userDataPath, app.isPackaged ? 'work' : 'work-dev');
+
+export const ffmpegElectronPath = app.isPackaged
+    ? ffmpegElectron.path.replace('app.asar', 'app.asar.unpacked')
+    : ffmpegElectron.path;
+export const ffprobeElectronPath = app.isPackaged
+    ? ffprobeElectron.path.replace('app.asar', 'app.asar.unpacked')
+    : ffprobeElectron.path;
 
 const MANDATORY_FOLDERS = [logsPath, workPath];
 

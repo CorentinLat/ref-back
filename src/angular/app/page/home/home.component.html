@@ -181,27 +181,14 @@
                 {{ 'PAGE.HOME.IMPORT_BUTTON' | translate }}
             </button>
         </article>
-
-        <article class="d-flex flex-column align-items-center mt-3" *ngIf="isProcessingVideos">
-            <ngb-progressbar
-                class="w-100"
-                type="success"
-                height="20px"
-                [value]="progress"
-                [striped]="true"
-                [animated]="true"
-            >
-                <i>{{ progress }}%</i>
-            </ngb-progressbar>
-        </article>
     </form>
 
     <footer class="footer">
         <section class="footer-container">
             <p>
                 {{ 'PAGE.HOME.MADE_BY' | translate }}
-                <b>Corentin LATAPPY</b>
-                <a class="ms-1" href="mailto:corentin.lat@gmail.com"><span class="bi bi-envelope"></span></a>
+                <b>Corentin Latappy</b>
+                <a class="ms-1" href="mailto:corentin.lat.ref@gmail.com"><span class="bi bi-envelope"></span></a>
                 {{ 'PAGE.HOME.WITH' | translate }}
                 <span class="bi bi-heart-fill"></span>
             </p>

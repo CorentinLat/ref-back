@@ -29,6 +29,11 @@
       "TITLE": "Import impossible",
       "INFORMATION": "Vous ne disposez pas de suffisament de stockage afin d'ajouter vos vidéos.",
       "CLOSE": "Fermer"
+    },
+    "PROCESS_LOADER": {
+      "TITLE": "Traitement en cours",
+      "REMAINING_TIME": "Temps restant estimé :",
+      "CANCEL": "Annuler"
     }
   },
   "PAGE": {
@@ -284,10 +289,16 @@
       "PROCESS_ACTION_EDITED": "Impossible d'éditer cette action...",
       "PROCESS_ACTION_REMOVED": "Impossible de supprimer cette action...",
       "PROCESS_DOWNLOAD_GAME": "Impossible de télécharger la vidéo...",
+      "PROCESS_DOWNLOAD_CLIPS": "Impossible de télécharger les clips...",
+      "PROCESS_DOWNLOAD_VIDEOS": "Impossible de télécharger les vidéos...",
       "PROCESS_DOWNLOAD_SUMMARY": "Impossible d'exporter le résumé...",
       "PROCESS_GAME": "Impossible de charger le match...",
       "PROCESS_GAME_COMMENT": "Impossible de mettre à jour le commentaire...",
       "PROCESS_VIDEO": "Impossible de traiter les vidéos..."
+    },
+    "INFO": {
+      "DOWNLOAD_VIDEO_CANCELLED": "Téléchargement annulé !",
+      "PROCESS_VIDEO_CANCELLED": "Import annulé !"
     },
     "SUCCESS": {
       "PROCESS_ACTION_ADDED": "Action ajoutée !",

@@ -21,6 +21,7 @@ import { checkGameFolderExists, getExistingGameFolders } from './utils/path';
 import { generatePdfSummary } from './utils/pdf';
 import hasEnoughRemainingSpaceForFilePaths from './utils/storage';
 import {
+    cancelCurrentVideoCommands,
     concatVideos,
     copyGameVideoToPath,
     copyVideoToUserDataPath,
@@ -31,6 +32,7 @@ import {
 export default function(ipcMain: IpcMain) {
     ipcMain.on('init_app', onInitAppListener);
     ipcMain.on('create_new_game', onCreateNewGameListener);
+    ipcMain.on('cancel_video_process', onCancelVideoProcessListener);
     ipcMain.on('get_game', onGetGameListener);
     ipcMain.on('update_game_comment', onUpdateGameCommentListener);
     ipcMain.on('remove_game', onRemoveGameListener);
@@ -59,20 +61,23 @@ const onCreateNewGameListener = async (event: IpcMainEvent, { force, gameInforma
     logger.debug('OnCreateNewGameListener');
 
     if (!videoPaths.length) {
-        logger.error('No video to handle');
+        logger.error('error OnCreateNewGameListener: No video to handle');
         event.reply('create_new_game_failed');
+        return;
     }
 
     const { gameNumber } = gameInformation;
     try {
         const hasEnoughSpace = await hasEnoughRemainingSpaceForFilePaths(videoPaths);
         if (!hasEnoughSpace) {
+            logger.error('error OnCreateNewGameListener: Not enough space');
             event.reply('create_new_game_failed', { notEnoughSpace: true });
             return;
         }
 
         const alreadyExisting = checkGameFolderExists(gameNumber, force);
         if (alreadyExisting) {
+            logger.error('error OnCreateNewGameListener: Game already existing');
             event.reply('create_new_game_failed', { alreadyExisting: true });
             return;
         }
@@ -87,11 +92,24 @@ const onCreateNewGameListener = async (event: IpcMainEvent, { force, gameInforma
         createNewGameFile({ ...gameInformation, videoPath });
 
         event.reply('create_new_game_succeeded', gameNumber);
-    } catch (error) {
+    } catch (error: any) {
         removeGame(gameNumber);
+
+        if (error.cancelled) {
+            logger.info('error OnCreateNewGameListener: Create new game cancelled');
+            event.reply('create_new_game_failed', { cancelled: true });
+            return;
+        }
+
         logger.error(`error OnCreateNewGameListener: ${error}`);
         event.reply('create_new_game_failed', error);
     }
+};
+
+const onCancelVideoProcessListener = async () => {
+    logger.debug('OnCancelVideoProcessListener');
+
+    cancelCurrentVideoCommands();
 };
 
 type OnGetGameListenerArgs = { gameNumber: string };
@@ -208,8 +226,19 @@ const onDownloadVideoClipsListener = async (event: IpcMainEvent, { gameNumber }:
         return;
     }
 
-    await generateGameClips(game, saveDirectory);
-    event.reply('download_video_clips_succeeded');
+    try {
+        await generateGameClips(game, saveDirectory, event);
+        event.reply('download_video_clips_succeeded');
+    } catch (error: any) {
+        if (error.cancelled) {
+            logger.info('error OnDownloadVideoClipsListener: Create clips cancelled');
+            event.reply('download_video_clips_failed', { cancelled: true });
+            return;
+        }
+
+        logger.error(`error OnDownloadVideoClipsListener: ${error}`);
+        event.reply('download_video_clips_failed', error);
+    }
 };
 
 type OnDownloadAllVideosListenerArgs = { gameNumber: string };
@@ -231,8 +260,19 @@ const onDownloadAllVideosListener = async (event: IpcMainEvent, { gameNumber }: 
         return;
     }
 
-    await downloadAllVideosGame(game, saveDirectory);
-    event.reply('download_all_videos_succeeded');
+    try {
+        await downloadAllVideosGame(game, saveDirectory, event);
+        event.reply('download_all_videos_succeeded');
+    } catch (error: any) {
+        if (error.cancelled) {
+            logger.info('error OnDownloadAllVideosListener: Create clips cancelled');
+            event.reply('download_all_videos_failed', { cancelled: true });
+            return;
+        }
+
+        logger.error(`error OnDownloadAllVideosListener: ${error}`);
+        event.reply('download_all_videos_failed', error);
+    }
 };
 
 type DownloadSummaryListenerArgs = { gameNumber: string };

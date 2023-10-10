@@ -8,7 +8,16 @@ et ce projet suit la [Gestion sémantique de version](https://semver.org/spec/v2
 - Pouvoir se connecter à l'application
 - Pouvoir récupérer automatiquement les données de la rencontre
 
-## [3.0.0] - 2022-02-03
+## [3.1.0] - 2023-10-10
+### Ajouté
+- Bouton pour annuler un traitement vidéo en cours
+### Mis à jour
+- Amélioration de l'affichage lors des traitements vidéo
+### Correction
+- Import de plusieurs vidéos
+- Export des clips
+
+## [3.0.0] - 2023-02-03
 ### Mis à jour
 - Changement du nom de l'application et de la charte graphique
 - Améliorations mineures pour l'affichage de certains composants
