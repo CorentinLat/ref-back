@@ -108,7 +108,9 @@
             "TRY": "Essai",
             "TRY_SHORT": "Essai",
             "NO_TRY": "Essai refusé",
-            "NO_TRY_SHORT": "Pas ess."
+            "NO_TRY_SHORT": "Pas ess.",
+            "RESTART_KICK": "Renvoi",
+            "RESTART_KICK_SHORT": "Renv."
           },
           "CARD": {
             "WARNING": "Avertissement",
@@ -195,6 +197,8 @@
             "TOO_MUCH_PLAYERS": "Surnombre de joueurs",
             "NO_RETURN": "Pas de retour",
             "BAD_RETURN": "Retour erroné",
+            "": "",
+            "DEAD_BALL": "Ballon mort",
             "OTHER": "Autre faute"
           },
           "PRECISE": {

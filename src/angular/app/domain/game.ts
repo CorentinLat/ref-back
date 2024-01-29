@@ -1,7 +1,7 @@
 export type Action = {
     id: string;
     second: number;
-    type: 'PLAY_ON' | 'TOUCH' | 'SCRUM' | 'FREE_KICK' | 'PENALTY' | 'PENALTY_TRY' | 'TRY' | 'NO_TRY';
+    type: 'PLAY_ON' | 'TOUCH' | 'SCRUM' | 'FREE_KICK' | 'PENALTY' | 'PENALTY_TRY' | 'TRY' | 'NO_TRY' | 'RESTART_KICK';
     card?: 'WARNING' | 'RED' | 'YELLOW' | 'WHITE';
     against: 'LOCAL' | 'VISITOR';
     sector: 'SCRUM' | 'FOUL_PLAY' | 'SPACE' | 'RUCK-TACKLE' | 'LINE_OUT-MAUL' | 'ADVANTAGE';
@@ -12,7 +12,7 @@ export type Action = {
 };
 export type NewAction = Omit<Action, 'id'>;
 
-export const actionTypes = ['PLAY_ON', 'TOUCH', 'SCRUM', 'FREE_KICK', 'PENALTY', 'PENALTY_TRY', 'TRY', 'NO_TRY'];
+export const actionTypes = ['PLAY_ON', 'TOUCH', 'SCRUM', 'FREE_KICK', 'PENALTY', 'PENALTY_TRY', 'TRY', 'NO_TRY', 'RESTART_KICK'];
 export const actionCardTypes = ['PENALTY', 'PENALTY_TRY', 'TRY', 'NO_TRY'];
 export const actionCards = ['WARNING', 'WHITE', 'YELLOW', 'RED'];
 export const actionAgainsts = ['LOCAL', 'VISITOR'];
@@ -47,7 +47,6 @@ export const actionFaults = {
         'NO_ARM_TACKLE',
         'NECK_ROLL',
         'FOREARM_PROJECTION',
-        'SIMULTANEOUS_TACKLE',
     ],
     SPACE: [
         'IN_FRONT_OF_KICKER',
@@ -58,6 +57,7 @@ export const actionFaults = {
         'LINE_OFFSIDE',
         'OBSTRUCTION',
         'TRY_SITUATION',
+        'DEAD_BALL',
         'OTHER',
     ],
     'TACKLE-RUCK': [
@@ -71,6 +71,7 @@ export const actionFaults = {
         'HAND_IN_RUCK',
         'NOT_ROLLING_AWAY',
         'NOT_RELEASING',
+        'SIMULTANEOUS_TACKLE',
     ],
     'LINE_OUT-MAUL': [
         'COLLAPSED_MAUL',
