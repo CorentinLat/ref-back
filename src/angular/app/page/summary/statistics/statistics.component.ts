@@ -27,9 +27,13 @@ export class StatisticsComponent implements OnInit {
     formatSector = (sector: string): string => this.translate.instant(`PAGE.SUMMARY.STATISTICS.SECTOR.${sector}`);
 
     private computePenaltyNumbersByTeams(): PieChartResults {
-        const count = this.countDecisionByTeams('PENALTY');
+        const penaltyCount = this.countDecisionByTeams('PENALTY');
+        const returnedPenaltyCount = this.countDecisionByTeams('RETURNED_PENALTY');
 
-        return Object.keys(count).map(team => ({ name: team, value: count[team] }));
+        return Object.keys(penaltyCount).map(team => ({
+            name: team,
+            value: penaltyCount[team] + returnedPenaltyCount[team],
+        }));
     }
 
     private computeFreeKickNumbersByTeams(): PieChartResults {
@@ -39,13 +43,13 @@ export class StatisticsComponent implements OnInit {
     }
 
     private computePenaltyNumbersBySectors(): PieChartResults {
-        const count = this.countDecisionBySectors('PENALTY');
+        const count = this.countDecisionBySectors(['PENALTY', 'RETURNED_PENALTY']);
 
         return Object.keys(count).map(sector => ({ name: sector, value: count[sector] }));
     }
 
     private computeFreeKickNumbersBySectors(): PieChartResults {
-        const count = this.countDecisionBySectors('FREE_KICK');
+        const count = this.countDecisionBySectors(['FREE_KICK']);
 
         return Object.keys(count).map(sector => ({ name: sector, value: count[sector] }));
     }
@@ -60,9 +64,9 @@ export class StatisticsComponent implements OnInit {
         }, {});
     }
 
-    private countDecisionBySectors(decision: string): { [sector: string]: number } {
+    private countDecisionBySectors(decisions: string[]): { [sector: string]: number } {
         return this.actions.reduce<{ [sector: string]: number }>((sectors, action) => {
-            if (action.type === decision) {
+            if (decisions.includes(action.type)) {
                 sectors[action.sector] = (sectors[action.sector] || 0) + 1;
             }
 

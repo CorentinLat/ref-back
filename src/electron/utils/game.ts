@@ -9,7 +9,7 @@ import { workPath } from './path';
 export type Action = {
     id: string;
     second: number;
-    type: 'PLAY_ON' | 'TOUCH' | 'SCRUM' | 'FREE_KICK' | 'PENALTY' | 'PENALTY_TRY' | 'TRY' | 'NO_TRY';
+    type: 'PLAY_ON' | 'TOUCH' | 'SCRUM' | 'FREE_KICK' | 'PENALTY' | 'RETURNED_PENALTY' | 'PENALTY_TRY' | 'TRY' | 'NO_TRY' | 'RESTART_KICK';
     card?: 'WARNING' | 'RED' | 'YELLOW' | 'WHITE';
     against: 'LOCAL' | 'VISITOR';
     sector: 'SCRUM' | 'FOUL_PLAY' | 'SPACE' | 'RUCK-TACKLE' | 'LINE_OUT-MAUL' | 'ADVANTAGE';
