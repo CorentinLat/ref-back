@@ -1,5 +1,5 @@
 require('dotenv').config();
-const { notarize } = require('electron-notarize');
+const { notarize } = require('@electron/notarize');
 const { appId } = require('../../electron-builder.json');
 
 exports.default = async function notarizeMacos(context) {
