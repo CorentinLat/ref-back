@@ -123,7 +123,7 @@ function addParagraph(doc: typeof PDFDocument, text: string): void {
 function addStatistics(doc: typeof PDFDocument, actions: Action[]): void {
     addSection(doc, 'STATISTICS');
 
-    const penalties = actions.filter(action => action.type === 'PENALTY');
+    const penalties = actions.filter(action => action.type === 'PENALTY' || action.type === 'RETURNED_PENALTY');
     const freeKicks = actions.filter(action => action.type === 'FREE_KICK');
     const penaltiesByTeam = getDecisionsBy('against', penalties);
     const freeKicksByTeam = getDecisionsBy('against', freeKicks);
