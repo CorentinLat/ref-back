@@ -261,7 +261,11 @@
         "DOWNLOAD_VIDEO_GAME": "Match",
         "DOWNLOAD_VIDEO_CLIPS": "Clips",
         "DOWNLOAD_VIDEO_ALL": "Tout",
-        "EXPORT_SUMMARY": "Exporter",
+        "EXPORT_SUMMARY": {
+          "": "Exporter",
+          "EXCEL": "Excel",
+          "PDF": "Pdf"
+        },
         "NAVIGATE_HOME": "Terminer"
       },
       "PANEL": {

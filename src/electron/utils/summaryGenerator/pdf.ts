@@ -1,9 +1,9 @@
 import fs from 'fs';
 import PDFDocument from 'pdfkit';
 
-import { convertSecondsToMMSS, getLongDateString } from './date';
-import { Action, Game } from './game';
-import translate from '../translation';
+import { convertSecondsToMMSS, getLongDateString } from '../date';
+import { Action, Game } from '../game';
+import translate from '../../translation';
 
 type Key = 'second' | 'type' | 'against' | 'sector' | 'fault' | 'precise' | 'comment';
 type ColumnAction = { content: string; colSpan: number; color: string };

@@ -4,6 +4,8 @@ import * as childProcess from 'child_process';
 import * as fs from 'fs';
 import { Observable } from 'rxjs';
 
+import { SummaryExportType } from '../../../../type/refBack';
+
 import { Action, Game, GameInformation, NewAction, NewGameInformation } from '../domain/game';
 
 type InitAppPayload = { appVersion: string; games: GameInformation[] };
@@ -214,18 +216,18 @@ export class ElectronService {
         });
     }
 
-    downloadPdfSummary(gameNumber: string): Promise<void> {
+    downloadSummary(gameNumber: string, exportType: SummaryExportType): Promise<void> {
         return new Promise((resolve, reject) => {
-            this.ipcRenderer?.once('download_pdf_summary_succeeded', () => {
-                this.ipcRenderer?.removeAllListeners('download_pdf_summary_failed');
+            this.ipcRenderer?.once('download_summary_succeeded', () => {
+                this.ipcRenderer?.removeAllListeners('download_summary_failed');
                 resolve();
             });
-            this.ipcRenderer?.once('download_pdf_summary_failed', (_, error: any) => {
-                this.ipcRenderer?.removeAllListeners('download_pdf_summary_succeeded');
+            this.ipcRenderer?.once('download_summary_failed', (_, error: any) => {
+                this.ipcRenderer?.removeAllListeners('download_summary_succeeded');
                 reject(error);
             });
 
-            this.ipcRenderer?.send('download_pdf_summary', { gameNumber });
+            this.ipcRenderer?.send('download_summary', { exportType, gameNumber });
         });
     }
 

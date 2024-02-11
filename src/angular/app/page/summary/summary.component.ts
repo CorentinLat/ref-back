@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
+import { SummaryExportType } from '../../../../../type/refBack';
+
 import { Action, Game } from '../../domain/game';
 
 import { ClipProcessLoaderModalComponent } from '../../component/modal/process-loader/clip-process-loader-modal.component';
@@ -103,11 +105,11 @@ export class SummaryComponent implements OnInit {
         }
     }
 
-    async handleExportSummary(): Promise<void> {
+    async handleExportSummary(exportType: SummaryExportType): Promise<void> {
         this.isDownloadingSummary = true;
 
         try {
-            await this.electron.downloadPdfSummary(this.gameNumber);
+            await this.electron.downloadSummary(this.gameNumber, exportType);
         } catch (error: any) {
             if (!error?.closed) {
                 this.toastService.showError('TOAST.ERROR.PROCESS_DOWNLOAD_SUMMARY');

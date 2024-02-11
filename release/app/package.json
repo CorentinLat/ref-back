@@ -16,6 +16,7 @@
   "dependencies": {
     "check-disk-space": "^3.3.1",
     "electron-updater": "^5.3.0",
+    "excel4node": "^1.8.2",
     "ffmpeg-static-electron": "^2.0.3",
     "ffprobe-static-electron": "^2.0.2",
     "fluent-ffmpeg": "^2.1.2",
@@ -26,6 +27,6 @@
   },
   "devDependencies": {
     "@types/pdfkit": "0.12.8",
-    "@types/uuid": "^8.3.2"
+    "@types/uuid": "^8.3.4"
   }
 }
