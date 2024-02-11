@@ -32,7 +32,7 @@ export class StatisticsComponent implements OnInit {
 
         return Object.keys(penaltyCount).map(team => ({
             name: team,
-            value: penaltyCount[team] + returnedPenaltyCount[team],
+            value: (penaltyCount[team] || 0) + (returnedPenaltyCount[team] || 0),
         }));
     }
 
