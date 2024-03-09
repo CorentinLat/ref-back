@@ -1,10 +1,4 @@
-import {
-    app,
-    Menu,
-    shell,
-    BrowserWindow,
-    MenuItemConstructorOptions,
-} from 'electron';
+import { app, BrowserWindow, Menu, MenuItemConstructorOptions, shell } from 'electron';
 
 import { logsPath } from './utils/path';
 import { checkUpdates } from './utils/update';
@@ -81,6 +75,45 @@ export default class MenuBuilder {
                 },
             ],
         };
+        const subMenuEdit: DarwinMenuItemConstructorOptions =
+            {
+                label: 'Édition',
+                submenu: [
+                    {
+                        label: 'Annuler',
+                        accelerator: 'Command+Z',
+                        role: 'undo',
+                    },
+                    {
+                        label: 'Rétablir',
+                        accelerator: 'Shift+Command+Z',
+                        role: 'redo',
+                    },
+                    {
+                        type: 'separator',
+                    },
+                    {
+                        label: 'Couper',
+                        accelerator: 'Command+X',
+                        role: 'cut',
+                    },
+                    {
+                        label: 'Copier',
+                        accelerator: 'Command+C',
+                        role: 'copy',
+                    },
+                    {
+                        label: 'Coller',
+                        accelerator: 'Command+V',
+                        role: 'paste',
+                    },
+                    {
+                        label: 'Tout sélectionner',
+                        accelerator: 'Command+A',
+                        role: 'selectAll',
+                    },
+                ],
+            };
         const subMenuViewDev: MenuItemConstructorOptions = {
             label: 'Présentation',
             submenu: [
@@ -172,11 +205,11 @@ export default class MenuBuilder {
                 ? subMenuViewDev
                 : subMenuViewProd;
 
-        return [subMenuAbout, subMenuView, subMenuWindow, subMenuHelp];
+        return [subMenuAbout, subMenuEdit, subMenuView, subMenuWindow, subMenuHelp];
     }
 
-    buildDefaultTemplate() {
-        const templateDefault = [
+    buildDefaultTemplate(): MenuItemConstructorOptions[] {
+        return [
             {
                 label: '&Fichier',
                 submenu: [
@@ -186,6 +219,44 @@ export default class MenuBuilder {
                         click: () => {
                             this.mainWindow.close();
                         },
+                    },
+                ],
+            },
+            {
+                label: '&Édition',
+                submenu: [
+                    {
+                        label: 'Annuler',
+                        accelerator: 'Ctrl+Z',
+                        role: 'undo',
+                    },
+                    {
+                        label: 'Rétablir',
+                        accelerator: 'Shift+Ctrl+Z',
+                        role: 'redo',
+                    },
+                    {
+                        type: 'separator',
+                    },
+                    {
+                        label: 'Couper',
+                        accelerator: 'Ctrl+X',
+                        role: 'cut',
+                    },
+                    {
+                        label: 'Copier',
+                        accelerator: 'Ctrl+C',
+                        role: 'copy',
+                    },
+                    {
+                        label: 'Coller',
+                        accelerator: 'Ctrl+V',
+                        role: 'paste',
+                    },
+                    {
+                        label: 'Tout sélectionner',
+                        accelerator: 'Ctrl+A',
+                        role: 'selectAll',
                     },
                 ],
             },
@@ -267,7 +338,5 @@ export default class MenuBuilder {
                 ],
             },
         ];
-
-        return templateDefault;
     }
 }
