@@ -78,6 +78,7 @@ export const actionFaults = {
         'PICK_AND_GO',
         'SQUEEZE_BALL',
         'FORWARD_PROJECTION',
+        'NOT_PLAYED',
         'OTHER',
     ],
     'LINE_OUT-MAUL': [
