@@ -54,11 +54,15 @@ export class MatchAnalysisComponent implements OnInit {
             });
     }
 
-    handleNavigateToSummary(): void {
-        this.router.navigate(
-            ['/summary'],
-            { queryParams: { gameNumber: this.game.information.gameNumber } }
-        );
+    async handleNavigateToSummary(): Promise<void> {
+        try {
+            await this.router.navigate(
+                ['/summary'],
+                { queryParams: { gameNumber: this.game.information.gameNumber } }
+            );
+        } catch (error: any) {
+            this.toastService.showError(error.message);
+        }
     }
 
     public onPlayerReady = (api: VgApiService): void => {
@@ -76,7 +80,11 @@ export class MatchAnalysisComponent implements OnInit {
         setTimeout(() => this.newActionAdded.next(action), 100);
     };
 
-    private navigateToHome(): void {
-        this.router.navigate(['/']);
+    private async navigateToHome(): Promise<void> {
+        try {
+            await this.router.navigate(['/']);
+        } catch (error: any) {
+            this.toastService.showError(error.message);
+        }
     }
 }

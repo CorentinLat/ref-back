@@ -214,7 +214,11 @@ export class HomeComponent implements OnInit {
         return `${this.gameNumberPrefix} ${this.gameNumberControl.value} ${this.gameNumberSuffix}`;
     }
 
-    private navigateToMatchAnalysisPage(gameNumber: string) {
-        this.router.navigate(['/match-analysis'], { queryParams: { gameNumber } });
+    private async navigateToMatchAnalysisPage(gameNumber: string) {
+        try {
+            await this.router.navigate(['/match-analysis'], { queryParams: { gameNumber } });
+        } catch (error: any) {
+            this.toastService.showError(error.message);
+        }
     }
 }

@@ -48,11 +48,12 @@ export class SummaryComponent implements OnInit {
             });
     }
 
-    handleNavigateToMatchAnalysis(): void {
-        this.router.navigate(
-            ['/match-analysis'],
-            { queryParams: { gameNumber: this.gameNumber} }
-        );
+    async handleNavigateToMatchAnalysis(): Promise<void> {
+        try {
+            await this.router.navigate(['/match-analysis'], { queryParams: { gameNumber: this.gameNumber} });
+        } catch (error: any) {
+            this.toastService.showError(error.message);
+        }
     }
 
     async handleDownloadVideoGame(): Promise<void> {
@@ -153,7 +154,11 @@ export class SummaryComponent implements OnInit {
             .sort((a, b) => a.localeCompare(b));
     }
 
-    private navigateToHome(): void {
-        this.router.navigate(['/']);
+    private async navigateToHome(): Promise<void> {
+        try {
+            await this.router.navigate(['/']);
+        } catch (error: any) {
+            this.toastService.showError(error.message);
+        }
     }
 }
