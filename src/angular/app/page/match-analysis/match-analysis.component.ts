@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, HostListener } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { VgApiService } from '@videogular/ngx-videogular/core';
@@ -34,6 +34,38 @@ export class MatchAnalysisComponent implements OnInit {
         private toastService: ToastService,
     ) {}
 
+    @HostListener('document:keydown', ['$event'])
+    handleKeyboardEvent(event: KeyboardEvent) {
+        if (!this.videoApiService?.isPlayerReady || (event.target as HTMLElement)?.tagName === 'TEXTAREA') {
+            return;
+        }
+
+        if (event.code === 'Space') {
+            this.toggleVideoPlayPause();
+        } else if (event.code === 'ArrowLeft') {
+            this.handleVideoTimeChange(event, false);
+        } else if (event.code === 'ArrowRight') {
+            this.handleVideoTimeChange(event, true);
+        } else if (event.key.toLowerCase() === 'f') {
+            this.toggleFullscreen();
+        } else if (event.key.toLowerCase() === 'm') {
+            this.toggleVideoMute();
+        }
+    }
+
+    @HostListener('document:mousewheel', ['$event'])
+    handleMouseWheelEvent(event: WheelEvent) {
+        if (!this.videoApiService?.isPlayerReady) {
+            return;
+        }
+
+        if (event.deltaX > 0) {
+            this.handleVideoTimeChange(event, false);
+        } else {
+            this.handleVideoTimeChange(event, true);
+        }
+    }
+
     ngOnInit(): void {
         const gameNumber = this.route.snapshot.queryParamMap.get('gameNumber');
         if (!gameNumber) {
@@ -58,7 +90,7 @@ export class MatchAnalysisComponent implements OnInit {
         try {
             await this.router.navigate(
                 ['/summary'],
-                { queryParams: { gameNumber: this.game.information.gameNumber } }
+                { queryParams: { gameNumber: this.game.information.gameNumber } },
             );
         } catch (error: any) {
             this.toastService.showError(error.message);
@@ -78,6 +110,31 @@ export class MatchAnalysisComponent implements OnInit {
 
     public onActionAdded = (action: Action): void => {
         setTimeout(() => this.newActionAdded.next(action), 100);
+    };
+
+    private toggleVideoPlayPause = (): void => {
+        if (this.videoApiService.state === 'paused') {
+            this.videoApiService.play();
+        } else {
+            this.videoApiService.pause();
+        }
+    };
+
+    private handleVideoTimeChange = (event: KeyboardEvent | WheelEvent, isForward = false): void => {
+        const delay = event.altKey ? 30
+            : event.shiftKey ? 10
+                : 1;
+        const multiplier = isForward ? 1 : -1;
+
+        this.putVideoAtSecond(this.videoApiService.currentTime + delay * multiplier);
+    };
+
+    private toggleFullscreen = (): void => {
+        this.videoApiService.fsAPI.toggleFullscreen();
+    };
+
+    private toggleVideoMute = (): void => {
+        this.videoApiService.volume = this.videoApiService.volume === 0 ? 1 : 0;
     };
 
     private async navigateToHome(): Promise<void> {
