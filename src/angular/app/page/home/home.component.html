@@ -142,35 +142,86 @@
             <article class="errors-container"></article>
         </section>
 
-        <section class="row">
-            <article class="col-8 offset-2">
+        <section class="row video-inputs" formGroupName="video">
+            <article class="video-options-toggle">
                 <input
-                    [className]="exposeClassNameForFormControl(videoControl)"
-                    formControlName="video"
+                    id="video-file"
+                    type="radio"
+                    class="btn-check"
+                    formControlName="options"
+                    value="file"
+                >
+                <label class="btn btn-outline-primary" for="video-file">
+                    {{ 'PAGE.HOME.FORM.LABEL.VIDEO_OPTIONS.FILE' | translate }}
+                </label>
+
+                <input
+                    id="video-veo"
+                    type="radio"
+                    class="btn-check"
+                    formControlName="options"
+                    value="veo"
+                >
+                <label class="btn btn-outline-primary" for="video-veo">
+                    {{ 'PAGE.HOME.FORM.LABEL.VIDEO_OPTIONS.VEO' | translate }}
+                </label>
+            </article>
+
+            <article class="col-8 offset-2" *ngIf="videoOptionsControl.value === 'file'">
+                <input
+                    [className]="exposeClassNameForFormControl(videoFileControl)"
+                    formControlName="file"
                     type="file"
                     multiple
                 >
                 <article class="errors-container">
-                    <p class="error" *ngIf="videoControl.errors?.invalidType">
-                        {{ 'PAGE.HOME.ERROR.VIDEO.IMPORT_INVALID' | translate }}
+                    <p class="error" *ngIf="videoFileControl.errors?.invalidType">
+                        {{ 'PAGE.HOME.ERROR.VIDEO_FILE.IMPORT_INVALID' | translate }}
                         <span *ngFor="let fileName of exposeErrorFileNames()">
                         <br>{{ fileName }}
                     </span>
                     </p>
-                    <p class="error" *ngIf="videoControl.errors?.multipleVideoFormat">
-                        {{ 'PAGE.HOME.ERROR.VIDEO.MULTIPLE_FORMAT' | translate }}
+                    <p class="error" *ngIf="videoFileControl.errors?.multipleVideoFormat">
+                        {{ 'PAGE.HOME.ERROR.VIDEO_FILE.MULTIPLE_FORMAT' | translate }}
                     </p>
-                    <p class="error" *ngIf="videoControl.errors?.notEnoughSpace">
-                        {{ 'PAGE.HOME.ERROR.VIDEO.NOT_ENOUGH_SPACE' | translate }}
+                    <p class="error" *ngIf="videoFileControl.errors?.notEnoughSpace">
+                        {{ 'PAGE.HOME.ERROR.VIDEO_FILE.NOT_ENOUGH_SPACE' | translate }}
                     </p>
-                    <p class="error" *ngIf="videoControl.errors?.processVideoFailed">
-                        {{ 'PAGE.HOME.ERROR.VIDEO.PROCESS_FAILED' | translate }}
+                    <p class="error" *ngIf="videoFileControl.errors?.processVideoFailed">
+                        {{ 'PAGE.HOME.ERROR.VIDEO_FILE.PROCESS_FAILED' | translate }}
                     </p>
-                    <p class="error" *ngIf="videoControl.dirty && videoControl.errors?.required">
-                        {{ 'PAGE.HOME.ERROR.VIDEO.REQUIRED' | translate }}
+                    <p class="error" *ngIf="videoGroup.dirty && videoGroup.errors?.required">
+                        {{ 'PAGE.HOME.ERROR.VIDEO_FILE.REQUIRED' | translate }}
                     </p>
                 </article>
             </article>
+
+            <section class="col-8 offset-2" *ngIf="videoOptionsControl.value === 'veo'">
+                <article class="input-group">
+                    <span class="input-group-text"><span class="bi bi-link"></span></span>
+                    <input
+                        [className]="exposeClassNameForFormControl(videoVeoControl)"
+                        [placeholder]="veoUrlPrefix"
+                        formControlName="veo"
+                        type="url"
+                    />
+                </article>
+
+                <article class="errors-container">
+                    <p class="error" *ngIf="videoVeoControl.errors?.invalidType || videoVeoControl.errors?.pattern">
+                        {{ 'PAGE.HOME.ERROR.VIDEO_VEO.IMPORT_INVALID' | translate }}
+                    </p>
+                    <p class="error" *ngIf="videoVeoControl.errors?.notEnoughSpace">
+                        {{ 'PAGE.HOME.ERROR.VIDEO_VEO.NOT_ENOUGH_SPACE' | translate }}
+                    </p>
+                    <p class="error" *ngIf="videoVeoControl.errors?.processVideoFailed">
+                        {{ 'PAGE.HOME.ERROR.VIDEO_VEO.PROCESS_FAILED' | translate }}
+                    </p>
+                    <p class="error" *ngIf="videoGroup.dirty && videoGroup.errors?.required">
+                        {{ 'PAGE.HOME.ERROR.VIDEO_VEO.REQUIRED' | translate }}
+                    </p>
+                </article>
+            </section>
         </section>
 
         <article class="text-center">

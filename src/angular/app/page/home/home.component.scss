@@ -40,6 +40,21 @@ $footer-padding-y: 10px;
                 text-align: center;
             }
         }
+
+        .video-inputs {
+            gap: 10px;
+
+            .video-options-toggle {
+                display: flex;
+                justify-content: center;
+                gap: 10px;
+
+                .btn {
+                    box-shadow: none;
+                    outline: none;
+                }
+            }
+        }
     }
 
     .footer {

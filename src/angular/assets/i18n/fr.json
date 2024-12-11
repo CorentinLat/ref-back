@@ -51,7 +51,11 @@
           "DATE": "Date",
           "LOCAL_TEAM": "Équipe Locale",
           "VISITOR_TEAM": "Équipe Visiteuse",
-          "SCORE": "Résultat"
+          "SCORE": "Résultat",
+          "VIDEO_OPTIONS": {
+            "FILE": "Fichier",
+            "VEO": "Lien Veo"
+          }
         }
       },
       "ERROR" : {
@@ -69,12 +73,18 @@
         "SCORES": {
           "REQUIRED": "Le score de la rencontre doit être saisi."
         },
-        "VIDEO": {
+        "VIDEO_FILE": {
           "IMPORT_INVALID": "Les fichiers suivants ne sont pas supportés :",
           "MULTIPLE_FORMAT": "Les vidéos doivent être au même format.",
           "NOT_ENOUGH_SPACE": "Stockage disponible insuffisant.",
           "PROCESS_FAILED": "Une erreur est survenue lors du traitement.",
           "REQUIRED": "Vous devez sélectionner au moins une vidéo."
+        },
+        "VIDEO_VEO": {
+          "IMPORT_INVALID": "Le lien Veo n'est pas valide.",
+          "NOT_ENOUGH_SPACE": "Stockage disponible insuffisant.",
+          "PROCESS_FAILED": "Une erreur est survenue lors du traitement.",
+          "REQUIRED": "Vous devez saisir un lien Veo."
         }
       }
     },

@@ -1,5 +1,5 @@
 import { Component, HostListener, OnInit, ViewEncapsulation } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Observable, of, OperatorFunction } from 'rxjs';
@@ -23,6 +23,11 @@ import { ToastService } from '../../service/ToastService';
     encapsulation: ViewEncapsulation.None
 })
 export class HomeComponent implements OnInit {
+    readonly gameNumberPrefix = this.dateService.getCurrentSeasonYears();
+    readonly gameNumberSuffix = 'RCT';
+
+    readonly veoUrlPrefix = 'https://app.veo.co/';
+
     appVersion = '';
     hasExistingGames = false;
 
@@ -46,11 +51,26 @@ export class HomeComponent implements OnInit {
                 [Validators.required, Validators.pattern('^\\d{1,3}$')]
             ),
         }),
-        video: new FormControl(null, Validators.required),
+        video: new FormGroup(
+            {
+                options: new FormControl('file', Validators.required),
+                file: new FormControl(null),
+                veo: new FormControl(null, Validators.pattern(`^${this.veoUrlPrefix}.+$`)),
+            },
+            {
+                validators: (group: AbstractControl) => {
+                    const { options, file, veo } = group.value;
+                    if (options === 'file' && !file) {
+                        return { required: true };
+                    }
+                    if (options === 'veo' && !veo) {
+                        return { required: true };
+                    }
+                    return null;
+                }
+            }
+        ),
     });
-
-    readonly gameNumberPrefix = this.dateService.getCurrentSeasonYears();
-    readonly gameNumberSuffix = 'RCT';
 
     files: File[] = [];
     notSupportedFiles: File[] = [];
@@ -75,7 +95,10 @@ export class HomeComponent implements OnInit {
     get scoreGroup(): FormGroup { return this.gameForm.get('score') as FormGroup; }
     get localScoreControl(): FormControl { return this.scoreGroup.get('local') as FormControl; }
     get visitorScoreControl(): FormControl { return this.scoreGroup.get('visitor') as FormControl; }
-    get videoControl(): FormControl { return this.gameForm.get('video') as FormControl; }
+    get videoGroup(): FormGroup { return this.gameForm.get('video') as FormGroup; }
+    get videoOptionsControl(): FormControl { return this.videoGroup.get('options') as FormControl; }
+    get videoFileControl(): FormControl { return this.videoGroup.get('file') as FormControl; }
+    get videoVeoControl(): FormControl { return this.videoGroup.get('veo') as FormControl; }
 
     @HostListener('change', ['$event.target.files'])
     emitFiles(files: FileList) {
@@ -98,9 +121,9 @@ export class HomeComponent implements OnInit {
         }
 
         if (this.notSupportedFiles.length) {
-            this.videoControl.setErrors({ invalidType: true });
+            this.videoFileControl.setErrors({ invalidType: true });
         } else if (fileExtensions.size > 1) {
-            this.videoControl.setErrors({ multipleVideoFormat: true });
+            this.videoFileControl.setErrors({ multipleVideoFormat: true });
         }
     }
 
@@ -148,7 +171,7 @@ export class HomeComponent implements OnInit {
             return;
         }
 
-        const { video, ...gameInformation } = this.gameForm.value;
+        const { videoOptions, videoFile, videoVeo, ...gameInformation } = this.gameForm.value;
         const videoPaths = this.files.map(({ path }) => path);
 
         this.isProcessingVideos = true;
@@ -201,11 +224,11 @@ export class HomeComponent implements OnInit {
             );
         } else if (error?.notEnoughSpace) {
             this.modalService.open(NotEnoughRemainingSpaceModalComponent, { centered: true });
-            this.videoControl.setErrors({ notEnoughSpace: true });
+            this.videoFileControl.setErrors({ notEnoughSpace: true });
         } else if (error?.cancelled) {
             this.toastService.showInfo('TOAST.INFO.PROCESS_VIDEO_CANCELLED');
         } else {
-            this.videoControl.setErrors({ processVideoFailed: true });
+            this.videoFileControl.setErrors({ processVideoFailed: true });
             this.toastService.showError('TOAST.ERROR.PROCESS_VIDEO');
         }
     };
