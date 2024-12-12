@@ -114,7 +114,13 @@ export type GameInformation = {
     score: { local: number; visitor: number };
     videoPath: string;
 };
-export type NewGameInformation = Omit<GameInformation, 'videoPath'>;
+export type NewGameInformation = Omit<GameInformation, 'videoPath'> & {
+    video: {
+        option: 'file' | 'veo';
+        videoPaths: string[];
+        veo?: string;
+    };
+};
 
 export type Game = {
     actions: Action[];

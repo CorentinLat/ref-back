@@ -3,10 +3,17 @@ import path from 'path';
 
 import IpcMainEvent = Electron.IpcMainEvent;
 
+import { CancelVideoProcessingError } from '../domain/error/CancelVideoProcessingError';
+import { NoVideoError } from '../domain/error/NoVideoError';
+import { UnexpectedError } from '../domain/error/UnexpectedError';
+
+import { cancelCurrentDownload, downloadUrlToPath } from './download';
 import { copyFileToPath, extractFileExtension } from './file';
-import { Game, getDefaultGameVideoFilename } from './game';
+import { Game, getDefaultGameVideoFilename, NewGameInformation } from './game';
 import logger from './logger';
 import { ffmpegElectronPath, ffprobeElectronPath, workPath } from './path';
+import throwIfNotEnoughRemainingSpaceForFilePaths from './storage';
+import { getVideoUrlFromVeo } from './veo';
 
 import translate from '../translation';
 
@@ -17,12 +24,36 @@ const SUPPORTED_HTML_VIDEO_EXTENSIONS = ['mp4', 'webm', 'ogg'];
 
 let currentCommands: FluentFFMPEG.FfmpegCommand[] = [];
 
+export async function handleVideoImport(gameInformation: NewGameInformation, event: IpcMainEvent): Promise<string> {
+    const { gameNumber, video: { option, videoPaths, veo } } = gameInformation;
+
+    let videoPath;
+    if (option === 'file' && videoPaths?.length) {
+        await throwIfNotEnoughRemainingSpaceForFilePaths(videoPaths);
+
+        if (videoPaths.length > 1) {
+            videoPath = await concatVideos(gameNumber, videoPaths, event);
+        } else {
+            videoPath = await copyVideoToUserDataPath(gameNumber, videoPaths[0], event);
+        }
+    } else if (option === 'veo' && veo) {
+        const videoUrl = await getVideoUrlFromVeo(veo);
+        videoPath = await downloadVideoUrlToUserDataPath(gameNumber, videoUrl, event);
+    } else {
+        throw new NoVideoError();
+    }
+
+    return videoPath;
+}
+
 export async function concatVideos(gameNumber: string, videoPaths: string[], event: IpcMainEvent): Promise<string> {
     logger.info(`Concat videos: ${videoPaths.join(', ')}`);
 
     const videoExtensions = new Set<string>();
     videoPaths.forEach(videoPath => videoExtensions.add(extractFileExtension(videoPath)));
-    if (videoExtensions.size > 1) { throw new Error(); }
+    if (videoExtensions.size > 1) {
+        throw new UnexpectedError();
+    }
 
     const videoName: string = generateVideoName();
     const outputFileName = path.join(workPath, gameNumber, videoName);
@@ -33,10 +64,8 @@ export async function concatVideos(gameNumber: string, videoPaths: string[], eve
     currentCommands.push(command);
     const startTime = Date.now();
 
-    // @ts-ignore
     videoPaths.forEach(videoPath => command.input(videoPath));
     return new Promise((resolve, reject) => {
-        // @ts-ignore
         command
             .on('progress', (progress: { timemark: string }) => {
                 const currentSeconds = extractNumberOfSecondsFromTimeMark(progress.timemark);
@@ -50,7 +79,7 @@ export async function concatVideos(gameNumber: string, videoPaths: string[], eve
             .on('error', (err: Error) => {
                 if (err.message.includes('SIGKILL')) {
                     logger.info(`Concat videos cancelled: ${outputFileName}`);
-                    return reject({ cancelled: true });
+                    return reject(new CancelVideoProcessingError());
                 }
 
                 logger.error(`error concatVideos: ${err}`);
@@ -69,6 +98,8 @@ export async function concatVideos(gameNumber: string, videoPaths: string[], eve
 export function cancelCurrentVideoCommands(): void {
     currentCommands.forEach(command => command.kill('SIGKILL'));
     currentCommands = [];
+
+    cancelCurrentDownload();
 }
 
 export async function copyVideoToUserDataPath(gameNumber: string, videoPath: string, event: IpcMainEvent): Promise<string> {
@@ -84,6 +115,15 @@ export async function copyVideoToUserDataPath(gameNumber: string, videoPath: str
         logger.info(`Format not supported: ${currentVideoExtension}. Converting to mp4...`);
         return await concatVideos(gameNumber, [videoPath], event);
     }
+}
+
+export async function downloadVideoUrlToUserDataPath(gameNumber: string, url: string, event: IpcMainEvent): Promise<string> {
+    const videoName: string = generateVideoName();
+    const outputFileName = path.join(workPath, gameNumber, videoName);
+
+    await downloadUrlToPath(url, outputFileName, event);
+
+    return outputFileName;
 }
 
 export async function downloadAllVideosGame(game: Game, destDirectory: string, event: IpcMainEvent): Promise<void> {
@@ -135,7 +175,7 @@ export async function generateGameClips(game: Game, destClipsDirectory: string, 
                 .on('error', (err: Error) => {
                     if (err.message.includes('SIGKILL')) {
                         logger.info(`Generate clip cancelled: ${clipName}`);
-                        return reject({ cancelled: true });
+                        return reject(new CancelVideoProcessingError());
                     }
 
                     logger.error(`error generateGameClips: ${err}`);
@@ -164,7 +204,7 @@ async function computeTotalDurationOfVideos(videoPaths: string[]): Promise<numbe
 
                 resolve(data.format.duration ?? 0);
             });
-        })
+        }),
     ));
 
     return durations.reduce<number>((acc, val) => acc + val, 0);

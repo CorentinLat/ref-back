@@ -5,6 +5,8 @@ import path from 'path';
 import ffmpegElectron from 'ffmpeg-static-electron';
 import ffprobeElectron from 'ffprobe-static-electron';
 
+import { GameAlreadyExistsError } from '../domain/error/GameAlreadyExistsError';
+
 import logger from './logger';
 
 export const downloadPath = app.getPath('downloads');
@@ -30,13 +32,13 @@ export function checkMandatoryFolderExists() {
     });
 }
 
-export function checkGameFolderExists(gameNumber: string, force?: boolean) {
+export function throwIfGameFolderExists(gameNumber: string, force?: boolean) {
     const gameFolderPath = path.join(workPath, gameNumber);
 
     if (fs.existsSync(gameFolderPath)) {
         if (!force) {
             logger.info(`Game folder already exists: ${gameFolderPath}`);
-            return true;
+            throw new GameAlreadyExistsError();
         }
 
         removeGameFolder(gameFolderPath);
@@ -44,7 +46,6 @@ export function checkGameFolderExists(gameNumber: string, force?: boolean) {
 
     fs.mkdirSync(gameFolderPath, { recursive: true });
     logger.info(`Game folder created: ${gameFolderPath}`);
-    return false;
 }
 
 export function removeGameFolder(gameFolderPath: string): void {

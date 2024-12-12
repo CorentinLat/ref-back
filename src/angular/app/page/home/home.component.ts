@@ -5,10 +5,18 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Observable, of, OperatorFunction } from 'rxjs';
 import { catchError, debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 
-import { GameNumberExistingModalComponent } from '../../component/modal/game-number-existing-modal/game-number-existing-modal.component';
-import { LoadGamesExistingModalComponent } from '../../component/modal/load-games-existing-modal/load-games-existing-modal.component';
-import { NotEnoughRemainingSpaceModalComponent } from '../../component/modal/not-enough-remaining-space-modal/not-enough-remaining-space-modal.component';
-import { VideoProcessLoaderModalComponent } from '../../component/modal/process-loader/video-process-loader-modal.component';
+import {
+    GameNumberExistingModalComponent,
+} from '../../component/modal/game-number-existing-modal/game-number-existing-modal.component';
+import {
+    LoadGamesExistingModalComponent,
+} from '../../component/modal/load-games-existing-modal/load-games-existing-modal.component';
+import {
+    NotEnoughRemainingSpaceModalComponent,
+} from '../../component/modal/not-enough-remaining-space-modal/not-enough-remaining-space-modal.component';
+import {
+    VideoProcessLoaderModalComponent,
+} from '../../component/modal/process-loader/video-process-loader-modal.component';
 
 import { DateTimeService } from '../../service/DateTimeService';
 import { ElectronService } from '../../service/ElectronService';
@@ -20,7 +28,7 @@ import { ToastService } from '../../service/ToastService';
     selector: 'app-home',
     templateUrl: './home.component.html',
     styleUrls: ['./home.component.scss'],
-    encapsulation: ViewEncapsulation.None
+    encapsulation: ViewEncapsulation.None,
 })
 export class HomeComponent implements OnInit {
     readonly gameNumberPrefix = this.dateService.getCurrentSeasonYears();
@@ -34,7 +42,7 @@ export class HomeComponent implements OnInit {
     gameForm = new FormGroup({
         gameNumber: new FormControl(
             '',
-            [Validators.required, Validators.pattern('^\\d{2}\\s\\d{4}\\s\\d{4}$')]
+            [Validators.required, Validators.pattern('^\\d{2}\\s\\d{4}\\s\\d{4}$')],
         ),
         date: new FormControl(this.dateService.getLastSundayDate(), Validators.required),
         teams: new FormGroup({
@@ -44,31 +52,31 @@ export class HomeComponent implements OnInit {
         score: new FormGroup({
             local: new FormControl(
                 0,
-                [Validators.required, Validators.pattern('^\\d{1,3}$')]
+                [Validators.required, Validators.pattern('^\\d{1,3}$')],
             ),
             visitor: new FormControl(
                 0,
-                [Validators.required, Validators.pattern('^\\d{1,3}$')]
+                [Validators.required, Validators.pattern('^\\d{1,3}$')],
             ),
         }),
         video: new FormGroup(
             {
-                options: new FormControl('file', Validators.required),
+                option: new FormControl('file', Validators.required),
                 file: new FormControl(null),
                 veo: new FormControl(null, Validators.pattern(`^${this.veoUrlPrefix}.+$`)),
             },
             {
                 validators: (group: AbstractControl) => {
-                    const { options, file, veo } = group.value;
-                    if (options === 'file' && !file) {
+                    const { option, file, veo } = group.value;
+                    if (option === 'file' && !file) {
                         return { required: true };
                     }
-                    if (options === 'veo' && !veo) {
+                    if (option === 'veo' && !veo) {
                         return { required: true };
                     }
                     return null;
-                }
-            }
+                },
+            },
         ),
     });
 
@@ -96,13 +104,15 @@ export class HomeComponent implements OnInit {
     get localScoreControl(): FormControl { return this.scoreGroup.get('local') as FormControl; }
     get visitorScoreControl(): FormControl { return this.scoreGroup.get('visitor') as FormControl; }
     get videoGroup(): FormGroup { return this.gameForm.get('video') as FormGroup; }
-    get videoOptionsControl(): FormControl { return this.videoGroup.get('options') as FormControl; }
+    get videoOptionControl(): FormControl { return this.videoGroup.get('option') as FormControl; }
     get videoFileControl(): FormControl { return this.videoGroup.get('file') as FormControl; }
     get videoVeoControl(): FormControl { return this.videoGroup.get('veo') as FormControl; }
 
     @HostListener('change', ['$event.target.files'])
     emitFiles(files: FileList) {
-        if (!files) { return; }
+        if (!files) {
+            return;
+        }
 
         this.files = [];
         this.notSupportedFiles = [];
@@ -110,7 +120,9 @@ export class HomeComponent implements OnInit {
         const fileExtensions = new Set<string>();
         for (let i = 0; i < files.length; i++) {
             const file = files.item(i);
-            if (!file) { continue; }
+            if (!file) {
+                continue;
+            }
 
             if (this.fileService.isFileSupported(file)) {
                 this.files.push(file);
@@ -152,9 +164,9 @@ export class HomeComponent implements OnInit {
             distinctUntilChanged(),
             switchMap(term =>
                 this.ffrService.searchTeams(term).pipe(
-                    catchError(() => of([]))
-                )
-            )
+                    catchError(() => of([])),
+                ),
+            ),
         );
 
     exposeFormGroupIsInvalid(formGroup: FormGroup): boolean {
@@ -171,7 +183,7 @@ export class HomeComponent implements OnInit {
             return;
         }
 
-        const { videoOptions, videoFile, videoVeo, ...gameInformation } = this.gameForm.value;
+        const { video: { option, veo }, ...gameInformation } = this.gameForm.value;
         const videoPaths = this.files.map(({ path }) => path);
 
         this.isProcessingVideos = true;
@@ -179,8 +191,11 @@ export class HomeComponent implements OnInit {
         try {
             const gameNumber = await this.electron.createNewGame(
                 force,
-                { ...gameInformation, gameNumber: this.getGameNumber() },
-                videoPaths,
+                {
+                    ...gameInformation,
+                    gameNumber: this.getGameNumber(),
+                    video: { option, videoPaths, veo },
+                },
             );
 
             this.navigateToMatchAnalysisPage(gameNumber);
@@ -205,6 +220,13 @@ export class HomeComponent implements OnInit {
 
     handleOpenUrlInBrowser(url: string) {
         this.electron.openUrlInBrowser(url);
+    }
+
+    handleVideoSourceUpdated() {
+        this.videoFileControl.reset();
+        this.videoVeoControl.reset();
+
+        this.files = [];
     }
 
     private handleProcessVideosFailed = (error: any) => {

@@ -31,7 +31,7 @@ export class ElectronService {
         return !!(window && window.process && window.process.type);
     }
 
-    createNewGame(force: boolean, gameInformation: NewGameInformation, videoPaths: string[]): Promise<string> {
+    createNewGame(force: boolean, gameInformation: NewGameInformation): Promise<string> {
         return new Promise((resolve, reject) => {
             this.ipcRenderer?.once('create_new_game_succeeded', (_, createdGameNumber: string) => {
                 this.ipcRenderer?.removeAllListeners('create_new_game_failed');
@@ -42,7 +42,7 @@ export class ElectronService {
                 reject(error);
             });
 
-            this.ipcRenderer?.send('create_new_game', { force, gameInformation, videoPaths });
+            this.ipcRenderer?.send('create_new_game', { force, gameInformation });
         });
     }
 

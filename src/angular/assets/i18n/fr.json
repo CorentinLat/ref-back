@@ -52,7 +52,7 @@
           "LOCAL_TEAM": "Équipe Locale",
           "VISITOR_TEAM": "Équipe Visiteuse",
           "SCORE": "Résultat",
-          "VIDEO_OPTIONS": {
+          "VIDEO_OPTION": {
             "FILE": "Fichier",
             "VEO": "Lien Veo"
           }
@@ -320,7 +320,7 @@
       "PROCESS_DOWNLOAD_SUMMARY": "Impossible d'exporter le résumé...",
       "PROCESS_GAME": "Impossible de charger le match...",
       "PROCESS_GAME_COMMENT": "Impossible de mettre à jour le commentaire...",
-      "PROCESS_VIDEO": "Impossible de traiter les vidéos..."
+      "PROCESS_VIDEO": "Impossible de traiter la vidéo..."
     },
     "INFO": {
       "DOWNLOAD_VIDEO_CANCELLED": "Téléchargement annulé !",

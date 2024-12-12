@@ -148,26 +148,28 @@
                     id="video-file"
                     type="radio"
                     class="btn-check"
-                    formControlName="options"
+                    formControlName="option"
                     value="file"
+                    (change)="handleVideoSourceUpdated()"
                 >
                 <label class="btn btn-outline-primary" for="video-file">
-                    {{ 'PAGE.HOME.FORM.LABEL.VIDEO_OPTIONS.FILE' | translate }}
+                    {{ 'PAGE.HOME.FORM.LABEL.VIDEO_OPTION.FILE' | translate }}
                 </label>
 
                 <input
                     id="video-veo"
                     type="radio"
                     class="btn-check"
-                    formControlName="options"
+                    formControlName="option"
                     value="veo"
+                    (change)="handleVideoSourceUpdated()"
                 >
                 <label class="btn btn-outline-primary" for="video-veo">
-                    {{ 'PAGE.HOME.FORM.LABEL.VIDEO_OPTIONS.VEO' | translate }}
+                    {{ 'PAGE.HOME.FORM.LABEL.VIDEO_OPTION.VEO' | translate }}
                 </label>
             </article>
 
-            <article class="col-8 offset-2" *ngIf="videoOptionsControl.value === 'file'">
+            <article class="col-8 offset-2" *ngIf="videoOptionControl.value === 'file'">
                 <input
                     [className]="exposeClassNameForFormControl(videoFileControl)"
                     formControlName="file"
@@ -196,7 +198,7 @@
                 </article>
             </article>
 
-            <section class="col-8 offset-2" *ngIf="videoOptionsControl.value === 'veo'">
+            <section class="col-8 offset-2" *ngIf="videoOptionControl.value === 'veo'">
                 <article class="input-group">
                     <span class="input-group-text"><span class="bi bi-link"></span></span>
                     <input
