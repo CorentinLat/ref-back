@@ -63,7 +63,7 @@ export class HomeComponent implements OnInit {
             {
                 option: new FormControl('file', Validators.required),
                 file: new FormControl(null),
-                veo: new FormControl(null, Validators.pattern(`^${this.veoUrlPrefix}.+$`)),
+                veo: new FormControl(null, Validators.pattern(new RegExp(`^${this.veoUrlPrefix.replace(/([.?*+^$[\]\\(){}|-])/g, '\\$1')}.+$`))),
             },
             {
                 validators: (group: AbstractControl) => {
@@ -246,12 +246,22 @@ export class HomeComponent implements OnInit {
             );
         } else if (error?.notEnoughSpace) {
             this.modalService.open(NotEnoughRemainingSpaceModalComponent, { centered: true });
-            this.videoFileControl.setErrors({ notEnoughSpace: true });
+
+            if (this.videoOptionControl.value === 'file') {
+                this.videoFileControl.setErrors({ notEnoughSpace: true });
+            } else if (this.videoOptionControl.value === 'veo') {
+                this.videoVeoControl.setErrors({ notEnoughSpace: true });
+            }
         } else if (error?.cancelled) {
             this.toastService.showInfo('TOAST.INFO.PROCESS_VIDEO_CANCELLED');
         } else {
-            this.videoFileControl.setErrors({ processVideoFailed: true });
             this.toastService.showError('TOAST.ERROR.PROCESS_VIDEO');
+
+            if (this.videoOptionControl.value === 'file') {
+                this.videoFileControl.setErrors({ processVideoFailed: true });
+            } else if (this.videoOptionControl.value === 'veo') {
+                this.videoVeoControl.setErrors({ processVideoFailed: true });
+            }
         }
     };
 

@@ -143,30 +143,32 @@
         </section>
 
         <section class="row video-inputs" formGroupName="video">
-            <article class="video-options-toggle">
-                <input
-                    id="video-file"
-                    type="radio"
-                    class="btn-check"
-                    formControlName="option"
-                    value="file"
-                    (change)="handleVideoSourceUpdated()"
-                >
-                <label class="btn btn-outline-primary" for="video-file">
-                    {{ 'PAGE.HOME.FORM.LABEL.VIDEO_OPTION.FILE' | translate }}
-                </label>
+            <article style="text-align: center">
+                <article class="video-options-toggle btn-group">
+                    <input
+                        id="video-file"
+                        type="radio"
+                        class="btn-check"
+                        formControlName="option"
+                        value="file"
+                        (change)="handleVideoSourceUpdated()"
+                    >
+                    <label class="btn btn-outline-primary" for="video-file">
+                        {{ 'PAGE.HOME.FORM.LABEL.VIDEO_OPTION.FILE' | translate }}
+                    </label>
 
-                <input
-                    id="video-veo"
-                    type="radio"
-                    class="btn-check"
-                    formControlName="option"
-                    value="veo"
-                    (change)="handleVideoSourceUpdated()"
-                >
-                <label class="btn btn-outline-primary" for="video-veo">
-                    {{ 'PAGE.HOME.FORM.LABEL.VIDEO_OPTION.VEO' | translate }}
-                </label>
+                    <input
+                        id="video-veo"
+                        type="radio"
+                        class="btn-check"
+                        formControlName="option"
+                        value="veo"
+                        (change)="handleVideoSourceUpdated()"
+                    >
+                    <label class="btn btn-outline-primary" for="video-veo">
+                        {{ 'PAGE.HOME.FORM.LABEL.VIDEO_OPTION.VEO' | translate }}
+                    </label>
+                </article>
             </article>
 
             <article class="col-8 offset-2" *ngIf="videoOptionControl.value === 'file'">
