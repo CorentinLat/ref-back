@@ -37,11 +37,24 @@
     }
   },
   "PAGE": {
+    "DECISIONS": {
+      "TITLE": "Parcourir vos Décisions",
+      "BACK_TO_HOME": "Retour à l'Accueil",
+      "EXPLANATION": "Recherchez des décisions, découpez-les puis téléchargez-les.",
+      "FORM": {
+        "LABEL": {
+          "SECTOR": "Secteur(s)",
+          "FAULT": "Faute(s)",
+          "PRECISE": "Précis"
+        }
+      }
+    },
     "HOME": {
       "IMPORT": "Importez votre vidéo",
       "IMPORT_BUTTON": "Démarrer",
       "MULTI_VIDEO_EXPLANATION": "Si votre vidéo est découpée en plusieurs clips, vous pouvez tous les importer.",
       "SEE_EXISTING_GAMES": "Rencontres",
+      "EXPLORE_DECISIONS": "Décisions",
       "MADE_BY": "Créé par",
       "WITH": "avec",
       "DOCUMENTATION": "Documentation",

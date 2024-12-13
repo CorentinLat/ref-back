@@ -218,6 +218,10 @@ export class HomeComponent implements OnInit {
             });
     };
 
+    async navigateToExploreDecisionsPage() {
+        await this.router.navigate(['/decisions']);
+    }
+
     handleOpenUrlInBrowser(url: string) {
         this.electron.openUrlInBrowser(url);
     }

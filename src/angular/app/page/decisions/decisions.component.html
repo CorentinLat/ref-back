@@ -1,0 +1,79 @@
+<section class="decisions-component">
+    <header class="decisions-header row">
+        <article class="col-3">
+            <button class="btn btn-link" (click)="navigateToHomePage()">
+                <i class="bi bi-arrow-left"></i> {{ 'PAGE.DECISIONS.BACK_TO_HOME' | translate }}
+            </button>
+        </article>
+
+        <h4 class="title col-6">{{ 'PAGE.DECISIONS.TITLE' | translate }}</h4>
+    </header>
+
+    <form
+        class="decisions-filters container"
+        [formGroup]="searchForm"
+        (change)="searchDecisions()"
+        novalidate
+    >
+        <article class="mb-4 text-center">
+            <p>{{ 'PAGE.DECISIONS.EXPLANATION' | translate }}</p>
+        </article>
+
+        <section class="row">
+            <article class="col-4">
+                <label for="sectors" class="form-label">
+                    {{ 'PAGE.DECISIONS.FORM.LABEL.SECTOR' | translate }}
+                    <span class="text-danger">*</span>
+                </label>
+                <div class="input-group">
+                    <select
+                        [className]="exposeClassNameForFormControl(sectorsControl)"
+                        id="sectors"
+                        class="form-select"
+                        formControlName="sectors"
+                    >
+                        <option *ngFor="let sector of []" [value]="sector.id">{{ sector.name }}</option>
+                    </select>
+                </div>
+            </article>
+
+            <article class="col-4">
+                <label for="sectors" class="form-label">
+                    {{ 'PAGE.DECISIONS.FORM.LABEL.FAULT' | translate }}
+                    <span class="text-danger">*</span>
+                </label>
+                <div class="input-group">
+                    <select
+                        [className]="exposeClassNameForFormControl(sectorsControl)"
+                        id="faults"
+                        class="form-select"
+                        formControlName="sectors"
+                    >
+                        <option *ngFor="let sector of []" [value]="sector.id">{{ sector.name }}</option>
+                    </select>
+                </div>
+            </article>
+
+            <article class="col-4">
+                <label for="sectors" class="form-label">
+                    {{ 'PAGE.DECISIONS.FORM.LABEL.PRECISE' | translate }}
+                    <span class="text-danger">*</span>
+                </label>
+                <div class="input-group">
+                    <select
+                        [className]="exposeClassNameForFormControl(sectorsControl)"
+                        id="precise"
+                        class="form-select"
+                        formControlName="sectors"
+                    >
+                        <option *ngFor="let sector of []" [value]="sector.id">{{ sector.name }}</option>
+                    </select>
+                </div>
+            </article>
+        </section>
+    </form>
+
+    <main class="decisions-body container">
+
+    </main>
+</section>

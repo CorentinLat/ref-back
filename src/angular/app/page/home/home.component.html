@@ -2,13 +2,20 @@
     <header class="container my-5">
         <img src="assets/cover/cover.svg" alt="Cover">
 
-        <button
-            class="btn btn-outline-primary existing-games"
-            (click)="handleDisplayExistingGames()"
-            *ngIf="hasExistingGames"
-        >
-            <i class="bi bi-eye"></i> {{ 'PAGE.HOME.SEE_EXISTING_GAMES' | translate }}
-        </button>
+        <section class="actions-container" *ngIf="hasExistingGames">
+            <button
+                class="btn btn-outline-primary"
+                (click)="handleDisplayExistingGames()"
+            >
+                <i class="bi bi-eye"></i> {{ 'PAGE.HOME.SEE_EXISTING_GAMES' | translate }}
+            </button>
+            <button
+                class="btn btn-outline-primary"
+                (click)="navigateToExploreDecisionsPage()"
+            >
+                <i class="bi bi-search"></i> {{ 'PAGE.HOME.EXPLORE_DECISIONS' | translate }}
+            </button>
+        </section>
     </header>
 
     <form

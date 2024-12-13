@@ -6,11 +6,14 @@ $footer-padding-y: 10px;
         position: relative;
         text-align: center;
 
-        .existing-games {
+        .actions-container {
             position: absolute;
             top: 50%;
             right: 0.75rem;
             transform: translateY(-50%);
+
+            display: flex;
+            gap: 10px;
         }
     }
 

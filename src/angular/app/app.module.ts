@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
@@ -14,6 +15,7 @@ import { VgOverlayPlayModule } from '@videogular/ngx-videogular/overlay-play';
 import { AppRoutingModule } from './app-routing.module';
 
 import { AppComponent } from './app.component';
+import { DecisionsComponent } from './page/decisions/decisions.component';
 import { HomeComponent } from './page/home/home.component';
 import { MatchAnalysisComponent } from './page/match-analysis/match-analysis.component';
 import { ActionsComponent } from './page/match-analysis/actions/actions.component';
@@ -46,6 +48,7 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader => new Transla
         AppComponent,
         ClipProcessLoaderModalComponent,
         CollapseDisplayActionsComponent,
+        DecisionsComponent,
         EditGameCommentModalComponent,
         FullDisplayActionsComponent,
         GameNumberExistingModalComponent,
@@ -67,6 +70,7 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader => new Transla
         FormsModule,
         HttpClientModule,
         NgbModule,
+        NgMultiSelectDropDownModule.forRoot(),
         NgxChartsModule,
         ReactiveFormsModule,
         TranslateModule.forRoot({

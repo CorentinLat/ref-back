@@ -1,0 +1,31 @@
+$decisions-component-margin: 20px;
+$header-height: 30px;
+$header-margin-bottom: 20px;
+
+.decisions-component {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+    max-height: calc(100vh - #{$decisions-component-margin * 2});
+    margin: $decisions-component-margin;
+    overflow: hidden;
+
+    .decisions-header {
+        height: $header-height;
+        margin-bottom: $header-margin-bottom;
+
+        .title {
+            margin: 0;
+            text-align: center;
+        }
+    }
+
+    .decisions-filters {
+
+    }
+
+    .decisions-body {
+
+    }
+}
