@@ -12,11 +12,13 @@ export type Action = {
 };
 export type NewAction = Omit<Action, 'id'>;
 
+export type ActionSector = 'SCRUM' | 'FOUL_PLAY' | 'SPACE' | 'TACKLE-RUCK' | 'LINE_OUT-MAUL' | 'ADVANTAGE';
+
 export const actionTypes = ['PLAY_ON', 'TOUCH', 'SCRUM', 'FREE_KICK', 'PENALTY', 'RETURNED_PENALTY', 'PENALTY_TRY', 'TRY', 'NO_TRY', 'RESTART_KICK'];
 export const actionCardTypes = ['PENALTY', 'RETURNED_PENALTY', 'PENALTY_TRY', 'TRY', 'NO_TRY'];
 export const actionCards = ['WARNING', 'WHITE', 'YELLOW', 'RED'];
 export const actionAgainsts = ['LOCAL', 'VISITOR'];
-export const actionSectors = ['SCRUM', 'FOUL_PLAY', 'SPACE', 'TACKLE-RUCK', 'LINE_OUT-MAUL', 'ADVANTAGE'];
+export const actionSectors: ActionSector[] = ['SCRUM', 'FOUL_PLAY', 'SPACE', 'TACKLE-RUCK', 'LINE_OUT-MAUL', 'ADVANTAGE'];
 export const actionFaults = {
     SCRUM: [
         'INTRODUCTION',

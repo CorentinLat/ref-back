@@ -46,6 +46,13 @@
           "SECTOR": "Secteur(s)",
           "FAULT": "Faute(s)",
           "PRECISE": "Précis"
+        },
+        "MULTI_SELECT": {
+          "ALL": "Tout sélectionner",
+          "NONE": "Tout désélectionner",
+          "NO_DATA_FAULT": "Sélectionnez un secteur",
+          "PLACEHOLDER": "Sélectionnez",
+          "SEARCH": "Rechercher"
         }
       }
     },

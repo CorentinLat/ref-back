@@ -12,7 +12,6 @@
     <form
         class="decisions-filters container"
         [formGroup]="searchForm"
-        (change)="searchDecisions()"
         novalidate
     >
         <article class="mb-4 text-center">
@@ -23,51 +22,51 @@
             <article class="col-4">
                 <label for="sectors" class="form-label">
                     {{ 'PAGE.DECISIONS.FORM.LABEL.SECTOR' | translate }}
-                    <span class="text-danger">*</span>
                 </label>
                 <div class="input-group">
-                    <select
-                        [className]="exposeClassNameForFormControl(sectorsControl)"
+                    <ng-multiselect-dropdown
                         id="sectors"
-                        class="form-select"
-                        formControlName="sectors"
+                        [settings]="multiSelectDropdownDefaultSettings"
+                        [placeholder]="'PAGE.DECISIONS.FORM.MULTI_SELECT.PLACEHOLDER' | translate"
+                        [formControl]="sectorsControl"
+                        [data]="actionSectors"
+                        (onDropDownClose)="searchDecisions()"
                     >
-                        <option *ngFor="let sector of []" [value]="sector.id">{{ sector.name }}</option>
-                    </select>
+                    </ng-multiselect-dropdown>
                 </div>
             </article>
 
             <article class="col-4">
-                <label for="sectors" class="form-label">
+                <label for="faults" class="form-label">
                     {{ 'PAGE.DECISIONS.FORM.LABEL.FAULT' | translate }}
-                    <span class="text-danger">*</span>
                 </label>
                 <div class="input-group">
-                    <select
-                        [className]="exposeClassNameForFormControl(sectorsControl)"
+                    <ng-multiselect-dropdown
                         id="faults"
-                        class="form-select"
-                        formControlName="sectors"
+                        [settings]="multiSelectDropdownFaultsSettings"
+                        [placeholder]="'PAGE.DECISIONS.FORM.MULTI_SELECT.PLACEHOLDER' | translate"
+                        [formControl]="faultsControl"
+                        [data]="actionFaults"
+                        (onDropDownClose)="searchDecisions()"
                     >
-                        <option *ngFor="let sector of []" [value]="sector.id">{{ sector.name }}</option>
-                    </select>
+                    </ng-multiselect-dropdown>
                 </div>
             </article>
 
             <article class="col-4">
-                <label for="sectors" class="form-label">
+                <label for="precises" class="form-label">
                     {{ 'PAGE.DECISIONS.FORM.LABEL.PRECISE' | translate }}
-                    <span class="text-danger">*</span>
                 </label>
                 <div class="input-group">
-                    <select
-                        [className]="exposeClassNameForFormControl(sectorsControl)"
-                        id="precise"
-                        class="form-select"
-                        formControlName="sectors"
+                    <ng-multiselect-dropdown
+                        id="precises"
+                        [settings]="multiSelectDropdownPrecisesSettings"
+                        [placeholder]="'PAGE.DECISIONS.FORM.MULTI_SELECT.PLACEHOLDER' | translate"
+                        [formControl]="precisesControl"
+                        [data]="actionPrecises"
+                        (onDropDownClose)="searchDecisions()"
                     >
-                        <option *ngFor="let sector of []" [value]="sector.id">{{ sector.name }}</option>
-                    </select>
+                    </ng-multiselect-dropdown>
                 </div>
             </article>
         </section>
