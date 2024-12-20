@@ -1,4 +1,4 @@
-import { Notification, dialog } from 'electron';
+import { MessageBoxOptions, Notification, dialog } from 'electron';
 import { autoUpdater } from 'electron-updater';
 
 import logger from './logger';
@@ -16,7 +16,7 @@ export function checkUpdatesAtStart() {
         }
     });
     autoUpdater.on('update-downloaded', ({ releaseName }) => {
-        const dialogOpts = {
+        const dialogOpts: MessageBoxOptions = {
             type: 'info',
             buttons: [
                 translate('DIALOG_UPDATE_BUTTON_RESTART'),

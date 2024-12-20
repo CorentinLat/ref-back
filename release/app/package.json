@@ -1,6 +1,6 @@
 {
   "name": "ref-back",
-  "version": "3.2.1",
+  "version": "4.0.0",
   "author": {
     "name": "Corentin LATAPPY",
     "email": "corentin.lat@gmail.com"
@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "check-disk-space": "^3.3.1",
-    "electron-updater": "^5.3.0",
+    "electron-updater": "6.3.9",
     "excel4node": "^1.8.2",
     "ffmpeg-static-electron": "^2.0.3",
     "ffprobe-static-electron": "^2.0.2",
