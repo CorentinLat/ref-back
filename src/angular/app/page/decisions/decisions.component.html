@@ -27,7 +27,7 @@
                     <ng-multiselect-dropdown
                         id="sectors"
                         [settings]="multiSelectDropdownDefaultSettings"
-                        [placeholder]="'PAGE.DECISIONS.FORM.MULTI_SELECT.PLACEHOLDER' | translate"
+                        [placeholder]="'PAGE.DECISIONS.FORM.MULTI_SELECT.PLACEHOLDER_SECTOR' | translate"
                         [formControl]="sectorsControl"
                         [data]="actionSectors"
                         (onDropDownClose)="searchDecisions()"
@@ -44,7 +44,7 @@
                     <ng-multiselect-dropdown
                         id="faults"
                         [settings]="multiSelectDropdownFaultsSettings"
-                        [placeholder]="'PAGE.DECISIONS.FORM.MULTI_SELECT.PLACEHOLDER' | translate"
+                        [placeholder]="'PAGE.DECISIONS.FORM.MULTI_SELECT.PLACEHOLDER_FAULT' | translate"
                         [formControl]="faultsControl"
                         [data]="actionFaults"
                         (onDropDownClose)="searchDecisions()"
@@ -61,7 +61,7 @@
                     <ng-multiselect-dropdown
                         id="precises"
                         [settings]="multiSelectDropdownPrecisesSettings"
-                        [placeholder]="'PAGE.DECISIONS.FORM.MULTI_SELECT.PLACEHOLDER' | translate"
+                        [placeholder]="'PAGE.DECISIONS.FORM.MULTI_SELECT.PLACEHOLDER_PRECISE' | translate"
                         [formControl]="precisesControl"
                         [data]="actionPrecises"
                         (onDropDownClose)="searchDecisions()"

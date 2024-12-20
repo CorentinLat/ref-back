@@ -22,7 +22,9 @@ $header-margin-bottom: 20px;
     }
 
     .decisions-filters {
-
+        ng-multiselect-dropdown {
+            width: 100%;
+        }
     }
 
     .decisions-body {

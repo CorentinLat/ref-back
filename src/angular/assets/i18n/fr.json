@@ -43,15 +43,17 @@
       "EXPLANATION": "Recherchez des décisions, découpez-les puis téléchargez-les.",
       "FORM": {
         "LABEL": {
-          "SECTOR": "Secteur(s)",
           "FAULT": "Faute(s)",
-          "PRECISE": "Précis"
+          "PRECISE": "Précis",
+          "SECTOR": "Secteur(s)"
         },
         "MULTI_SELECT": {
           "ALL": "Tout sélectionner",
           "NONE": "Tout désélectionner",
           "NO_DATA_FAULT": "Sélectionnez un secteur",
-          "PLACEHOLDER": "Sélectionnez",
+          "PLACEHOLDER_FAULT": "Filtrez par faute",
+          "PLACEHOLDER_PRECISE": "Filtrez par précision",
+          "PLACEHOLDER_SECTOR": "Filtrez par secteur",
           "SEARCH": "Rechercher"
         }
       }

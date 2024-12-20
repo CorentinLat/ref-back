@@ -78,16 +78,7 @@ export class DecisionsComponent implements OnDestroy, OnInit {
             .sort((a, b) => a.name.localeCompare(b.name));
     }
     get actionFaults(): { id: string; name: string }[] {
-        const allFaults: string [] = this.sectorsControl.value
-            .map((sector: { id: ActionSector }) => actionFaults[sector.id])
-            .flat(Infinity);
-
-        return Array.from(new Set(allFaults))
-            .map(fault => ({
-                id: fault,
-                name: this.translate.instant(`PAGE.MATCH_ANALYSIS.ACTIONS.ACTION.FAULT.${fault}`),
-            }))
-            .sort((a: any, b: any) => a.name.localeCompare(b.name));
+        return this.getFaultsForCurrentSectors();
     }
     get actionPrecises(): { id: string; name: string }[] {
         return actionPrecises
@@ -100,7 +91,12 @@ export class DecisionsComponent implements OnDestroy, OnInit {
 
     ngOnInit() {
         this.sectorsControlChangeSubscription$ = this.sectorsControl.valueChanges.subscribe(() => {
-            // TODO update faults control
+            this.faultsControl.setValue(
+                this.faultsControl.value.filter(
+                    ({ id }: { id: string }) =>
+                        this.actionFaults.some(fault => fault.id === id)
+                )
+            );
         });
     }
 
@@ -124,6 +120,19 @@ export class DecisionsComponent implements OnDestroy, OnInit {
 
     async navigateToHomePage() {
         await this.router.navigate(['/']);
+    }
+
+    private getFaultsForCurrentSectors(): { id: string; name: string }[] {
+        const allFaults: string [] = this.sectorsControl.value
+            .map((sector: { id: ActionSector }) => actionFaults[sector.id])
+            .flat(Infinity);
+
+        return Array.from(new Set(allFaults))
+            .map(fault => ({
+                id: fault,
+                name: this.translate.instant(`PAGE.MATCH_ANALYSIS.ACTIONS.ACTION.FAULT.${fault}`),
+            }))
+            .sort((a: any, b: any) => a.name.localeCompare(b.name));
     }
 
     // private async navigateToMatchAnalysisPage(gameNumber: string) {
