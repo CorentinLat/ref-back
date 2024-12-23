@@ -18,7 +18,7 @@ export class FullDisplayActionsComponent implements OnInit, OnDestroy {
     @Input() isSummaryDisplay = false;
     @Input() sector: string|null = null;
 
-    @Input() newActionAdded!: Observable<Action>;
+    @Input() newActionAdded?: Observable<Action>;
 
     @Input() putVideoAtSecond!: (second: number) => void;
 
@@ -27,7 +27,7 @@ export class FullDisplayActionsComponent implements OnInit, OnDestroy {
     private readonly actionHeightPx = 59;
     private readonly topMarginPx = 10;
 
-    private newActionSubscription!: Subscription;
+    private newActionSubscription?: Subscription;
 
     constructor(
         private electron: ElectronService,
@@ -35,7 +35,7 @@ export class FullDisplayActionsComponent implements OnInit, OnDestroy {
     ) {}
 
     ngOnInit(): void {
-        this.newActionSubscription = this.newActionAdded.subscribe(action => {
+        this.newActionSubscription = this.newActionAdded?.subscribe(action => {
             const index = this.actions.findIndex(({ id }) => id === action.id);
             const actionPosition = Math.max(index * this.actionHeightPx - this.topMarginPx, 0);
 
@@ -44,7 +44,7 @@ export class FullDisplayActionsComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy(): void {
-        this.newActionSubscription.unsubscribe();
+        this.newActionSubscription?.unsubscribe();
     }
 
     exposeIsBySectorDisplay(): boolean {
