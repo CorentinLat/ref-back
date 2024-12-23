@@ -6,13 +6,15 @@ import { TranslateService } from '@ngx-translate/core';
 import { IDropdownSettings } from 'ng-multiselect-dropdown';
 import { Subscription } from 'rxjs';
 
+import { Decision } from '../../../../../type/refBack';
+
 import { actionFaults, actionPrecises, ActionSector, actionSectors } from '../../domain/game';
 
-// import { ElectronService } from '../../service/ElectronService';
-// import { ToastService } from '../../service/ToastService';
+import { ElectronService } from '../../service/ElectronService';
+import { ToastService } from '../../service/ToastService';
 
 @Component({
-    selector: 'app-home',
+    selector: 'app-decisions',
     templateUrl: './decisions.component.html',
     styleUrls: ['./decisions.component.scss'],
     encapsulation: ViewEncapsulation.None,
@@ -24,21 +26,25 @@ export class DecisionsComponent implements OnDestroy, OnInit {
         precises: new FormControl([], []),
     });
 
-    isProcessingVideos = false;
+    allDecisions: Decision[] = [];
+    filteredDecisions: Decision[] = [];
+
+    isLoadingDecisions = false;
 
     private sectorsControlChangeSubscription$?: Subscription;
 
     constructor(
-        // private electron: ElectronService,
+        private electron: ElectronService,
         // private modalService: NgbModal,
         private router: Router,
-        // private toastService: ToastService,
+        private toastService: ToastService,
         private translate: TranslateService,
     ) {}
 
     get multiSelectDropdownDefaultSettings(): IDropdownSettings {
         return {
             singleSelection: false,
+            enableCheckAll: false,
             selectAllText: this.translate.instant('PAGE.DECISIONS.FORM.MULTI_SELECT.ALL'),
             unSelectAllText: this.translate.instant('PAGE.DECISIONS.FORM.MULTI_SELECT.NONE'),
             itemsShowLimit: 2,
@@ -98,28 +104,59 @@ export class DecisionsComponent implements OnDestroy, OnInit {
                 )
             );
         });
+
+        this.getAllDecisions()
+            .then(() => this.filterDecisions());
     }
 
     ngOnDestroy() {
         this.sectorsControlChangeSubscription$?.unsubscribe();
     }
 
-    async searchDecisions() {
-        if (this.searchForm.invalid) {
-            return;
-        }
+    filterDecisions() {
+        if (this.searchForm.invalid) return;
 
-        const searchOptions = {
-            faults: this.faultsControl.value.map(({ id }: { id: string }) => id),
+        const { sectors, faults, precises }: { faults: string[]; sectors: string[]; precises: string[] } = {
             sectors: this.sectorsControl.value.map(({ id }: { id: string }) => id),
+            faults: this.faultsControl.value.map(({ id }: { id: string }) => id),
             precises: this.precisesControl.value.map(({ id }: { id: string }) => id),
         };
 
-        console.log(searchOptions);
+        let filteredDecisions = [...this.allDecisions];
+        if (sectors.length) filteredDecisions = filteredDecisions.filter(decision => sectors.includes(decision.sector));
+        if (faults.length) filteredDecisions = filteredDecisions.filter(decision => faults.includes(decision.fault));
+        if (precises.length) filteredDecisions = filteredDecisions.filter(decision => precises.includes(decision.precise));
+
+        this.filteredDecisions = filteredDecisions;
     }
 
     async navigateToHomePage() {
-        await this.router.navigate(['/']);
+        try {
+            await this.router.navigate(['/']);
+        } catch (error: any) {
+            this.toastService.showError(error.message);
+        }
+    }
+
+    async navigateToMatchAnalysisPage(gameNumber: string) {
+        try {
+            await this.router.navigate(['/match-analysis'], { queryParams: { gameNumber } });
+        } catch (error: any) {
+            this.toastService.showError(error.message);
+        }
+    }
+
+    private async getAllDecisions() {
+        this.isLoadingDecisions = true;
+
+        try {
+            this.allDecisions = await this.electron.getDecisions();
+        } catch (error: any) {
+            this.allDecisions = [];
+            this.toastService.showError('TOAST.ERROR.PROCESS_DECISIONS');
+        } finally {
+            this.isLoadingDecisions = false;
+        }
     }
 
     private getFaultsForCurrentSectors(): { id: string; name: string }[] {
@@ -134,12 +171,4 @@ export class DecisionsComponent implements OnDestroy, OnInit {
             }))
             .sort((a: any, b: any) => a.name.localeCompare(b.name));
     }
-
-    // private async navigateToMatchAnalysisPage(gameNumber: string) {
-    //     try {
-    //         await this.router.navigate(['/match-analysis'], { queryParams: { gameNumber } });
-    //     } catch (error: any) {
-    //         this.toastService.showError(error.message);
-    //     }
-    // }
 }

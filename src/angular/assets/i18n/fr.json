@@ -41,6 +41,11 @@
       "TITLE": "Parcourir vos Décisions",
       "BACK_TO_HOME": "Retour à l'Accueil",
       "EXPLANATION": "Recherchez des décisions, découpez-les puis téléchargez-les.",
+      "NO_DECISION": "Aucune décision ne correspond.",
+      "ACTION": {
+        "SEE_DECISION": "Décision",
+        "SEE_GAME": "Rencontre"
+      },
       "FORM": {
         "LABEL": {
           "FAULT": "Faute(s)",
@@ -336,6 +341,7 @@
       "PROCESS_ACTION_ADDED": "Impossible d'ajouter cette action...",
       "PROCESS_ACTION_EDITED": "Impossible d'éditer cette action...",
       "PROCESS_ACTION_REMOVED": "Impossible de supprimer cette action...",
+      "PROCESS_DECISIONS": "Impossible de récupérer les décisions...",
       "PROCESS_DOWNLOAD_GAME": "Impossible de télécharger la vidéo...",
       "PROCESS_DOWNLOAD_CLIPS": "Impossible de télécharger les clips...",
       "PROCESS_DOWNLOAD_VIDEOS": "Impossible de télécharger les vidéos...",

@@ -4,6 +4,7 @@ import IpcMainEvent = Electron.IpcMainEvent;
 
 import { SummaryExportType } from '../../type/refBack';
 
+import { getDecisionsForGames } from './utils/decision';
 import { askSaveDirectory, askSaveVideoPath } from './utils/dialog';
 import {
     Action,
@@ -44,6 +45,7 @@ export default function(ipcMain: IpcMain) {
     ipcMain.on('download_all_videos', onDownloadAllVideosListener);
     ipcMain.on('download_summary', onDownloadSummaryListener);
     ipcMain.on('open_url_in_browser', onOpenUrlInBrowserListener);
+    ipcMain.on('get_decisions', onGetDecisionsListener);
 }
 
 const onInitAppListener = async (event: IpcMainEvent) => {
@@ -284,4 +286,18 @@ const onOpenUrlInBrowserListener = (event: IpcMainEvent, { url }: OnOpenUrlInBro
         .openExternal(url)
         .then(() => event.reply('open_url_in_browser_succeeded'))
         .catch(() => event.reply('open_url_in_browser_failed'));
+};
+
+const onGetDecisionsListener = async (event: IpcMainEvent) => {
+    logger.debug('OnGetDecisionsListener');
+
+    try {
+        const gameNumbers = await getExistingGameFolders();
+        const allDecisions = getDecisionsForGames(gameNumbers);
+
+        event.reply('get_decisions_succeeded', allDecisions);
+    } catch (error: any) {
+        logger.error(`error onGetDecisionsListener: ${error}`);
+        event.reply('get_decisions_failed');
+    }
 };

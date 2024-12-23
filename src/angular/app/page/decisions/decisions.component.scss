@@ -28,6 +28,20 @@ $header-margin-bottom: 20px;
     }
 
     .decisions-body {
+        overflow: scroll;
 
+        .actions-container {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+    }
+
+    .no-decision,
+    .loader-decision {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
     }
 }

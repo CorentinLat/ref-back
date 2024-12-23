@@ -27,13 +27,14 @@ import { AddEditActionComponent } from './page/match-analysis/handle-match-analy
 import { SummaryComponent } from './page/summary/summary.component';
 import { StatisticsComponent } from './page/summary/statistics/statistics.component';
 
-import { ToastsComponent } from './component/toasts/toasts.component';
+import { ClipProcessLoaderModalComponent } from './component/modal/process-loader/clip-process-loader-modal.component';
 import { EditGameCommentModalComponent } from './component/modal/edit-game-comment-modal/edit-game-comment-modal.component';
 import { GameNumberExistingModalComponent } from './component/modal/game-number-existing-modal/game-number-existing-modal.component';
 import { LoadGamesExistingModalComponent } from './component/modal/load-games-existing-modal/load-games-existing-modal.component';
 import { NotEnoughRemainingSpaceModalComponent } from './component/modal/not-enough-remaining-space-modal/not-enough-remaining-space-modal.component';
-import { ClipProcessLoaderModalComponent } from './component/modal/process-loader/clip-process-loader-modal.component';
 import { VideoProcessLoaderModalComponent } from './component/modal/process-loader/video-process-loader-modal.component';
+import { CardComponent } from './component/shared/card/card.component';
+import { ToastsComponent } from './component/toasts/toasts.component';
 import { VgNavigateComponent } from './component/videogular/vg-go-back/vg-navigate.component';
 
 import DirectivesModule from './directive/directives.module';
@@ -46,6 +47,7 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader => new Transla
         ActionsComponent,
         AddEditActionComponent,
         AppComponent,
+        CardComponent,
         ClipProcessLoaderModalComponent,
         CollapseDisplayActionsComponent,
         DecisionsComponent,

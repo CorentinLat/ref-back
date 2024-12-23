@@ -25,10 +25,7 @@
             </article>
 
             <article class="card-type">
-                <i class="bi bi-exclamation-square" *ngIf="action.card === 'WARNING'"></i>
-                <i class="bi bi-square" *ngIf="action.card === 'WHITE'"></i>
-                <i class="bi bi-square-fill text-warning" *ngIf="action.card === 'YELLOW'"></i>
-                <i class="bi bi-square-fill text-danger" *ngIf="action.card === 'RED'"></i>
+                <app-card [card]="action.card"></app-card>
             </article>
         </section>
 

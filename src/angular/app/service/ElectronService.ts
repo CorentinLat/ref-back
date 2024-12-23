@@ -4,7 +4,7 @@ import * as childProcess from 'child_process';
 import * as fs from 'fs';
 import { Observable } from 'rxjs';
 
-import { SummaryExportType } from '../../../../type/refBack';
+import { Decision, SummaryExportType } from '../../../../type/refBack';
 
 import { Action, Game, GameInformation, NewAction, NewGameInformation } from '../domain/game';
 
@@ -233,5 +233,20 @@ export class ElectronService {
 
     openUrlInBrowser(url: string): void {
         this.ipcRenderer?.send('open_url_in_browser', { url });
+    }
+
+    getDecisions(): Promise<Decision[]> {
+        return new Promise<Decision[]>((resolve, reject) => {
+            this.ipcRenderer?.once('get_decisions_succeeded', (_, decisions: Decision[]) => {
+                this.ipcRenderer?.removeAllListeners('get_decisions_failed');
+                resolve(decisions);
+            });
+            this.ipcRenderer?.once('get_decisions_failed', () => {
+                this.ipcRenderer?.removeAllListeners('get_decisions_succeeded');
+                reject();
+            });
+
+            this.ipcRenderer?.send('get_decisions');
+        });
     }
 }
