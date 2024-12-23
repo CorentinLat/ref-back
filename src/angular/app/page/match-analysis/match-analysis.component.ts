@@ -55,9 +55,8 @@ export class MatchAnalysisComponent implements OnInit {
 
     @HostListener('document:mousewheel', ['$event'])
     handleMouseWheelEvent(event: WheelEvent) {
-        if (!this.videoApiService?.isPlayerReady) {
-            return;
-        }
+        if (!this.videoApiService?.isPlayerReady) return;
+        if (Math.abs(event.deltaY) >= Math.abs(event.deltaX)) return;
 
         if (event.deltaX > 0) {
             this.handleVideoTimeChange(event, false);
