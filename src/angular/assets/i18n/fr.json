@@ -34,6 +34,12 @@
       "TITLE": "Traitement en cours",
       "REMAINING_TIME": "Temps restant estimé :",
       "CANCEL": "Annuler"
+    },
+    "VIDEO_EDITOR": {
+      "BUTTON": {
+        "CANCEL": "Annuler",
+        "SAVE": "Sauvegarder"
+      }
     }
   },
   "PAGE": {

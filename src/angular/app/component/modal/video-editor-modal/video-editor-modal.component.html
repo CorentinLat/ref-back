@@ -1,0 +1,29 @@
+<section class="video-editor-modal-component">
+    <article class="modal-header">
+        <h5 class="modal-title">{{ videoTitle }}</h5>
+        <button type="button" class="btn-close" (click)="modal.dismiss()"></button>
+    </article>
+
+    <article class="modal-body">
+        <app-video-viewer [videoPath]="videoPath" [timing]="timing"></app-video-viewer>
+    </article>
+
+    <article class="modal-footer">
+        <button
+            type="button"
+            class="btn btn-outline-secondary"
+            [disabled]="isProcessingVideo"
+            (click)="modal.dismiss()"
+        >
+            {{ 'MODAL.VIDEO_EDITOR.BUTTON.CANCEL' | translate }}
+        </button>
+        <button
+            type="button"
+            class="btn btn-success"
+            [disabled]="isProcessingVideo || !hasConfiguredEdition"
+            (click)="modal.close({ overwrite: true })"
+        >
+            {{ 'MODAL.VIDEO_EDITOR.BUTTON.SAVE' | translate }}
+        </button>
+    </article>
+</section>

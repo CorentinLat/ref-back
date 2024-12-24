@@ -33,11 +33,13 @@ import { GameNumberExistingModalComponent } from './component/modal/game-number-
 import { LoadGamesExistingModalComponent } from './component/modal/load-games-existing-modal/load-games-existing-modal.component';
 import { NotEnoughRemainingSpaceModalComponent } from './component/modal/not-enough-remaining-space-modal/not-enough-remaining-space-modal.component';
 import { VideoProcessLoaderModalComponent } from './component/modal/process-loader/video-process-loader-modal.component';
+import { VideoEditorModalComponent } from './component/modal/video-editor-modal/video-editor-modal.component';
 import { CardComponent } from './component/shared/card/card.component';
 import { ToastsComponent } from './component/toasts/toasts.component';
 import { VgNavigateComponent } from './component/videogular/vg-go-back/vg-navigate.component';
 
 import DirectivesModule from './directive/directives.module';
+import { VideoViewerComponent } from './component/shared/video-viewer/video-viewer.component';
 
 const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader => new TranslateHttpLoader(http, './assets/i18n/', '.json');
 
@@ -63,7 +65,9 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader => new Transla
         SummaryComponent,
         ToastsComponent,
         VgNavigateComponent,
+        VideoEditorModalComponent,
         VideoProcessLoaderModalComponent,
+        VideoViewerComponent,
     ],
     imports: [
         AppRoutingModule,

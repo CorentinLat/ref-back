@@ -1,0 +1,9 @@
+.video-editor-modal-component {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+
+    .modal-body {
+        height: 100%;
+    }
+}

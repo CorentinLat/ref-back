@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
-// import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateService } from '@ngx-translate/core';
 import { IDropdownSettings } from 'ng-multiselect-dropdown';
 import { Subscription } from 'rxjs';
@@ -12,6 +12,8 @@ import { actionFaults, actionPrecises, ActionSector, actionSectors } from '../..
 
 import { ElectronService } from '../../service/ElectronService';
 import { ToastService } from '../../service/ToastService';
+
+import { VideoEditorModalComponent } from '../../component/modal/video-editor-modal/video-editor-modal.component';
 
 @Component({
     selector: 'app-decisions',
@@ -35,7 +37,7 @@ export class DecisionsComponent implements OnDestroy, OnInit {
 
     constructor(
         private electron: ElectronService,
-        // private modalService: NgbModal,
+        private modalService: NgbModal,
         private router: Router,
         private toastService: ToastService,
         private translate: TranslateService,
@@ -79,7 +81,7 @@ export class DecisionsComponent implements OnDestroy, OnInit {
         return actionSectors
             .map(sector => ({
                 id: sector,
-                name: this.translate.instant(`PAGE.MATCH_ANALYSIS.ACTIONS.ACTION.SECTOR.${sector}`),
+                name: this.translateDecisionPart('SECTOR', sector),
             }))
             .sort((a, b) => a.name.localeCompare(b.name));
     }
@@ -90,7 +92,7 @@ export class DecisionsComponent implements OnDestroy, OnInit {
         return actionPrecises
             .map(precise => ({
                 id: precise,
-                name: this.translate.instant(`PAGE.MATCH_ANALYSIS.ACTIONS.ACTION.PRECISE.${precise}`),
+                name: this.translateDecisionPart('PRECISE', precise),
             }))
             .sort((a, b) => a.name.localeCompare(b.name));
     }
@@ -130,6 +132,16 @@ export class DecisionsComponent implements OnDestroy, OnInit {
         this.filteredDecisions = filteredDecisions;
     }
 
+    displayDecisionVideo({ card, fault, precise, second, sector, type, videoPath }: Decision) {
+        const modalRef = this.modalService.open(VideoEditorModalComponent, { fullscreen: true });
+        modalRef.componentInstance.videoTitle = `${this.translateDecisionPart('SECTOR', sector)}
+         - ${this.translateDecisionPart('FAULT', fault)}
+          - ${this.translateDecisionPart('PRECISE', precise)}
+           - ${this.translateDecisionPart('TYPE', type)}${card ? ` (${this.translateDecisionPart('CARD', card)})` : ''}`;
+        modalRef.componentInstance.videoPath = videoPath;
+        modalRef.componentInstance.timing = second;
+    }
+
     async navigateToHomePage() {
         try {
             await this.router.navigate(['/']);
@@ -167,8 +179,12 @@ export class DecisionsComponent implements OnDestroy, OnInit {
         return Array.from(new Set(allFaults))
             .map(fault => ({
                 id: fault,
-                name: this.translate.instant(`PAGE.MATCH_ANALYSIS.ACTIONS.ACTION.FAULT.${fault}`),
+                name: this.translateDecisionPart('FAULT', fault),
             }))
             .sort((a: any, b: any) => a.name.localeCompare(b.name));
     }
-}
+
+    private translateDecisionPart(part: 'CARD' | 'FAULT' | 'PRECISE' | 'SECTOR' | 'TYPE', key: string): string {
+        return this.translate.instant(`PAGE.MATCH_ANALYSIS.ACTIONS.ACTION.${part}.${key}`);
+    }
+ }
