@@ -46,6 +46,37 @@
                 </span>
             </article>
 
+            <article class="game-editing" *ngIf="!isClipEdition">
+                <span class="timing">
+                    <button class="btn btn-light btn-sm" (click)="handleUpdateFirstHalfBeginToCurrent()">
+                        <i class="bi bi-hourglass-top"></i>
+                    </button>
+                    <span class="timing-label">{{ 'MODAL.VIDEO_EDITOR.EDITION.GAME.FIRST.BEGIN' | translate }} :</span>
+                    <span class="timing-value">{{ exposeSecondToMMSS(game.firstHalf.begin) }}</span>
+                </span>
+                <span class="timing">
+                    <button class="btn btn-light btn-sm" (click)="handleUpdateFirstHalfEndToCurrent()">
+                        <i class="bi bi-hourglass-split"></i>
+                    </button>
+                    <span class="timing-label">{{ 'MODAL.VIDEO_EDITOR.EDITION.GAME.FIRST.END' | translate }} :</span>
+                    <span class="timing-value">{{ exposeSecondToMMSS(game.firstHalf.end) }}</span>
+                </span>
+                <span class="timing">
+                    <button class="btn btn-light btn-sm" (click)="handleUpdateSecondHalfBeginToCurrent()">
+                        <i class="bi bi-hourglass-bottom"></i>
+                    </button>
+                    <span class="timing-label">{{ 'MODAL.VIDEO_EDITOR.EDITION.GAME.SECOND.BEGIN' | translate }} :</span>
+                    <span class="timing-value">{{ exposeSecondToMMSS(game.secondHalf.begin) }}</span>
+                </span>
+                <span class="timing">
+                    <button class="btn btn-light btn-sm" (click)="handleUpdateSecondHalfEndToCurrent()">
+                        <i class="bi bi-hourglass"></i>
+                    </button>
+                    <span class="timing-label">{{ 'MODAL.VIDEO_EDITOR.EDITION.GAME.SECOND.END' | translate }} :</span>
+                    <span class="timing-value">{{ exposeSecondToMMSS(game.secondHalf.end) }}</span>
+                </span>
+            </article>
+
             <article class="editing-buttons" *ngIf="isEditing">
                 <button
                     type="button"

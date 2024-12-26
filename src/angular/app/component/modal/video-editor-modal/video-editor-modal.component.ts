@@ -80,6 +80,34 @@ export class VideoEditorModalComponent implements OnInit {
         }
     };
 
+    handleUpdateFirstHalfBeginToCurrent = () => {
+        if (!this.isClipEdition) {
+            this.game.firstHalf.begin = this.currentVideoTime;
+            this.checkEditionValidity();
+        }
+    };
+
+    handleUpdateFirstHalfEndToCurrent = () => {
+        if (!this.isClipEdition) {
+            this.game.firstHalf.end = this.currentVideoTime;
+            this.checkEditionValidity();
+        }
+    };
+
+    handleUpdateSecondHalfBeginToCurrent = () => {
+        if (!this.isClipEdition) {
+            this.game.secondHalf.begin = this.currentVideoTime;
+            this.checkEditionValidity();
+        }
+    };
+
+    handleUpdateSecondHalfEndToCurrent = () => {
+        if (!this.isClipEdition) {
+            this.game.secondHalf.end = this.currentVideoTime;
+            this.checkEditionValidity();
+        }
+    };
+
     handleSubmitVideoProcessing = () => {
         this.isProcessingVideo = true;
     };

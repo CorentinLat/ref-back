@@ -40,6 +40,16 @@
         "CLIP": {
           "BEGIN": "Début du clip",
           "END": "Fin du clip"
+        },
+        "GAME": {
+          "FIRST": {
+            "BEGIN": "Début 1MT",
+            "END": "Fin 1MT"
+          },
+          "SECOND": {
+            "BEGIN": "Début 2MT",
+            "END": "Fin 2MT"
+          }
         }
       },
       "BUTTON": {
