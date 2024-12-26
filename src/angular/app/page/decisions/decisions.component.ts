@@ -131,9 +131,9 @@ export class DecisionsComponent implements OnDestroy, OnInit {
         this.filteredDecisions = filteredDecisions;
     }
 
-    displayDecisionVideo({ card, fault, precise, second, sector, type, videoPath }: TranslatedDecision) {
+    displayDecisionVideo({ card, faultLabel, preciseLabel, second, sectorLabel, typeLabel, videoPath }: TranslatedDecision) {
         const modalRef = this.modalService.open(VideoEditorModalComponent, { fullscreen: true });
-        modalRef.componentInstance.videoTitle = `${sector} - ${fault} - ${precise} - ${type}${
+        modalRef.componentInstance.videoTitle = `${sectorLabel} - ${faultLabel} - ${preciseLabel} - ${typeLabel}${
             card ? ` (${this.translateDecisionPart('CARD', card)})` : ''
         }`;
         modalRef.componentInstance.videoPath = videoPath;
