@@ -1,17 +1,36 @@
-import { ChangeDetectorRef, Component, HostListener, Input, OnInit } from '@angular/core';
+import {
+    ChangeDetectorRef,
+    Component,
+    EventEmitter,
+    HostListener,
+    Input,
+    OnDestroy,
+    OnInit,
+    Output,
+} from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { VgApiService } from '@videogular/ngx-videogular/core';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-video-viewer',
     templateUrl: './video-viewer.component.html',
 })
-export class VideoViewerComponent implements OnInit {
+export class VideoViewerComponent implements OnInit, OnDestroy {
     @Input() videoPath!: string;
     @Input() timing?: number;
 
+    @Output() videoReady = new EventEmitter<number>();
+    @Output() videoPaused = new EventEmitter<number>();
+    @Output() videoPlayed = new EventEmitter<number>();
+    @Output() videoTimeUpdated = new EventEmitter<number>();
+
     videoApiService!: VgApiService;
     videoPathSafe!: SafeResourceUrl;
+
+    private mediaPauseSubscription$?: Subscription;
+    private mediaPlaySubscription$?: Subscription;
+    private mediaTimeUpdatedSubscription$?: Subscription;
 
     constructor(
         private cdr: ChangeDetectorRef,
@@ -23,6 +42,7 @@ export class VideoViewerComponent implements OnInit {
         if (!this.videoApiService?.isPlayerReady || (event.target as HTMLElement)?.tagName === 'TEXTAREA') {
             return;
         }
+        event.preventDefault();
 
         if (event.code === 'Space') {
             this.toggleVideoPlayPause();
@@ -41,6 +61,7 @@ export class VideoViewerComponent implements OnInit {
     handleMouseWheelEvent(event: WheelEvent) {
         if (!this.videoApiService?.isPlayerReady) return;
         if (Math.abs(event.deltaY) >= Math.abs(event.deltaX)) return;
+        event.preventDefault();
 
         if (event.deltaX > 0) {
             this.handleVideoTimeChange(event, false);
@@ -53,11 +74,25 @@ export class VideoViewerComponent implements OnInit {
         this.videoPathSafe = this.sanitizer.bypassSecurityTrustResourceUrl(`video://${this.videoPath}`);
     }
 
+    ngOnDestroy(): void {
+        this.mediaPauseSubscription$?.unsubscribe();
+        this.mediaPlaySubscription$?.unsubscribe();
+        this.mediaTimeUpdatedSubscription$?.unsubscribe();
+    }
+
     onPlayerReady = (api: VgApiService): void => {
         this.videoApiService = api;
         this.videoApiService.volume = 0;
         this.putVideoAtSecond(this.timing);
 
+        this.mediaPauseSubscription$ = this.videoApiService.getDefaultMedia().subscriptions
+            .pause.subscribe((e) => this.videoPaused.emit(e.target.currentTime));
+        this.mediaPlaySubscription$ = this.videoApiService.getDefaultMedia().subscriptions
+            .play.subscribe((e) => this.videoPlayed.emit(e.target.currentTime));
+        this.mediaTimeUpdatedSubscription$ = this.videoApiService.getDefaultMedia().subscriptions
+            .timeUpdate.subscribe((e) => this.videoTimeUpdated.emit(e.target.currentTime));
+
+        this.videoReady.emit(this.videoApiService.currentTime);
         this.cdr.detectChanges();
     };
 

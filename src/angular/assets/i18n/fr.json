@@ -36,8 +36,16 @@
       "CANCEL": "Annuler"
     },
     "VIDEO_EDITOR": {
+      "EDITION": {
+        "CLIP": {
+          "BEGIN": "Début du clip",
+          "END": "Fin du clip"
+        }
+      },
       "BUTTON": {
         "CANCEL": "Annuler",
+        "CREATE_CLIP": "Créer un clip",
+        "CUT_VIDEO": "Couper la vidéo",
         "SAVE": "Sauvegarder"
       }
     }
@@ -62,9 +70,9 @@
           "ALL": "Tout sélectionner",
           "NONE": "Tout désélectionner",
           "NO_DATA_FAULT": "Sélectionnez un secteur",
-          "PLACEHOLDER_FAULT": "Filtrez par faute",
-          "PLACEHOLDER_PRECISE": "Filtrez par précision",
-          "PLACEHOLDER_SECTOR": "Filtrez par secteur",
+          "PLACEHOLDER_FAULT": "Filtrer par faute",
+          "PLACEHOLDER_PRECISE": "Filtrer par précision",
+          "PLACEHOLDER_SECTOR": "Filtrer par secteur",
           "SEARCH": "Rechercher"
         }
       }

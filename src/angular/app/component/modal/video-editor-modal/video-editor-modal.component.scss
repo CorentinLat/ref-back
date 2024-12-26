@@ -6,4 +6,32 @@
     .modal-body {
         height: 100%;
     }
+
+    .editing-container {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 50px;
+        width: 100%;
+
+        .game-editing, .clip-editing {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+
+            .timing {
+                display: flex;
+                align-items: center;
+                gap: 5px;
+
+                .timing-label { font-weight: bold; }
+                .timing-value { width: 50px; }
+            }
+        }
+
+        .editing-buttons {
+            display: flex;
+            gap: 16px;
+        }
+    }
 }

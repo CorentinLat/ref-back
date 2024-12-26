@@ -1,29 +1,70 @@
 <section class="video-editor-modal-component">
-    <article class="modal-header">
+    <header class="modal-header">
         <h5 class="modal-title">{{ videoTitle }}</h5>
         <button type="button" class="btn-close" (click)="modal.dismiss()"></button>
-    </article>
+    </header>
 
-    <article class="modal-body">
-        <app-video-viewer [videoPath]="videoPath" [timing]="timing"></app-video-viewer>
-    </article>
+    <main class="modal-body">
+        <app-video-viewer
+            [videoPath]="videoPath"
+            [timing]="timing"
+            (videoReady)="handleVideoReady($event)"
+            (videoPaused)="handleVideoPaused()"
+            (videoTimeUpdated)="handleVideoTimeUpdated($event)"
+        ></app-video-viewer>
+    </main>
 
-    <article class="modal-footer">
+    <footer class="modal-footer">
         <button
             type="button"
-            class="btn btn-outline-secondary"
-            [disabled]="isProcessingVideo"
-            (click)="modal.dismiss()"
+            class="btn btn-primary"
+            (click)="handleEditVideo()"
+            *ngIf="!isEditing"
         >
-            {{ 'MODAL.VIDEO_EDITOR.BUTTON.CANCEL' | translate }}
+            <span *ngIf="isClipEdition">
+                <i class="bi bi-plus"></i>
+                {{ 'MODAL.VIDEO_EDITOR.BUTTON.CREATE_CLIP' | translate }}
+            </span>
+            <span *ngIf="!isClipEdition">
+                <i class="bi bi-scissors"></i>
+                {{ 'MODAL.VIDEO_EDITOR.BUTTON.CUT_VIDEO' | translate }}
+            </span>
         </button>
-        <button
-            type="button"
-            class="btn btn-success"
-            [disabled]="isProcessingVideo || !hasConfiguredEdition"
-            (click)="modal.close({ overwrite: true })"
-        >
-            {{ 'MODAL.VIDEO_EDITOR.BUTTON.SAVE' | translate }}
-        </button>
-    </article>
+
+        <section class="editing-container" *ngIf="isEditing">
+            <article class="clip-editing" *ngIf="isClipEdition">
+                <span class="timing">
+                    <button class="btn btn-light btn-sm" (click)="handleUpdateClipBeginToCurrent()">
+                        <i class="bi bi-arrow-clockwise"></i>
+                    </button>
+                    <span class="timing-label">{{ 'MODAL.VIDEO_EDITOR.EDITION.CLIP.BEGIN' | translate }} :</span>
+                    <span class="timing-value">{{ exposeSecondToMMSS(clip.begin) }}</span>
+                </span>
+                <span class="timing">
+                    <span class="timing-label">{{ 'MODAL.VIDEO_EDITOR.EDITION.CLIP.END' | translate }} :</span>
+                    <span class="timing-value">{{ exposeSecondToMMSS(clip.end) }}</span>
+                </span>
+            </article>
+
+            <article class="editing-buttons" *ngIf="isEditing">
+                <button
+                    type="button"
+                    class="btn btn-danger"
+                    [disabled]="isProcessingVideo"
+                    (click)="isEditing = false"
+                >
+                    {{ 'MODAL.VIDEO_EDITOR.BUTTON.CANCEL' | translate }}
+                </button>
+                <button
+                    type="button"
+                    class="btn btn-success"
+                    [disabled]="isProcessingVideo || !isEditionValid"
+                    (click)="handleSubmitVideoProcessing()"
+                >
+                    <i class="bi bi-save"></i>
+                    {{ 'MODAL.VIDEO_EDITOR.BUTTON.SAVE' | translate }}
+                </button>
+            </article>
+        </section>
+    </footer>
 </section>
