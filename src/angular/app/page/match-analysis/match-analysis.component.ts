@@ -1,12 +1,13 @@
 import { ChangeDetectorRef, Component, OnInit, HostListener } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { VgApiService } from '@videogular/ngx-videogular/core';
 import { Subject } from 'rxjs';
 
 import { Action, Game } from '../../domain/game';
 
 import { ElectronService } from '../../service/ElectronService';
+import { NavigationService } from '../../service/NavigationService';
 import { ToastService } from '../../service/ToastService';
 
 @Component({
@@ -18,6 +19,7 @@ export class MatchAnalysisComponent implements OnInit {
     public game!: Game;
     public gameNumber!: string;
     public videoPath!: SafeResourceUrl;
+    public originPath: string|null = null;
 
     public videoApiService!: VgApiService;
 
@@ -28,8 +30,8 @@ export class MatchAnalysisComponent implements OnInit {
     constructor(
         private cdr: ChangeDetectorRef,
         private electron: ElectronService,
+        private navigation: NavigationService,
         private route: ActivatedRoute,
-        private router: Router,
         private sanitizer: DomSanitizer,
         private toastService: ToastService,
     ) {}
@@ -68,9 +70,10 @@ export class MatchAnalysisComponent implements OnInit {
     ngOnInit(): void {
         const gameNumber = this.route.snapshot.queryParamMap.get('gameNumber');
         if (!gameNumber) {
-            this.navigateToHome();
+            this.handleNavigateToOriginOrHome();
             return;
         }
+        this.originPath = this.route.snapshot.queryParamMap.get('originPath');
 
         this.gameNumber = gameNumber;
         this.electron
@@ -81,20 +84,12 @@ export class MatchAnalysisComponent implements OnInit {
             })
             .catch(() => {
                 this.toastService.showError('TOAST.ERROR.PROCESS_GAME');
-                this.navigateToHome();
+                this.handleNavigateToOriginOrHome();
             });
     }
 
-    async handleNavigateToSummary(): Promise<void> {
-        try {
-            await this.router.navigate(
-                ['/summary'],
-                { queryParams: { gameNumber: this.game.information.gameNumber } },
-            );
-        } catch (error: any) {
-            this.toastService.showError(error.message);
-        }
-    }
+    public handleNavigateToOriginOrHome = () => this.navigation.navigateTo(this.originPath || '/');
+    public handleNavigateToSummary = () => this.navigation.navigateTo('/summary', { gameNumber: this.game.information.gameNumber });
 
     public onPlayerReady = (api: VgApiService): void => {
         this.videoApiService = api;
@@ -135,12 +130,4 @@ export class MatchAnalysisComponent implements OnInit {
     private toggleVideoMute = (): void => {
         this.videoApiService.volume = this.videoApiService.volume === 0 ? 1 : 0;
     };
-
-    private async navigateToHome(): Promise<void> {
-        try {
-            await this.router.navigate(['/']);
-        } catch (error: any) {
-            this.toastService.showError(error.message);
-        }
-    }
 }

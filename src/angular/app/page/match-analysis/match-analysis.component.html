@@ -1,7 +1,12 @@
 <section class="match-analysis-component">
     <header class="match-analysis-header" *ngIf="game">
-        <button class="btn btn-link" [routerLink]="['/']">
-            <i class="bi bi-house"></i> {{ 'PAGE.MATCH_ANALYSIS.BACK_HOME' | translate }}
+        <button class="btn btn-link" [routerLink]="[originPath || '/']">
+            <span *ngIf="originPath">
+                <i class="bi bi-arrow-left"></i> {{ 'PAGE.MATCH_ANALYSIS.BACK' | translate }}
+            </span>
+            <span *ngIf="!originPath">
+                <i class="bi bi-house"></i> {{ 'PAGE.MATCH_ANALYSIS.BACK_HOME' | translate }}
+            </span>
         </button>
 
         <section class="game-information-container" *ngIf="game">

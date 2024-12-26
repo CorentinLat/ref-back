@@ -75,52 +75,70 @@
         </section>
     </form>
 
-    <section class="decisions-body" *ngIf="!isLoadingDecisions">
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>{{ 'PAGE.MATCH_ANALYSIS.ACTIONS.SECTOR' | translate }}</th>
-                    <th>{{ 'PAGE.MATCH_ANALYSIS.ACTIONS.FAULT' | translate }}</th>
-                    <th style="width: 100px">{{ 'PAGE.MATCH_ANALYSIS.ACTIONS.PRECISE' | translate }}</th>
-                    <th style="width: 200px">{{ 'PAGE.MATCH_ANALYSIS.ACTIONS.TYPE' | translate }}</th>
-                    <th>{{ 'PAGE.MATCH_ANALYSIS.ACTIONS.COMMENT' | translate }}</th>
-                    <th style="width: 150px"></th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr *ngFor="let decision of filteredDecisions">
-                    <td>{{ 'PAGE.MATCH_ANALYSIS.ACTIONS.ACTION.SECTOR.' + decision.sector | translate }}</td>
-                    <td>{{ 'PAGE.MATCH_ANALYSIS.ACTIONS.ACTION.FAULT.' + decision.fault | translate }}</td>
-                    <td>{{ 'PAGE.MATCH_ANALYSIS.ACTIONS.ACTION.PRECISE.' + decision.precise | translate }}</td>
-                    <td>
-                        {{ 'PAGE.MATCH_ANALYSIS.ACTIONS.ACTION.TYPE.' + decision.type | translate }}
+    <main class="decisions-main" *ngIf="!isLoadingDecisions">
+        <section class="decisions-table" *ngIf="filteredDecisions.length">
+            <section class="decisions-table-header">
+                <article class="column sector">
+                    {{ 'PAGE.MATCH_ANALYSIS.ACTIONS.SECTOR' | translate }}
+                </article>
+                <article class="column fault">
+                    {{ 'PAGE.MATCH_ANALYSIS.ACTIONS.FAULT' | translate }}
+                </article>
+                <article class="column precise">
+                    {{ 'PAGE.MATCH_ANALYSIS.ACTIONS.PRECISE' | translate }}
+                </article>
+                <article class="column type">
+                    {{ 'PAGE.MATCH_ANALYSIS.ACTIONS.TYPE' | translate }}
+                </article>
+                <article class="column comment">
+                    {{ 'PAGE.MATCH_ANALYSIS.ACTIONS.COMMENT' | translate }}
+                </article>
+                <article class="column actions"></article>
+            </section>
+            <section class="decisions-table-body">
+                <section class="decision" *ngFor="let decision of filteredDecisions">
+                    <article class="column sector">
+                        {{ decision.sectorLabel }}
+                    </article>
+                    <article class="column fault">
+                        {{ decision.faultLabel }}
+                    </article>
+                    <article class="column precise">
+                        {{ decision.preciseLabel }}
+                    </article>
+                    <article class="column type">
+                        {{ decision.typeLabel }}
                         <app-card [card]="decision.card"></app-card>
-                    </td>
-                    <td>{{ decision.comment }}</td>
-                    <td class="actions-container">
-                        <button
-                            class="btn btn-outline-primary btn-sm"
-                            (click)="displayDecisionVideo(decision)"
-                        >
-                            <i class="bi bi-play-circle"></i>
-                            {{ 'PAGE.DECISIONS.ACTION.SEE_DECISION' | translate }}
-                        </button>
-                        <button
-                            class="btn btn-outline-secondary btn-sm"
-                            (click)="navigateToMatchAnalysisPage(decision.gameNumber)"
-                        >
-                            <i class="bi bi-eye"></i>
-                            {{ 'PAGE.DECISIONS.ACTION.SEE_GAME' | translate }}
-                        </button>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+                    </article>
+                    <article class="column comment">
+                        {{ decision.comment }}
+                    </article>
+                    <article class="column actions">
+                        <div class="actions-container">
+                            <button
+                                class="btn btn-outline-primary btn-sm"
+                                (click)="displayDecisionVideo(decision)"
+                            >
+                                <i class="bi bi-play-circle"></i>
+                                {{ 'PAGE.DECISIONS.ACTION.SEE_DECISION' | translate }}
+                            </button>
+                            <button
+                                class="btn btn-outline-secondary btn-sm"
+                                (click)="navigateToMatchAnalysisPage(decision.gameNumber)"
+                            >
+                                <i class="bi bi-eye"></i>
+                                {{ 'PAGE.DECISIONS.ACTION.SEE_GAME' | translate }}
+                            </button>
+                        </div>
+                    </article>
+                </section>
+            </section>
+        </section>
 
         <h3 class="no-decision" *ngIf="!filteredDecisions.length">
             {{ 'PAGE.DECISIONS.NO_DECISION' | translate }}
         </h3>
-    </section>
+    </main>
 
     <article class="loader-decision" *ngIf="isLoadingDecisions">
         <div class="spinner-border" style="width: 3rem; height: 3rem;" role="status">

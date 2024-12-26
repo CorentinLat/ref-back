@@ -1,16 +1,15 @@
 import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateService } from '@ngx-translate/core';
 import { IDropdownSettings } from 'ng-multiselect-dropdown';
 import { Subscription } from 'rxjs';
 
-import { Decision } from '../../../../../type/refBack';
-
+import { TranslatedDecision } from '../../domain/decision';
 import { actionFaults, actionPrecises, ActionSector, actionSectors } from '../../domain/game';
 
 import { ElectronService } from '../../service/ElectronService';
+import { NavigationService } from '../../service/NavigationService';
 import { ToastService } from '../../service/ToastService';
 
 import { VideoEditorModalComponent } from '../../component/modal/video-editor-modal/video-editor-modal.component';
@@ -28,8 +27,8 @@ export class DecisionsComponent implements OnDestroy, OnInit {
         precises: new FormControl([], []),
     });
 
-    allDecisions: Decision[] = [];
-    filteredDecisions: Decision[] = [];
+    allDecisions: TranslatedDecision[] = [];
+    filteredDecisions: TranslatedDecision[] = [];
 
     isLoadingDecisions = false;
 
@@ -38,7 +37,7 @@ export class DecisionsComponent implements OnDestroy, OnInit {
     constructor(
         private electron: ElectronService,
         private modalService: NgbModal,
-        private router: Router,
+        private navigation: NavigationService,
         private toastService: ToastService,
         private translate: TranslateService,
     ) {}
@@ -132,37 +131,35 @@ export class DecisionsComponent implements OnDestroy, OnInit {
         this.filteredDecisions = filteredDecisions;
     }
 
-    displayDecisionVideo({ card, fault, precise, second, sector, type, videoPath }: Decision) {
+    displayDecisionVideo({ card, fault, precise, second, sector, type, videoPath }: TranslatedDecision) {
         const modalRef = this.modalService.open(VideoEditorModalComponent, { fullscreen: true });
-        modalRef.componentInstance.videoTitle = `${this.translateDecisionPart('SECTOR', sector)}
-         - ${this.translateDecisionPart('FAULT', fault)}
-          - ${this.translateDecisionPart('PRECISE', precise)}
-           - ${this.translateDecisionPart('TYPE', type)}${card ? ` (${this.translateDecisionPart('CARD', card)})` : ''}`;
+        modalRef.componentInstance.videoTitle = `${sector} - ${fault} - ${precise} - ${type}${
+            card ? ` (${this.translateDecisionPart('CARD', card)})` : ''
+        }`;
         modalRef.componentInstance.videoPath = videoPath;
         modalRef.componentInstance.timing = second;
     }
 
-    async navigateToHomePage() {
-        try {
-            await this.router.navigate(['/']);
-        } catch (error: any) {
-            this.toastService.showError(error.message);
-        }
-    }
-
-    async navigateToMatchAnalysisPage(gameNumber: string) {
-        try {
-            await this.router.navigate(['/match-analysis'], { queryParams: { gameNumber } });
-        } catch (error: any) {
-            this.toastService.showError(error.message);
-        }
-    }
+    navigateToHomePage = () => this.navigation.navigateTo('/');
+    navigateToMatchAnalysisPage = (gameNumber: string) =>
+        this.navigation.navigateTo('/match-analysis', { gameNumber, originPath: '/decisions' });
 
     private async getAllDecisions() {
         this.isLoadingDecisions = true;
 
         try {
-            this.allDecisions = await this.electron.getDecisions();
+            this.allDecisions = (await this.electron.getDecisions())
+                .map(decision => ({
+                    ...decision,
+                    sectorLabel: this.translateDecisionPart('SECTOR', decision.sector),
+                    faultLabel: this.translateDecisionPart('FAULT', decision.fault),
+                    preciseLabel: this.translateDecisionPart('PRECISE', decision.precise),
+                    typeLabel: this.translateDecisionPart('TYPE', decision.type),
+                }))
+                .sort((a, b) => a.typeLabel.localeCompare(b.typeLabel))
+                .sort((a, b) => a.preciseLabel.localeCompare(b.preciseLabel))
+                .sort((a, b) => a.faultLabel.localeCompare(b.faultLabel))
+                .sort((a, b) => a.sectorLabel.localeCompare(b.sectorLabel));
         } catch (error: any) {
             this.allDecisions = [];
             this.toastService.showError('TOAST.ERROR.PROCESS_DECISIONS');

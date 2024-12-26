@@ -27,8 +27,61 @@ $header-margin-bottom: 20px;
         }
     }
 
-    .decisions-body {
-        overflow: scroll;
+    .decisions-main {
+        height: 100%;
+        overflow: hidden;
+
+        .decisions-table {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            overflow: hidden;
+
+            .decisions-table-header {
+                font-size: 18px;
+                font-weight: bold;
+                padding: 0 12px 10px 5px;
+                border-bottom: 2px solid black;
+            }
+
+            .decisions-table-body {
+                overflow: scroll;
+
+                .decision {
+                    border-bottom: 1px solid lightgray;
+                    padding: 10px 12px 10px 5px;
+                }
+            }
+
+            .decisions-table-header,
+            .decision {
+                $gap-between-columns: 5px;
+                $sector-width: 140px;
+                $fault-width: 280px;
+                $precise-width: 100px;
+                $type-width: 200px;
+                $actions-width: 150px;
+
+                display: flex;
+                align-items: center;
+                gap: $gap-between-columns;
+
+                .column {
+                    &.sector { min-width: 140px; }
+                    &.fault { min-width: 280px; }
+                    &.precise { min-width: 100px; }
+                    &.type { min-width: 200px; }
+                    &.comment {
+                        min-width: 130px;
+                        width: calc(100% - (
+                            $sector-width + $fault-width + $precise-width + $type-width + $actions-width
+                            + 5 * $gap-between-columns
+                        ));
+                    }
+                    &.actions { min-width: 150px; }
+                }
+            }
+        }
 
         .actions-container {
             display: flex;

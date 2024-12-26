@@ -123,6 +123,7 @@
     },
     "MATCH_ANALYSIS": {
       "BACK_HOME": "Accueil",
+      "BACK": "Retour",
       "ACTIONS": {
         "TITLE": "Décisions",
         "NO_ACTION": "Aucune décision n'a été ajoutée pour le moment.",
