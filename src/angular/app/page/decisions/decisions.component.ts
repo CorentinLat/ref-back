@@ -13,6 +13,7 @@ import { NavigationService } from '../../service/NavigationService';
 import { ToastService } from '../../service/ToastService';
 
 import { VideoEditorModalComponent } from '../../component/modal/video-editor-modal/video-editor-modal.component';
+import { Decision } from '../../../../../type/refBack';
 
 @Component({
     selector: 'app-decisions',
@@ -141,8 +142,11 @@ export class DecisionsComponent implements OnDestroy, OnInit {
     }
 
     navigateToHomePage = () => this.navigation.navigateTo('/');
-    navigateToMatchAnalysisPage = (gameNumber: string) =>
-        this.navigation.navigateTo('/match-analysis', { gameNumber, originPath: '/decisions' });
+    navigateToMatchAnalysisPage = ({ gameNumber, second }: Decision) => this.navigation.navigateTo('/match-analysis', {
+        gameNumber,
+        second,
+        originPath: '/decisions',
+    });
 
     private async getAllDecisions() {
         this.isLoadingDecisions = true;

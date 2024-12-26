@@ -95,6 +95,11 @@ export class MatchAnalysisComponent implements OnInit {
         this.videoApiService = api;
         this.videoApiService.volume = 0;
 
+        const startingSecond = this.route.snapshot.queryParamMap.get('second');
+        if (startingSecond) {
+            this.putVideoAtSecond(parseInt(startingSecond, 10));
+        }
+
         this.cdr.detectChanges();
     };
 
