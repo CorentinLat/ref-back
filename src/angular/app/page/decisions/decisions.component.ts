@@ -5,6 +5,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { IDropdownSettings } from 'ng-multiselect-dropdown';
 import { Subscription } from 'rxjs';
 
+import { Decision } from '../../../../../type/refBack';
+
 import { TranslatedDecision } from '../../domain/decision';
 import { actionFaults, actionPrecises, ActionSector, actionSectors } from '../../domain/game';
 
@@ -13,7 +15,6 @@ import { NavigationService } from '../../service/NavigationService';
 import { ToastService } from '../../service/ToastService';
 
 import { VideoEditorModalComponent } from '../../component/modal/video-editor-modal/video-editor-modal.component';
-import { Decision } from '../../../../../type/refBack';
 
 @Component({
     selector: 'app-decisions',

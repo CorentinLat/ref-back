@@ -1,9 +1,12 @@
 import { Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Observable, Subscription } from 'rxjs';
 
 import { Action } from '../../../../domain/game';
 
 import { DateTimeService } from '../../../../service/DateTimeService';
+
+import { VideoEditorModalComponent } from '../../../../component/modal/video-editor-modal/video-editor-modal.component';
 
 @Component({
   selector: 'app-collapse-display-actions',
@@ -12,6 +15,7 @@ import { DateTimeService } from '../../../../service/DateTimeService';
 })
 export class CollapseDisplayActionsComponent implements OnInit, OnDestroy {
     @Input() actions!: Action[];
+    @Input() video!: { title: string; path: string };
 
     @Input() newActionAdded!: Observable<Action>;
 
@@ -25,7 +29,10 @@ export class CollapseDisplayActionsComponent implements OnInit, OnDestroy {
 
     private newActionSubscription!: Subscription;
 
-    constructor(private dateTimeService: DateTimeService) {}
+    constructor(
+        private dateTimeService: DateTimeService,
+        private modalService: NgbModal,
+    ) {}
 
     ngOnInit(): void {
         this.newActionSubscription = this.newActionAdded.subscribe(action => {
@@ -41,6 +48,12 @@ export class CollapseDisplayActionsComponent implements OnInit, OnDestroy {
 
     ngOnDestroy(): void {
         this.newActionSubscription.unsubscribe();
+    }
+
+    handleOpenGameVideoEditorModal() {
+        const modalRef = this.modalService.open(VideoEditorModalComponent, { fullscreen: true });
+        modalRef.componentInstance.videoTitle = this.video.title;
+        modalRef.componentInstance.videoPath = this.video.path;
     }
 
     exposeActionMinutes(second: number): string {

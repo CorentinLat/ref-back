@@ -48,5 +48,11 @@
 
     <p class="decision-card no-decision" *ngIf="!actions.length">
         {{ 'PAGE.MATCH_ANALYSIS.ACTIONS.NO_ACTION_SHORT' | translate }}
+
+        <button class="btn btn-primary btn-sm" (click)="handleOpenGameVideoEditorModal()">
+            <i class="bi bi-film"></i>
+            <i class="bi bi-scissors"></i>
+            <i class="bi bi-film"></i>
+        </button>
     </p>
 </section>

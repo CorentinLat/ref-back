@@ -2,6 +2,7 @@
     class="display-actions"
     [actions]="exposeActionsSortedByTime()"
     [gameNumber]="gameNumber"
+    [video]="video"
     [putVideoAtSecond]="putVideoAtSecond"
     [newActionAdded]="newActionAdded"
     *ngIf="!collapsed"
@@ -9,6 +10,7 @@
 <app-collapse-display-actions
     class="display-actions"
     [actions]="exposeActionsSortedByTime()"
+    [video]="video"
     [putVideoAtSecond]="putVideoAtSecond"
     [newActionAdded]="newActionAdded"
     *ngIf="collapsed"

@@ -16,10 +16,13 @@ import { ToastService } from '../../service/ToastService';
     styleUrls: ['./match-analysis.component.scss'],
 })
 export class MatchAnalysisComponent implements OnInit {
+    public originPath: string|null = null;
+
     public game!: Game;
     public gameNumber!: string;
+    public video!: { title: string; path: string };
+
     public videoPath!: SafeResourceUrl;
-    public originPath: string|null = null;
 
     public videoApiService!: VgApiService;
 
@@ -81,6 +84,10 @@ export class MatchAnalysisComponent implements OnInit {
             .then(game => {
                 this.game = game;
                 this.videoPath = this.sanitizer.bypassSecurityTrustResourceUrl(`video://${game.information.videoPath}`);
+                this.video = {
+                    title: `${this.game.information.date} - ${this.game.information.teams.local} - ${this.game.information.teams.visitor}`,
+                    path: this.game.information.videoPath,
+                };
             })
             .catch(() => {
                 this.toastService.showError('TOAST.ERROR.PROCESS_GAME');

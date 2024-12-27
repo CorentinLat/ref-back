@@ -69,6 +69,15 @@ export class VideoEditorModalComponent implements OnInit {
         this.checkEditionValidity();
     };
 
+    handleCancelEdit = () => {
+        if (this.isClipEdition) {
+            this.isEditing = false;
+            this.isEditionValid = false;
+        } else {
+            this.modal.dismiss();
+        }
+    };
+
     handleUpdateClipBeginToCurrent = () => {
         if (this.isClipEdition) {
             this.clip.begin = this.currentVideoTime;

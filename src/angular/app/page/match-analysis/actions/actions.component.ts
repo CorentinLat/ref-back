@@ -12,6 +12,7 @@ export class ActionsComponent {
     @Input() actions!: Action[];
     @Input() collapsed!: boolean;
     @Input() gameNumber!: string;
+    @Input() video!: { title: string; path: string };
 
     @Input() newActionAdded!: Observable<Action>;
 
