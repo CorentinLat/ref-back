@@ -32,7 +32,7 @@ export class VideoEditorModalComponent implements OnInit {
         this.isEditing = !this.isClipEdition;
     }
 
-    handleVideoReady = (currentTime: number) => this.currentVideoTime = currentTime;
+    handleVideoReady = ({ currentTime }: { currentTime: number }) => this.currentVideoTime = currentTime;
 
     handleVideoTimeUpdated = (currentTime: number) => {
         this.currentVideoTime = currentTime;

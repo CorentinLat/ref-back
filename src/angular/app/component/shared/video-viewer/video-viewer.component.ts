@@ -20,7 +20,7 @@ export class VideoViewerComponent implements OnInit, OnDestroy {
     @Input() videoPath!: string;
     @Input() timing?: number;
 
-    @Output() videoReady = new EventEmitter<number>();
+    @Output() videoReady = new EventEmitter<{ currentTime: number; vgApiService: VgApiService }>();
     @Output() videoPaused = new EventEmitter<number>();
     @Output() videoPlayed = new EventEmitter<number>();
     @Output() videoTimeUpdated = new EventEmitter<number>();
@@ -92,7 +92,7 @@ export class VideoViewerComponent implements OnInit, OnDestroy {
         this.mediaTimeUpdatedSubscription$ = this.videoApiService.getDefaultMedia().subscriptions
             .timeUpdate.subscribe((e) => this.videoTimeUpdated.emit(e.target.currentTime));
 
-        this.videoReady.emit(this.videoApiService.currentTime);
+        this.videoReady.emit({ currentTime: this.videoApiService.currentTime, vgApiService: this.videoApiService });
         this.cdr.detectChanges();
     };
 

@@ -1,5 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit, HostListener } from '@angular/core';
-import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { VgApiService } from '@videogular/ngx-videogular/core';
 import { Subject } from 'rxjs';
@@ -22,8 +21,6 @@ export class MatchAnalysisComponent implements OnInit {
     public gameNumber!: string;
     public video!: { title: string; path: string };
 
-    public videoPath!: SafeResourceUrl;
-
     public videoApiService!: VgApiService;
 
     public collapse = { actions: true };
@@ -34,41 +31,9 @@ export class MatchAnalysisComponent implements OnInit {
         private cdr: ChangeDetectorRef,
         private electron: ElectronService,
         private navigation: NavigationService,
-        private route: ActivatedRoute,
-        private sanitizer: DomSanitizer,
+        public route: ActivatedRoute,
         private toastService: ToastService,
     ) {}
-
-    @HostListener('document:keydown', ['$event'])
-    handleKeyboardEvent(event: KeyboardEvent) {
-        if (!this.videoApiService?.isPlayerReady || (event.target as HTMLElement)?.tagName === 'TEXTAREA') {
-            return;
-        }
-
-        if (event.code === 'Space') {
-            this.toggleVideoPlayPause();
-        } else if (event.code === 'ArrowLeft') {
-            this.handleVideoTimeChange(event, false);
-        } else if (event.code === 'ArrowRight') {
-            this.handleVideoTimeChange(event, true);
-        } else if (event.key.toLowerCase() === 'f') {
-            this.toggleFullscreen();
-        } else if (event.key.toLowerCase() === 'm') {
-            this.toggleVideoMute();
-        }
-    }
-
-    @HostListener('document:mousewheel', ['$event'])
-    handleMouseWheelEvent(event: WheelEvent) {
-        if (!this.videoApiService?.isPlayerReady) return;
-        if (Math.abs(event.deltaY) >= Math.abs(event.deltaX)) return;
-
-        if (event.deltaX > 0) {
-            this.handleVideoTimeChange(event, false);
-        } else {
-            this.handleVideoTimeChange(event, true);
-        }
-    }
 
     ngOnInit(): void {
         const gameNumber = this.route.snapshot.queryParamMap.get('gameNumber');
@@ -83,7 +48,6 @@ export class MatchAnalysisComponent implements OnInit {
             .getGameByNumber(this.gameNumber)
             .then(game => {
                 this.game = game;
-                this.videoPath = this.sanitizer.bypassSecurityTrustResourceUrl(`video://${game.information.videoPath}`);
                 this.video = {
                     title: `${this.game.information.date} - ${this.game.information.teams.local} - ${this.game.information.teams.visitor}`,
                     path: this.game.information.videoPath,
@@ -98,14 +62,8 @@ export class MatchAnalysisComponent implements OnInit {
     public handleNavigateToOriginOrHome = () => this.navigation.navigateTo(this.originPath || '/');
     public handleNavigateToSummary = () => this.navigation.navigateTo('/summary', { gameNumber: this.game.information.gameNumber });
 
-    public onPlayerReady = (api: VgApiService): void => {
-        this.videoApiService = api;
-        this.videoApiService.volume = 0;
-
-        const startingSecond = this.route.snapshot.queryParamMap.get('second');
-        if (startingSecond) {
-            this.putVideoAtSecond(parseInt(startingSecond, 10));
-        }
+    public handleVideoReady = ({ vgApiService }: { vgApiService: VgApiService }): void => {
+        this.videoApiService = vgApiService;
 
         this.cdr.detectChanges();
     };
@@ -116,30 +74,5 @@ export class MatchAnalysisComponent implements OnInit {
 
     public onActionAdded = (action: Action): void => {
         setTimeout(() => this.newActionAdded.next(action), 100);
-    };
-
-    private toggleVideoPlayPause = (): void => {
-        if (this.videoApiService.state === 'paused') {
-            this.videoApiService.play();
-        } else {
-            this.videoApiService.pause();
-        }
-    };
-
-    private handleVideoTimeChange = (event: KeyboardEvent | WheelEvent, isForward = false): void => {
-        const delay = event.altKey ? 30
-            : event.shiftKey ? 10
-                : 1;
-        const multiplier = isForward ? 1 : -1;
-
-        this.putVideoAtSecond(this.videoApiService.currentTime + delay * multiplier);
-    };
-
-    private toggleFullscreen = (): void => {
-        this.videoApiService.fsAPI.toggleFullscreen();
-    };
-
-    private toggleVideoMute = (): void => {
-        this.videoApiService.volume = this.videoApiService.volume === 0 ? 1 : 0;
     };
 }
