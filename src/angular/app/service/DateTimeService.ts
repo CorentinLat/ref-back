@@ -28,4 +28,15 @@ export class DateTimeService {
         const currentSeasonEndYear = currentSeasonStartYear + 1;
         return `${currentSeasonStartYear}${currentSeasonEndYear.toString().slice(-2)}`;
     }
+
+    getRemainingMinutes(remainingSeconds: number): string {
+        const minutes = Math.floor(remainingSeconds / 60);
+        if (!Number.isFinite(minutes)) {
+            return '...';
+        }
+
+        return minutes === 0
+            ? `< 1m`
+            : `${minutes}m`;
+    }
 }

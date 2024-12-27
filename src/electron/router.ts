@@ -5,7 +5,7 @@ import IpcMainEvent = Electron.IpcMainEvent;
 import { SummaryExportType } from '../../type/refBack';
 
 import { getDecisionsForGames } from './utils/decision';
-import { askSaveDirectory, askSaveVideoPath } from './utils/dialog';
+import { askSaveDirectory, askSaveFile, askSaveVideoPath } from './utils/dialog';
 import {
     Action,
     NewAction,
@@ -46,6 +46,7 @@ export default function(ipcMain: IpcMain) {
     ipcMain.on('download_summary', onDownloadSummaryListener);
     ipcMain.on('open_url_in_browser', onOpenUrlInBrowserListener);
     ipcMain.on('get_decisions', onGetDecisionsListener);
+    ipcMain.on('cut_video', onCutVideoListener);
 }
 
 const onInitAppListener = async (event: IpcMainEvent) => {
@@ -299,5 +300,42 @@ const onGetDecisionsListener = async (event: IpcMainEvent) => {
     } catch (error: any) {
         logger.error(`error onGetDecisionsListener: ${error}`);
         event.reply('get_decisions_failed');
+    }
+};
+
+type OnCutVideoListenerArgs = { videoPath: string; cuts: number[][]; replaceVideo: boolean };
+const onCutVideoListener = async (event: IpcMainEvent, { videoPath, cuts, replaceVideo }: OnCutVideoListenerArgs) => {
+    logger.debug('OnCutVideoListener');
+
+    if (
+        !cuts.length
+        || cuts.some(([begin, end]) => begin >= end)
+        || cuts.some(([begin]) => begin < 0)
+        || cuts.some(times => times.length !== 2)
+    ) {
+        logger.debug('No cuts to apply');
+        event.reply('cut_video_failed');
+        return;
+    }
+
+    const savePath = replaceVideo ? videoPath : askSaveFile('Clip');
+    logger.debug(`Video save path : ${savePath}`);
+    if (!savePath) {
+        logger.debug('Cut video save path closed');
+        event.reply('cut_video_failed', { closed: true });
+        return;
+    }
+
+    try {
+        logger.debug(`videoPath: ${videoPath}`);
+        for (const cut of cuts) {
+            logger.debug(`cut: ${cut}`);
+        }
+
+        await new Promise(resolve => setTimeout(resolve, 10000));
+        event.reply('cut_video_succeeded');
+    } catch (error: any) {
+        logger.error(`error onCutVideoListener: ${error}`);
+        event.reply('cut_video_failed');
     }
 };

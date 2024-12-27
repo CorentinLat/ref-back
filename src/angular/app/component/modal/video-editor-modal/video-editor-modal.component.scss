@@ -34,4 +34,11 @@
             gap: 16px;
         }
     }
+
+    .video-processing-loader {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+    }
 }

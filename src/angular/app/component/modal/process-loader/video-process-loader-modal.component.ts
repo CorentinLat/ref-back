@@ -2,6 +2,7 @@ import { Component, NgZone, OnDestroy, OnInit } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
 
+import { DateTimeService } from '../../../service/DateTimeService';
 import { ElectronService } from '../../../service/ElectronService';
 
 @Component({ templateUrl: './process-loader-modal.component.html' })
@@ -12,6 +13,7 @@ export class VideoProcessLoaderModalComponent implements OnDestroy, OnInit {
     protected currentSubscription$!: Subscription;
 
     constructor(
+        private readonly dateTimeService: DateTimeService,
         protected electronService: ElectronService,
         public modal: NgbActiveModal,
         protected zone: NgZone
@@ -25,16 +27,7 @@ export class VideoProcessLoaderModalComponent implements OnDestroy, OnInit {
         this.currentSubscription$?.unsubscribe();
     }
 
-    exposeRemainingTime(): string {
-        const minutes = Math.floor(this.remainingTime / 60);
-        if (!Number.isFinite(minutes)) {
-            return '...';
-        }
-
-        return minutes === 0
-            ? `< 1m`
-            : `${minutes}m`;
-    }
+    exposeRemainingTime = () => this.dateTimeService.getRemainingMinutes(this.remainingTime);
 
     handleCancelGameCreation() {
         this.electronService.cancelVideoProcess();

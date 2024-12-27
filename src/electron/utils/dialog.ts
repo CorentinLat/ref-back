@@ -26,3 +26,16 @@ export function askSaveDirectory(): string|null {
 
     return savePath ? savePath[0] : null;
 }
+
+export function askSaveFile(defaultName: string): string|null {
+    const extension = 'mp4';
+    const defaultPath = path.join(downloadPath, `${defaultName}.${extension}`);
+
+    const savePath = dialog.showSaveDialogSync({
+        defaultPath,
+        properties: ['showOverwriteConfirmation'],
+        filters: [{ name: extension, extensions: [`.${extension}`] }],
+    });
+
+    return savePath ? savePath : null;
+}

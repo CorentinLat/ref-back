@@ -249,4 +249,19 @@ export class ElectronService {
             this.ipcRenderer?.send('get_decisions');
         });
     }
+
+    cutVideo(videoPath: string, cuts: number[][], replaceVideo: boolean = false): Promise<void> {
+        return new Promise((resolve, reject) => {
+            this.ipcRenderer?.once('cut_video_succeeded', () => {
+                this.ipcRenderer?.removeAllListeners('cut_video_failed');
+                resolve();
+            });
+            this.ipcRenderer?.once('cut_video_failed', (_, error: any) => {
+                this.ipcRenderer?.removeAllListeners('cut_video_succeeded');
+                reject(error);
+            });
+
+            this.ipcRenderer?.send('cut_video', { videoPath, cuts, replaceVideo });
+        });
+    }
 }

@@ -1,14 +1,18 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, NgZone, OnDestroy, OnInit } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { VgApiService } from '@videogular/ngx-videogular/core';
+import { Subscription } from 'rxjs';
 
 import { DateTimeService } from '../../../service/DateTimeService';
+import { ElectronService } from '../../../service/ElectronService';
+import { ToastService } from '../../../service/ToastService';
 
 @Component({
   selector: 'app-video-editor-modal',
   templateUrl: './video-editor-modal.component.html',
   styleUrls: ['./video-editor-modal.component.scss']
 })
-export class VideoEditorModalComponent implements OnInit {
+export class VideoEditorModalComponent implements OnInit, OnDestroy {
     @Input() videoTitle!: string;
     @Input() videoPath!: string;
     @Input() timing?: number;
@@ -17,22 +21,43 @@ export class VideoEditorModalComponent implements OnInit {
     isEditing!: boolean;
     isEditionValid = false;
     isProcessingVideo = false;
+    progress = 0;
+    remainingTime = Infinity;
 
+    videoService!: VgApiService;
     currentVideoTime!: number;
     clip = { begin: 0, end: 0 };
     game = { firstHalf: { begin: 0, end: 0 }, secondHalf: { begin: 0, end: 0 } };
 
+    private currentSubscription$!: Subscription;
+
     constructor(
-        private dateTimeService: DateTimeService,
+        private readonly dateTimeService: DateTimeService,
+        private readonly electronService: ElectronService,
+        private readonly toastService: ToastService,
         public modal: NgbActiveModal,
+        protected zone: NgZone,
     ) {}
 
     ngOnInit(): void {
         this.isClipEdition = this.timing !== undefined;
         this.isEditing = !this.isClipEdition;
+
+        this.currentSubscription$ = this.electronService.getProcessVideoProgress()
+            .subscribe(({ percentage, remaining }) => this.zone.run(() => {
+                this.progress = Math.round(percentage);
+                this.remainingTime = remaining;
+            }));
     }
 
-    handleVideoReady = ({ currentTime }: { currentTime: number }) => this.currentVideoTime = currentTime;
+    ngOnDestroy() {
+        this.currentSubscription$?.unsubscribe();
+    }
+
+    handleVideoReady = ({ currentTime, vgApiService }: { currentTime: number; vgApiService: VgApiService }) => {
+        this.currentVideoTime = currentTime;
+        this.videoService = vgApiService;
+    };
 
     handleVideoTimeUpdated = (currentTime: number) => {
         this.currentVideoTime = currentTime;
@@ -117,10 +142,32 @@ export class VideoEditorModalComponent implements OnInit {
         }
     };
 
-    handleSubmitVideoProcessing = () => {
+    handleSubmitVideoProcessing = async () => {
         this.isProcessingVideo = true;
+        this.videoService.pause();
+
+        try {
+            const cuts = this.isClipEdition
+                ? [[this.clip.begin, this.clip.end]]
+                : [[this.game.firstHalf.begin, this.game.firstHalf.end], [this.game.secondHalf.begin, this.game.secondHalf.end]];
+
+            await this.electronService.cutVideo(this.videoPath, cuts, !this.isClipEdition);
+            this.toastService.showSuccess('TOAST.SUCCESS.PROCESS_CUT_VIDEO');
+            this.modal.close();
+        } catch (error: any) {
+            if (error?.cancelled) {
+                this.toastService.showInfo('TOAST.INFO.CUT_VIDEO_CANCELLED');
+            } else if (!error?.closed) {
+                this.toastService.showError('TOAST.ERROR.PROCESS_CUT_VIDEO');
+            }
+        } finally {
+            this.isProcessingVideo = false;
+        }
     };
 
+    handleCancelVideoProcessing = () => this.electronService.cancelVideoProcess();
+
+    exposeRemainingTime = () => this.dateTimeService.getRemainingMinutes(this.remainingTime);
     exposeSecondToMMSS = (seconds: number) => this.dateTimeService.convertSecondsToMMSS(seconds);
 
     private checkEditionValidity = () => {

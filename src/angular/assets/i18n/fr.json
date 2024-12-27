@@ -367,6 +367,7 @@
       "PROCESS_ACTION_ADDED": "Impossible d'ajouter cette action...",
       "PROCESS_ACTION_EDITED": "Impossible d'éditer cette action...",
       "PROCESS_ACTION_REMOVED": "Impossible de supprimer cette action...",
+      "PROCESS_CUT_VIDEO": "Impossible d'éditer la vidéo...",
       "PROCESS_DECISIONS": "Impossible de récupérer les décisions...",
       "PROCESS_DOWNLOAD_GAME": "Impossible de télécharger la vidéo...",
       "PROCESS_DOWNLOAD_CLIPS": "Impossible de télécharger les clips...",
@@ -377,12 +378,14 @@
       "PROCESS_VIDEO": "Impossible de traiter la vidéo..."
     },
     "INFO": {
+      "CUT_VIDEO_CANCELLED": "Édition de la vidéo annulée !",
       "DOWNLOAD_VIDEO_CANCELLED": "Téléchargement annulé !",
       "PROCESS_VIDEO_CANCELLED": "Import annulé !"
     },
     "SUCCESS": {
       "PROCESS_ACTION_ADDED": "Action ajoutée !",
       "PROCESS_ACTION_EDITED": "Action mise à jour !",
+      "PROCESS_CUT_VIDEO": "Vidéo éditée !",
       "gameDescription_EDITED": "Description mise à jour !",
       "globalPerformance_EDITED": "Performance mise à jour !"
     }
