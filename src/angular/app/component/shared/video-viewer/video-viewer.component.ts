@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { VgApiService } from '@videogular/ngx-videogular/core';
-import { Subscription } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-video-viewer',
@@ -20,17 +20,19 @@ export class VideoViewerComponent implements OnInit, OnDestroy {
     @Input() videoPath!: string;
     @Input() timing?: number;
 
+    @Input() refreshVideoMedia?: Observable<string>;
+
     @Output() videoReady = new EventEmitter<{ currentTime: number; vgApiService: VgApiService }>();
     @Output() videoPaused = new EventEmitter<number>();
     @Output() videoPlayed = new EventEmitter<number>();
     @Output() videoTimeUpdated = new EventEmitter<number>();
 
+    isHidingVideo = false;
+
     videoApiService!: VgApiService;
     videoPathSafe!: SafeResourceUrl;
 
-    private mediaPauseSubscription$?: Subscription;
-    private mediaPlaySubscription$?: Subscription;
-    private mediaTimeUpdatedSubscription$?: Subscription;
+    private refreshVideoMediaSubscription$?: Subscription;
 
     constructor(
         private cdr: ChangeDetectorRef,
@@ -72,12 +74,20 @@ export class VideoViewerComponent implements OnInit, OnDestroy {
 
     ngOnInit(): void {
         this.videoPathSafe = this.sanitizer.bypassSecurityTrustResourceUrl(`video://${this.videoPath}`);
+
+        this.refreshVideoMediaSubscription$ = this.refreshVideoMedia?.subscribe((newPath) => {
+            this.videoApiService.pause();
+            this.putVideoAtSecond(0);
+
+            this.isHidingVideo = true;
+            this.videoPathSafe = this.sanitizer.bypassSecurityTrustResourceUrl(`video://${newPath}`);
+
+            setTimeout(() => this.isHidingVideo = false);
+        });
     }
 
     ngOnDestroy(): void {
-        this.mediaPauseSubscription$?.unsubscribe();
-        this.mediaPlaySubscription$?.unsubscribe();
-        this.mediaTimeUpdatedSubscription$?.unsubscribe();
+        this.refreshVideoMediaSubscription$?.unsubscribe();
     }
 
     onPlayerReady = (api: VgApiService): void => {
@@ -85,16 +95,13 @@ export class VideoViewerComponent implements OnInit, OnDestroy {
         this.videoApiService.volume = 0;
         this.putVideoAtSecond(this.timing);
 
-        this.mediaPauseSubscription$ = this.videoApiService.getDefaultMedia().subscriptions
-            .pause.subscribe((e) => this.videoPaused.emit(e.target.currentTime));
-        this.mediaPlaySubscription$ = this.videoApiService.getDefaultMedia().subscriptions
-            .play.subscribe((e) => this.videoPlayed.emit(e.target.currentTime));
-        this.mediaTimeUpdatedSubscription$ = this.videoApiService.getDefaultMedia().subscriptions
-            .timeUpdate.subscribe((e) => this.videoTimeUpdated.emit(e.target.currentTime));
-
         this.videoReady.emit({ currentTime: this.videoApiService.currentTime, vgApiService: this.videoApiService });
         this.cdr.detectChanges();
     };
+
+    handleVideoPaused = (event: any) => this.videoPaused.emit(event.target.currentTime);
+    handleVideoPlayed = (event: any) => this.videoPlayed.emit(event.target.currentTime);
+    handleVideoTimeUpdated = (event: any) => this.videoTimeUpdated.emit(event.target.currentTime);
 
     private toggleVideoPlayPause = (): void => {
         if (this.videoApiService.state === 'paused') {

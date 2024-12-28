@@ -250,18 +250,18 @@ export class ElectronService {
         });
     }
 
-    cutVideo(videoPath: string, cuts: number[][], replaceVideo: boolean = false): Promise<void> {
+    cutVideo(videoPath: string, cuts: number[][], editGame: boolean = false): Promise<string> {
         return new Promise((resolve, reject) => {
-            this.ipcRenderer?.once('cut_video_succeeded', () => {
+            this.ipcRenderer?.once('cut_video_succeeded', (_, newVideoPath: string) => {
                 this.ipcRenderer?.removeAllListeners('cut_video_failed');
-                resolve();
+                resolve(newVideoPath);
             });
             this.ipcRenderer?.once('cut_video_failed', (_, error: any) => {
                 this.ipcRenderer?.removeAllListeners('cut_video_succeeded');
                 reject(error);
             });
 
-            this.ipcRenderer?.send('cut_video', { videoPath, cuts, replaceVideo });
+            this.ipcRenderer?.send('cut_video', { videoPath, cuts, editGame });
         });
     }
 }

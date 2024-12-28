@@ -1,13 +1,10 @@
-import { Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
 
 import { Action } from '../../../../domain/game';
 
 import { ElectronService } from '../../../../service/ElectronService';
 import { ToastService } from '../../../../service/ToastService';
-
-import { VideoEditorModalComponent } from '../../../../component/modal/video-editor-modal/video-editor-modal.component';
 
 @Component({
   selector: 'app-full-display-actions',
@@ -17,7 +14,6 @@ import { VideoEditorModalComponent } from '../../../../component/modal/video-edi
 export class FullDisplayActionsComponent implements OnInit, OnDestroy {
     @Input() actions!: Action[];
     @Input() gameNumber!: string;
-    @Input() video!: { title: string; path: string };
 
     @Input() isSummaryDisplay = false;
     @Input() sector: string|null = null;
@@ -25,6 +21,8 @@ export class FullDisplayActionsComponent implements OnInit, OnDestroy {
     @Input() newActionAdded?: Observable<Action>;
 
     @Input() putVideoAtSecond!: (second: number) => void;
+
+    @Output() editVideo = new EventEmitter<void>();
 
     @ViewChild('scrollable') scrollable!: ElementRef;
 
@@ -35,7 +33,6 @@ export class FullDisplayActionsComponent implements OnInit, OnDestroy {
 
     constructor(
         private electron: ElectronService,
-        private modalService: NgbModal,
         private toastService: ToastService,
     ) {}
 
@@ -50,12 +47,6 @@ export class FullDisplayActionsComponent implements OnInit, OnDestroy {
 
     ngOnDestroy(): void {
         this.newActionSubscription?.unsubscribe();
-    }
-
-    handleOpenGameVideoEditorModal() {
-        const modalRef = this.modalService.open(VideoEditorModalComponent, { fullscreen: true });
-        modalRef.componentInstance.videoTitle = this.video.title;
-        modalRef.componentInstance.videoPath = this.video.path;
     }
 
     exposeIsBySectorDisplay(): boolean {

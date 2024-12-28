@@ -6,6 +6,7 @@ import { SummaryExportType } from '../../type/refBack';
 
 import { getDecisionsForGames } from './utils/decision';
 import { askSaveDirectory, askSaveFile, askSaveVideoPath } from './utils/dialog';
+import { extractFileExtension } from './utils/file';
 import {
     Action,
     NewAction,
@@ -13,6 +14,7 @@ import {
     addNewActionToGame,
     createNewGameFile,
     editActionFromGame,
+    editGameVideoPath,
     getGame,
     getGamesInformation,
     removeActionFromGame,
@@ -25,6 +27,8 @@ import { generateSummary } from './utils/summaryGenerator';
 import {
     cancelCurrentVideoCommands,
     copyGameVideoToPath,
+    createClipFromVideoGame,
+    cutVideoGame,
     downloadAllVideosGame,
     generateGameClips,
     handleVideoImport,
@@ -68,7 +72,8 @@ const onCreateNewGameListener = async (event: IpcMainEvent, { force, gameInforma
         throwIfGameFolderExists(gameNumber, force);
 
         const videoPath = await handleVideoImport(gameInformation, event);
-        createNewGameFile({ ...gameInformation, videoPath });
+        const { video, ...rest } = gameInformation;
+        createNewGameFile({ ...rest, videoPath });
 
         event.reply('create_new_game_succeeded', gameNumber);
     } catch (error: any) {
@@ -84,10 +89,10 @@ const onCreateNewGameListener = async (event: IpcMainEvent, { force, gameInforma
     }
 };
 
-const onCancelVideoProcessListener = async () => {
+const onCancelVideoProcessListener = (): Promise<void> => {
     logger.debug('OnCancelVideoProcessListener');
 
-    cancelCurrentVideoCommands();
+    return cancelCurrentVideoCommands();
 };
 
 type OnGetGameListenerArgs = { gameNumber: string };
@@ -303,8 +308,8 @@ const onGetDecisionsListener = async (event: IpcMainEvent) => {
     }
 };
 
-type OnCutVideoListenerArgs = { videoPath: string; cuts: number[][]; replaceVideo: boolean };
-const onCutVideoListener = async (event: IpcMainEvent, { videoPath, cuts, replaceVideo }: OnCutVideoListenerArgs) => {
+type OnCutVideoListenerArgs = { videoPath: string; cuts: number[][]; editGame: boolean };
+const onCutVideoListener = async (event: IpcMainEvent, { videoPath, cuts, editGame }: OnCutVideoListenerArgs) => {
     logger.debug('OnCutVideoListener');
 
     if (
@@ -318,24 +323,31 @@ const onCutVideoListener = async (event: IpcMainEvent, { videoPath, cuts, replac
         return;
     }
 
-    const savePath = replaceVideo ? videoPath : askSaveFile('Clip');
-    logger.debug(`Video save path : ${savePath}`);
-    if (!savePath) {
-        logger.debug('Cut video save path closed');
-        event.reply('cut_video_failed', { closed: true });
-        return;
-    }
-
     try {
-        logger.debug(`videoPath: ${videoPath}`);
-        for (const cut of cuts) {
-            logger.debug(`cut: ${cut}`);
-        }
+        if (editGame) {
+            const newVideoPath = await cutVideoGame(event, videoPath, cuts);
+            editGameVideoPath(newVideoPath);
 
-        await new Promise(resolve => setTimeout(resolve, 10000));
-        event.reply('cut_video_succeeded');
+            event.reply('cut_video_succeeded', newVideoPath);
+        } else {
+            const savePath = askSaveFile('Clip', extractFileExtension(videoPath));
+
+            if (!savePath) {
+                logger.debug('Cut video save path closed');
+                event.reply('cut_video_failed', { closed: true });
+                return;
+            }
+
+            await createClipFromVideoGame(event, videoPath, cuts[0][0], cuts[0][1], savePath);
+            event.reply('cut_video_succeeded', savePath);
+        }
     } catch (error: any) {
-        logger.error(`error onCutVideoListener: ${error}`);
-        event.reply('cut_video_failed');
+        if (error?.type === 'BaseError') {
+            logger.error(`error onCutVideoListener: ${error.message}`);
+            event.reply('cut_video_failed', error.body);
+        } else {
+            logger.error(`error onCutVideoListener: ${error}`);
+            event.reply('cut_video_failed');
+        }
     }
 };

@@ -2,16 +2,16 @@
     class="display-actions"
     [actions]="exposeActionsSortedByTime()"
     [gameNumber]="gameNumber"
-    [video]="video"
     [putVideoAtSecond]="putVideoAtSecond"
     [newActionAdded]="newActionAdded"
+    (editVideo)="editVideo.emit()"
     *ngIf="!collapsed"
 ></app-full-display-actions>
 <app-collapse-display-actions
     class="display-actions"
     [actions]="exposeActionsSortedByTime()"
-    [video]="video"
     [putVideoAtSecond]="putVideoAtSecond"
     [newActionAdded]="newActionAdded"
+    (editVideo)="editVideo.emit()"
     *ngIf="collapsed"
 ></app-collapse-display-actions>

@@ -27,8 +27,7 @@ export function askSaveDirectory(): string|null {
     return savePath ? savePath[0] : null;
 }
 
-export function askSaveFile(defaultName: string): string|null {
-    const extension = 'mp4';
+export function askSaveFile(defaultName: string, extension: string = 'mp4'): string|null {
     const defaultPath = path.join(downloadPath, `${defaultName}.${extension}`);
 
     const savePath = dialog.showSaveDialogSync({

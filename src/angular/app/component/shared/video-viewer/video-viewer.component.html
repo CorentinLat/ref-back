@@ -27,7 +27,15 @@
         <vg-fullscreen></vg-fullscreen>
     </vg-controls>
 
-    <video [vgMedia]="$any(media)" #media preload="auto" crossorigin>
+    <video
+        [vgMedia]="$any(media)"
+        #media
+        preload="auto"
+        (pause)="handleVideoPaused($event)"
+        (play)="handleVideoPlayed($event)"
+        (timeupdate)="handleVideoTimeUpdated($event)"
+        *ngIf="!isHidingVideo"
+    >
         <source [src]="videoPathSafe">
     </video>
 </vg-player>

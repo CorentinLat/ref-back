@@ -2,9 +2,8 @@ import fs from 'fs';
 import path from 'path';
 import { v4 as uuidv4 } from 'uuid';
 
-import { removeGameFolder } from './path';
 import logger from './logger';
-import { workPath } from './path';
+import { removeGameFolder, workPath } from './path';
 
 export type Action = {
     id: string;
@@ -130,6 +129,23 @@ export function editActionFromGame(gameNumber: string, actionToEdit: Action): Ac
     } catch (error) {
         logger.error(`error editActionFromGame: ${error}`);
         return null;
+    }
+}
+
+export function editGameVideoPath(videoPath: string) {
+    const gameNumber = path.basename(path.dirname(videoPath));
+    const game = getGame(gameNumber);
+    if (!game) return false;
+
+    const gameFile = path.join(workPath, gameNumber, 'game.json');
+    try {
+        game.information.videoPath = videoPath;
+        fs.writeFileSync(gameFile, JSON.stringify(game));
+
+        return true;
+    } catch (error) {
+        logger.error(`error editGameVideoPath: ${error}`);
+        return false;
     }
 }
 

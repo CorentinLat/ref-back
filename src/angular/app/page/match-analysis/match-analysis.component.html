@@ -45,6 +45,7 @@
                 class="video"
                 [videoPath]="game.information.videoPath"
                 [timing]="route.snapshot.queryParams.second"
+                [refreshVideoMedia]="refreshVideoMedia"
                 (videoReady)="handleVideoReady($event)"
             ></app-video-viewer>
 
@@ -54,9 +55,9 @@
                     [actions]="game.actions"
                     [collapsed]="collapse.actions"
                     [gameNumber]="gameNumber"
-                    [video]="video"
                     [newActionAdded]="newActionAdded.asObservable()"
                     [putVideoAtSecond]="putVideoAtSecond"
+                    (editVideo)="handleOpenGameVideoEditorModal()"
                 ></app-actions>
             </section>
         </section>

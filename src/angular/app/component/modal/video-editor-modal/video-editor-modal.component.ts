@@ -8,7 +8,6 @@ import { ElectronService } from '../../../service/ElectronService';
 import { ToastService } from '../../../service/ToastService';
 
 @Component({
-  selector: 'app-video-editor-modal',
   templateUrl: './video-editor-modal.component.html',
   styleUrls: ['./video-editor-modal.component.scss']
 })
@@ -151,9 +150,10 @@ export class VideoEditorModalComponent implements OnInit, OnDestroy {
                 ? [[this.clip.begin, this.clip.end]]
                 : [[this.game.firstHalf.begin, this.game.firstHalf.end], [this.game.secondHalf.begin, this.game.secondHalf.end]];
 
-            await this.electronService.cutVideo(this.videoPath, cuts, !this.isClipEdition);
+            const videoPath = await this.electronService.cutVideo(this.videoPath, cuts, !this.isClipEdition);
+
             this.toastService.showSuccess('TOAST.SUCCESS.PROCESS_CUT_VIDEO');
-            this.modal.close();
+            this.modal.close(videoPath);
         } catch (error: any) {
             if (error?.cancelled) {
                 this.toastService.showInfo('TOAST.INFO.CUT_VIDEO_CANCELLED');
@@ -162,6 +162,7 @@ export class VideoEditorModalComponent implements OnInit, OnDestroy {
             }
         } finally {
             this.isProcessingVideo = false;
+            this.progress = 0;
         }
     };
 

@@ -8,6 +8,13 @@ export function copyFileToPath(filePath: string, newFilePath: string): void {
     logger.info(`Copy video succeeded: ${newFilePath}`);
 }
 
+export function removeFile(filePath: string): void {
+    if (fs.existsSync(filePath)) {
+        fs.rmSync(filePath, { force: true });
+        logger.info(`File removed: ${filePath}`);
+    }
+}
+
 export function extractFileExtension(fileName: string): string {
     return path.extname(fileName).slice(1).toLowerCase();
 }

@@ -1,12 +1,9 @@
-import { Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
 
 import { Action } from '../../../../domain/game';
 
 import { DateTimeService } from '../../../../service/DateTimeService';
-
-import { VideoEditorModalComponent } from '../../../../component/modal/video-editor-modal/video-editor-modal.component';
 
 @Component({
   selector: 'app-collapse-display-actions',
@@ -15,11 +12,12 @@ import { VideoEditorModalComponent } from '../../../../component/modal/video-edi
 })
 export class CollapseDisplayActionsComponent implements OnInit, OnDestroy {
     @Input() actions!: Action[];
-    @Input() video!: { title: string; path: string };
 
     @Input() newActionAdded!: Observable<Action>;
 
     @Input() putVideoAtSecond!: (second: number) => void;
+
+    @Output() editVideo = new EventEmitter<void>();
 
     @ViewChild('scrollable') scrollable!: ElementRef;
 
@@ -29,10 +27,7 @@ export class CollapseDisplayActionsComponent implements OnInit, OnDestroy {
 
     private newActionSubscription!: Subscription;
 
-    constructor(
-        private dateTimeService: DateTimeService,
-        private modalService: NgbModal,
-    ) {}
+    constructor(private dateTimeService: DateTimeService) {}
 
     ngOnInit(): void {
         this.newActionSubscription = this.newActionAdded.subscribe(action => {
@@ -48,12 +43,6 @@ export class CollapseDisplayActionsComponent implements OnInit, OnDestroy {
 
     ngOnDestroy(): void {
         this.newActionSubscription.unsubscribe();
-    }
-
-    handleOpenGameVideoEditorModal() {
-        const modalRef = this.modalService.open(VideoEditorModalComponent, { fullscreen: true });
-        modalRef.componentInstance.videoTitle = this.video.title;
-        modalRef.componentInstance.videoPath = this.video.path;
     }
 
     exposeActionMinutes(second: number): string {

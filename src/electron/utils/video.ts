@@ -8,10 +8,10 @@ import { NoVideoError } from '../domain/error/NoVideoError';
 import { UnexpectedError } from '../domain/error/UnexpectedError';
 
 import { cancelCurrentDownload, downloadUrlToPath } from './download';
-import { copyFileToPath, extractFileExtension } from './file';
+import { copyFileToPath, extractFileExtension, removeFile } from './file';
 import { Game, getDefaultGameVideoFilename, NewGameInformation } from './game';
 import logger from './logger';
-import { ffmpegElectronPath, ffprobeElectronPath, workPath } from './path';
+import { ffmpegElectronPath, ffprobeElectronPath, tempPath, workPath } from './path';
 import throwIfNotEnoughRemainingSpaceForFilePaths from './storage';
 import { getVideoUrlFromVeo } from './veo';
 
@@ -22,7 +22,7 @@ FluentFFMPEG.setFfprobePath(ffprobeElectronPath);
 
 const SUPPORTED_HTML_VIDEO_EXTENSIONS = ['mp4', 'webm', 'ogg'];
 
-let currentCommands: FluentFFMPEG.FfmpegCommand[] = [];
+let currentFfmpegExecutions: { command: FluentFFMPEG.FfmpegCommand; outputPath: string }[] = [];
 
 export async function handleVideoImport(gameInformation: NewGameInformation, event: IpcMainEvent): Promise<string> {
     const { gameNumber, video: { option, videoPaths, veo } } = gameInformation;
@@ -56,48 +56,40 @@ export async function concatVideos(gameNumber: string, videoPaths: string[], eve
     }
 
     const videoName: string = generateVideoName();
-    const outputFileName = path.join(workPath, gameNumber, videoName);
+    const outputFileName = generateNewVideoPath(gameNumber, videoName);
 
     const totalDuration = await computeTotalDurationOfVideos(videoPaths);
-
-    const command = FluentFFMPEG().videoBitrate('4600k');
-    currentCommands.push(command);
     const startTime = Date.now();
 
+    const command = FluentFFMPEG().videoBitrate('4600k');
+    currentFfmpegExecutions.push({ command, outputPath: outputFileName });
     videoPaths.forEach(videoPath => command.input(videoPath));
-    return new Promise((resolve, reject) => {
-        command
-            .on('progress', (progress: { timemark: string }) => {
-                const currentSeconds = extractNumberOfSecondsFromTimeMark(progress.timemark);
-                const percentageDone = Math.min(currentSeconds / totalDuration * 100, 100);
+    command
+        .on('progress', (progress: any) => {
+            const currentSeconds = extractNumberOfSecondsFromTimeMark(progress.timemark);
+            const percentageDone = Math.round(currentSeconds / totalDuration * 100);
 
-                const elapsedTime = Date.now() - startTime;
-                const remainingTime = Math.round(elapsedTime / percentageDone * (100 - percentageDone) / 1000);
+            const elapsedTime = Date.now() - startTime;
+            const remainingTime = Math.round(elapsedTime / percentageDone * (100 - percentageDone) / 1000);
 
-                event.reply('videos_progress', { percentage: percentageDone, remaining: remainingTime });
-            })
-            .on('error', (err: Error) => {
-                if (err.message.includes('SIGKILL')) {
-                    logger.info(`Concat videos cancelled: ${outputFileName}`);
-                    return reject(new CancelVideoProcessingError());
-                }
+            event.reply('videos_progress', { percentage: percentageDone, remaining: remainingTime });
+        })
+        .mergeToFile(outputFileName, tempPath);
+    await promisifyFfmpegCommand(command);
+    currentFfmpegExecutions = [];
 
-                logger.error(`error concatVideos: ${err}`);
-                reject(err);
-            })
-            .on('end', () => {
-                logger.info(`Concat videos succeeded: ${outputFileName}`);
-
-                currentCommands = [];
-                resolve(outputFileName);
-            })
-            .mergeToFile(outputFileName);
-    });
+    return outputFileName;
 }
 
-export function cancelCurrentVideoCommands(): void {
-    currentCommands.forEach(command => command.kill('SIGKILL'));
-    currentCommands = [];
+export async function cancelCurrentVideoCommands(): Promise<void> {
+    await Promise.all(currentFfmpegExecutions.map(async ({ command, outputPath }) => {
+        command.kill('SIGKILL');
+
+        // Waiting to ensure process is killed
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        removeFile(outputPath);
+    }));
+    currentFfmpegExecutions = [];
 
     cancelCurrentDownload();
 }
@@ -107,7 +99,7 @@ export async function copyVideoToUserDataPath(gameNumber: string, videoPath: str
 
     if (SUPPORTED_HTML_VIDEO_EXTENSIONS.includes(currentVideoExtension)) {
         const videoName: string = generateVideoName(currentVideoExtension);
-        const outputFileName = path.join(workPath, gameNumber, videoName);
+        const outputFileName = generateNewVideoPath(gameNumber, videoName);
 
         copyFileToPath(videoPath, outputFileName);
         return Promise.resolve(outputFileName);
@@ -118,7 +110,7 @@ export async function copyVideoToUserDataPath(gameNumber: string, videoPath: str
 }
 
 export async function downloadVideoUrlToUserDataPath(gameNumber: string, url: string, event: IpcMainEvent): Promise<string> {
-    const videoName: string = generateVideoName();
+    const videoName = generateVideoName();
     const outputFileName = path.join(workPath, gameNumber, videoName);
 
     await downloadUrlToPath(url, outputFileName, event);
@@ -154,45 +146,134 @@ export async function generateGameClips(game: Game, destClipsDirectory: string, 
         const clipName = `#${index + 1} ${translate(fault)}.${videoExtension}`;
         const clipPath = path.join(destClipsDirectory, clipName);
         const clipDuration = clip.end - clip.start;
+        const startTime = Date.now();
 
         const command = FluentFFMPEG(videoPath)
             .setStartTime(clip.start)
-            .setDuration(clipDuration);
-        currentCommands.push(command);
-        const startTime = Date.now();
+            .setDuration(clipDuration)
+            .on('progress', (progress: any) => {
+                const currentSeconds = extractNumberOfSecondsFromTimeMark(progress.timemark);
+                const percentageDone = Math.round(currentSeconds / clipDuration * 100);
 
-        return new Promise<void>((resolve, reject) => {
-            command
-                .on('progress', (progress: any) => {
-                    const currentSeconds = extractNumberOfSecondsFromTimeMark(progress.timemark);
-                    const percentageDone = Math.round(currentSeconds / clipDuration * 100);
+                const elapsedTime = Date.now() - startTime;
+                const remainingTime = Math.round(elapsedTime / percentageDone * (100 - percentageDone) / 1000);
 
-                    const elapsedTime = Date.now() - startTime;
-                    const remainingTime = Math.round(elapsedTime / percentageDone * (100 - percentageDone) / 1000);
+                event.reply('clip_progress', { clip: index, percentage: percentageDone, remaining: remainingTime });
+            })
+            .save(clipPath);
 
-                    event.reply('clip_progress', { clip: index, percentage: percentageDone, remaining: remainingTime });
-                })
-                .on('error', (err: Error) => {
-                    if (err.message.includes('SIGKILL')) {
-                        logger.info(`Generate clip cancelled: ${clipName}`);
-                        return reject(new CancelVideoProcessingError());
-                    }
+        currentFfmpegExecutions.push({ command, outputPath: clipPath });
 
-                    logger.error(`error generateGameClips: ${err}`);
-                    reject(err);
-                })
-                .on('end', () => {
-                    logger.info(`Generate clip succeeded: ${clipPath}`);
-                    resolve();
-                })
-                .save(clipPath);
-        });
+        return promisifyFfmpegCommand(command);
     }));
+
+    currentFfmpegExecutions = [];
 }
 
-function generateVideoName(extension: string = 'mp4'): string {
-    return `${Date.now().toString(10)}.${extension}`;
+export async function createClipFromVideoGame(event: IpcMainEvent, videoPath: string, begin: number, end: number, outputPath: string): Promise<void> {
+    const clipDuration = end - begin;
+    const startTime = Date.now();
+
+    const command = FluentFFMPEG(videoPath)
+        .setStartTime(begin)
+        .setDuration(clipDuration)
+        .on('progress', (progress: any) => {
+            const currentSeconds = extractNumberOfSecondsFromTimeMark(progress.timemark);
+            const percentageDone = Math.round(currentSeconds / clipDuration * 100);
+
+            const elapsedTime = Date.now() - startTime;
+            const remainingTime = Math.round(elapsedTime / percentageDone * (100 - percentageDone) / 1000);
+
+            event.reply('videos_progress', { percentage: percentageDone, remaining: remainingTime });
+        })
+        .save(outputPath);
+
+    currentFfmpegExecutions.push({ command, outputPath });
+    await promisifyFfmpegCommand(command);
+    currentFfmpegExecutions = [];
 }
+
+export async function cutVideoGame(event: IpcMainEvent, videoPath: string, cuts: number[][]): Promise<string> {
+    const newVideoPath = generateNewVideoPathInSameDirectory(videoPath);
+
+    const startTime = Date.now();
+    const totalDuration = cuts.reduce((acc, [begin, end]) => acc + (end - begin), 0) * 2;
+    const secondsByCommand = Array(cuts.length + 1).fill(0);
+
+    const clipsPath = await Promise.all(cuts.map(async ([begin, end], index) => {
+        const clipDuration = end - begin;
+        const clipPath = path.join(tempPath, `${path.basename(videoPath)}-${index}.mp4`);
+
+        const command = FluentFFMPEG(videoPath)
+            .setStartTime(begin)
+            .setDuration(clipDuration)
+            .on('progress', (progress: any) => {
+                secondsByCommand[index] = extractNumberOfSecondsFromTimeMark(progress.timemark);
+                const totalSeconds = secondsByCommand.reduce((acc, val) => acc + val, 0);
+                const percentageDone = Math.round(totalSeconds / totalDuration * 100);
+
+                const elapsedTime = Date.now() - startTime;
+                const remainingTime = Math.round(elapsedTime / percentageDone * (100 - percentageDone) / 1000);
+
+                event.reply('videos_progress', { percentage: percentageDone, remaining: remainingTime });
+            })
+            .save(clipPath);
+        currentFfmpegExecutions.push({ command, outputPath: clipPath });
+        await promisifyFfmpegCommand(command);
+
+        return clipPath;
+    }));
+
+    const mergeCommand = FluentFFMPEG();
+    currentFfmpegExecutions.push({ command: mergeCommand, outputPath: newVideoPath });
+    clipsPath.forEach(clipPath => mergeCommand.mergeAdd(clipPath));
+    mergeCommand
+        .on('progress', (progress: any) => {
+            secondsByCommand[cuts.length] = extractNumberOfSecondsFromTimeMark(progress.timemark);
+            const totalSeconds = secondsByCommand.reduce((acc, val) => acc + val, 0);
+            const percentageDone = Math.round(totalSeconds / totalDuration * 100);
+
+            const elapsedTime = Date.now() - startTime;
+            const remainingTime = Math.round(elapsedTime / percentageDone * (100 - percentageDone) / 1000);
+
+            event.reply('videos_progress', { percentage: percentageDone, remaining: remainingTime });
+        })
+        .mergeToFile(newVideoPath, tempPath);
+    await promisifyFfmpegCommand(mergeCommand);
+
+    clipsPath.forEach(clipPath => removeFile(clipPath));
+    removeFile(videoPath);
+    currentFfmpegExecutions = [];
+
+    return newVideoPath;
+}
+
+const generateNewVideoPathInSameDirectory = (videoPath: string): string =>
+    path.join(path.dirname(videoPath), generateVideoName(extractFileExtension(videoPath)));
+
+const generateNewVideoPath = (gameNumber: string, videoName: string): string =>
+    path.join(workPath, gameNumber, videoName);
+
+const generateVideoName = (extension: string = 'mp4'): string =>
+    `${Date.now().toString(10)}.${extension}`;
+
+const promisifyFfmpegCommand = (command: FluentFFMPEG.FfmpegCommand): Promise<void> =>
+    new Promise((resolve, reject) => {
+        command
+            .on('error', (err: Error) => {
+                if (err.message.includes('SIGKILL')) {
+                    logger.info(`Video processing cancelled`);
+                    return reject(new CancelVideoProcessingError());
+                }
+
+                logger.error(`Error on video processing: ${err}`);
+                reject(err);
+            })
+            .on('end', () => {
+                logger.info(`Video processing succeeded`);
+                resolve();
+            });
+    });
 
 async function computeTotalDurationOfVideos(videoPaths: string[]): Promise<number> {
     const durations = await Promise.all(videoPaths.map(videoPath =>
