@@ -3,9 +3,7 @@
     flex-direction: column;
     height: 100vh;
 
-    .modal-body {
-        height: 100%;
-    }
+    .modal-body { height: 100%; }
 
     .editing-container {
         display: flex;
@@ -38,7 +36,14 @@
     .video-processing-loader {
         display: flex;
         align-items: center;
-        justify-content: center;
+        gap: 12px;
         width: 100%;
+
+        .remaining-time-label, .remaining-time-value {
+            margin: 0;
+            white-space: nowrap;
+        }
+
+        .remaining-time-value { min-width: 50px; }
     }
 }

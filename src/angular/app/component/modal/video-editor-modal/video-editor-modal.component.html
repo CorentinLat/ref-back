@@ -109,13 +109,11 @@
                 height="20px"
                 [value]="progress"
                 [animated]="true"
-            >
-            </ngb-progressbar>
+            ></ngb-progressbar>
 
-            <article class="d-flex gap-1">
-                <p class="w-50 text-end m-0"><b>{{ 'MODAL.PROCESS_LOADER.REMAINING_TIME' | translate }}</b></p>
-                <p class="w-50 text-start m-0">{{ exposeRemainingTime() }}</p>
-            </article>
+            <p class="remaining-time-label">{{ 'MODAL.PROCESS_LOADER.REMAINING_TIME' | translate }}</p>
+
+            <p class="remaining-time-value">{{ exposeRemainingTime() }}</p>
 
             <button class="btn btn-outline-danger btn-sm" type="button" (click)="handleCancelVideoProcessing()">
                 {{ 'MODAL.PROCESS_LOADER.CANCEL' | translate }} <i class="bi bi-x-lg"></i>
