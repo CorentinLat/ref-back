@@ -79,19 +79,22 @@
         <section class="decisions-table" *ngIf="filteredDecisions.length">
             <section class="decisions-table-header">
                 <article class="column sector">
-                    {{ 'PAGE.MATCH_ANALYSIS.ACTIONS.SECTOR' | translate }}
+                    {{ 'PAGE.DECISIONS.ACTIONS.SECTOR' | translate }}
                 </article>
                 <article class="column fault">
-                    {{ 'PAGE.MATCH_ANALYSIS.ACTIONS.FAULT' | translate }}
+                    {{ 'PAGE.DECISIONS.ACTIONS.FAULT' | translate }}
                 </article>
                 <article class="column precise">
-                    {{ 'PAGE.MATCH_ANALYSIS.ACTIONS.PRECISE' | translate }}
+                    {{ 'PAGE.DECISIONS.ACTIONS.PRECISE' | translate }}
                 </article>
                 <article class="column type">
-                    {{ 'PAGE.MATCH_ANALYSIS.ACTIONS.TYPE' | translate }}
+                    {{ 'PAGE.DECISIONS.ACTIONS.TYPE' | translate }}
                 </article>
                 <article class="column comment">
-                    {{ 'PAGE.MATCH_ANALYSIS.ACTIONS.COMMENT' | translate }}
+                    {{ 'PAGE.DECISIONS.ACTIONS.COMMENT_REFEREE' | translate }}
+                </article>
+                <article class="column comment">
+                    {{ 'PAGE.DECISIONS.ACTIONS.COMMENT_ADVISER' | translate }}
                 </article>
                 <article class="column actions"></article>
             </section>
@@ -112,6 +115,9 @@
                     </article>
                     <article class="column comment">
                         {{ decision.comment }}
+                    </article>
+                    <article class="column comment">
+                        {{ decision.commentFromAdviser }}
                     </article>
                     <article class="column actions">
                         <div class="actions-container">

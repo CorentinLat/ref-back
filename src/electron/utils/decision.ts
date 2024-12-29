@@ -21,5 +21,6 @@ const getDecisionsForGame = (gameNumber: string): Decision[] => {
         type: action.type,
         card: action.card,
         comment: action.comment,
+        commentFromAdviser: action.commentFromAdviser,
     }));
 };

@@ -53,30 +53,21 @@ $header-height: 30px;
 
             .decisions-table-header,
             .decision {
-                $gap-between-columns: 5px;
-                $sector-width: 140px;
-                $fault-width: 280px;
-                $precise-width: 100px;
-                $type-width: 200px;
-                $actions-width: 150px;
-
                 display: flex;
                 align-items: center;
-                gap: $gap-between-columns;
+                gap: 5px;
 
                 .column {
-                    &.sector { min-width: 140px; }
+                    &.actions { min-width: 150px; }
                     &.fault { min-width: 280px; }
                     &.precise { min-width: 100px; }
+                    &.sector { min-width: 140px; }
                     &.type { min-width: 200px; }
                     &.comment {
                         min-width: 130px;
-                        width: calc(100% - (
-                            $sector-width + $fault-width + $precise-width + $type-width + $actions-width
-                            + 5 * $gap-between-columns
-                        ));
+                        width: calc(100%);
+                        white-space: pre-line;
                     }
-                    &.actions { min-width: 150px; }
                 }
             }
         }

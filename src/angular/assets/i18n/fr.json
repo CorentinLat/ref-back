@@ -70,6 +70,14 @@
         "SEE_DECISION": "Décision",
         "SEE_GAME": "Rencontre"
       },
+      "ACTIONS": {
+        "SECTOR": "Secteur",
+        "FAULT": "Faute",
+        "PRECISE": "Précis",
+        "TYPE": "Décision",
+        "COMMENT_REFEREE": "Commentaire Arbitre",
+        "COMMENT_ADVISER": "Commentaire Conseiller"
+      },
       "FORM": {
         "LABEL": {
           "FAULT": "Faute(s)",
@@ -157,7 +165,7 @@
         "SECTOR": "Secteur",
         "FAULT": "Faute",
         "PRECISE": "Précis",
-        "COMMENT": "Commentaire",
+        "COMMENT": "Commentaire(s)",
         "ACTION": {
           "TYPE": {
             "PLAY_ON": "Jeu",
