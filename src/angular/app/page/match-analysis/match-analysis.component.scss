@@ -31,61 +31,6 @@ $header-gap: 20px;
                 white-space: nowrap;
             }
         }
-
-        .game-information-container {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-            width: 100%;
-            overflow: hidden;
-
-            .teams-scores {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                gap: 20px;
-
-                .team {
-                    flex-basis: 0;
-                    flex-grow: 1;
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                    white-space: nowrap;
-                    font-weight: bold;
-
-                    &.local { text-align: right; }
-                    &.visitor { text-align: left; }
-                }
-
-                .scores {
-                    display: flex;
-                    gap: 16px;
-                }
-            }
-
-            .date-number {
-                display: flex;
-                align-items: center;
-                gap: 40px;
-
-                .date {
-                    font-weight: bold;
-                    text-align: right;
-                }
-
-                .date, .number {
-                    flex-basis: 0;
-                    flex-grow: 1;
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                    white-space: nowrap;
-                }
-            }
-
-            h4, h5 {
-                margin: 0;
-            }
-        }
     }
 
     .match-analysis-body {

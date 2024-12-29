@@ -41,21 +41,7 @@
             </article>
         </section>
 
-        <section class="game-information-container" *ngIf="game">
-            <article class="teams-scores">
-                <h4 class="team local">{{ game.information.teams.local }}</h4>
-                <h5 class="scores">
-                    <span>{{ game.information.score.local }}</span>
-                    <span>{{ game.information.score.visitor }}</span>
-                </h5>
-                <h4 class="team visitor">{{ game.information.teams.visitor }}</h4>
-            </article>
-
-            <article class="date-number">
-                <h5 class="date">{{ game.information.date | date: 'dd/MM/yyyy' }}</h5>
-                <h5 class="number">{{ gameNumber }}</h5>
-            </article>
-        </section>
+        <app-game-information class="w-100" [game]="game"></app-game-information>
 
         <section class="right-container">
             <button class="btn btn-link" (click)="handleNavigateToSummary()">

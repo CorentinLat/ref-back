@@ -1,0 +1,64 @@
+.game-information-component {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    width: 100%;
+    overflow: hidden;
+
+    .teams-scores {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 20px;
+
+        .team {
+            flex-basis: 0;
+            flex-grow: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            font-weight: bold;
+
+            &.local { text-align: right; }
+            &.visitor { text-align: left; }
+        }
+
+        .scores {
+            display: flex;
+            gap: 16px;
+        }
+    }
+
+    .date-number {
+        display: flex;
+        align-items: center;
+        gap: 40px;
+
+        .date {
+            font-weight: bold;
+            text-align: right;
+        }
+
+        .date, .number {
+            flex-basis: 0;
+            flex-grow: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+    }
+
+    .game-comments {
+        display: flex;
+        margin: 1rem 1rem 0 1rem;
+        gap: 2rem;
+
+        .comment-display-component {
+            width: 100%;
+        }
+    }
+
+    h4, h5 {
+        margin: 0;
+    }
+}

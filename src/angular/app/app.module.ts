@@ -24,6 +24,7 @@ import { FullDisplayActionsComponent } from './page/match-analysis/actions/full-
 import { ActionFullComponent } from './page/match-analysis/actions/full-display/action/action-full.component';
 import { HandleMatchAnalysisComponent } from './page/match-analysis/handle-match-analysis/handle-match-analysis.component';
 import { AddEditActionComponent } from './page/match-analysis/handle-match-analysis/add-edit-action/add-edit-action.component';
+import { GameCommentDisplayComponent } from './page/match-analysis/handle-match-analysis/game-comment-display/game-comment-display.component';
 import { SummaryComponent } from './page/summary/summary.component';
 import { StatisticsComponent } from './page/summary/statistics/statistics.component';
 
@@ -35,11 +36,12 @@ import { NotEnoughRemainingSpaceModalComponent } from './component/modal/not-eno
 import { VideoProcessLoaderModalComponent } from './component/modal/process-loader/video-process-loader-modal.component';
 import { VideoEditorModalComponent } from './component/modal/video-editor-modal/video-editor-modal.component';
 import { CardComponent } from './component/shared/card/card.component';
+import { GameInformationComponent } from './component/shared/game-information/game-information.component';
+import { VideoViewerComponent } from './component/shared/video-viewer/video-viewer.component';
 import { ToastsComponent } from './component/toasts/toasts.component';
 import { VgNavigateComponent } from './component/videogular/vg-go-back/vg-navigate.component';
 
 import DirectivesModule from './directive/directives.module';
-import { VideoViewerComponent } from './component/shared/video-viewer/video-viewer.component';
 
 const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader => new TranslateHttpLoader(http, './assets/i18n/', '.json');
 
@@ -55,6 +57,7 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader => new Transla
         DecisionsComponent,
         EditGameCommentModalComponent,
         FullDisplayActionsComponent,
+        GameCommentDisplayComponent,
         GameNumberExistingModalComponent,
         HandleMatchAnalysisComponent,
         HomeComponent,
@@ -68,6 +71,7 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader => new Transla
         VideoEditorModalComponent,
         VideoProcessLoaderModalComponent,
         VideoViewerComponent,
+        GameInformationComponent,
     ],
     imports: [
         AppRoutingModule,

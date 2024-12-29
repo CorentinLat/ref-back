@@ -1,0 +1,31 @@
+<section class="game-comment-display-component">
+    <h5 class="comment-title">
+        {{ 'PAGE.MATCH_ANALYSIS.FORM.' + keyLabel + '.TITLE' | translate }}
+        <button
+            class="btn text-warning"
+            *ngIf="isEditable && (game[refereeCommentKey] || game[adviserCommentKey])"
+            (click)="handleUpdateGameComment()"
+        >
+            <i class="bi bi-pen"></i>
+        </button>
+    </h5>
+
+    <p class="comment-text" *ngIf="game[refereeCommentKey] || game[adviserCommentKey]">
+        <span *ngIf="game[refereeCommentKey]">
+            <span class="role">{{ 'PAGE.MATCH_ANALYSIS.ROLE.REFEREE' | translate }} :</span>
+            {{ game[refereeCommentKey] }}
+        </span>
+        <br *ngIf="game[refereeCommentKey] && game[adviserCommentKey]">
+        <span *ngIf="game[adviserCommentKey]">
+            <span class="role">{{ 'PAGE.MATCH_ANALYSIS.ROLE.ADVISER' | translate }} :</span>
+            {{ game[adviserCommentKey] }}
+        </span>
+    </p>
+
+    <article class="no-comment" *ngIf="!game[refereeCommentKey] && !game[adviserCommentKey]">
+        <p>{{ 'PAGE.MATCH_ANALYSIS.FORM.' + keyLabel + '.NO' | translate }}</p>
+        <button class="btn btn-link" (click)="handleUpdateGameComment()" *ngIf="isEditable">
+            {{ 'PAGE.MATCH_ANALYSIS.FORM.ADD' | translate }}
+        </button>
+    </article>
+</section>

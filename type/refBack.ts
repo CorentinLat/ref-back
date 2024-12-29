@@ -37,10 +37,8 @@ export type Game = {
     globalPerformanceFromAdviser?: string;
 };
 
-export type EditableGameComment = 'gameDescription'
-    | 'gameDescriptionFromAdviser'
-    | 'globalPerformance'
-    | 'globalPerformanceFromAdviser';
+export type EditableGameComment = 'gameDescription' | 'globalPerformance';
+export type AllEditableGameComment = EditableGameComment | 'gameDescriptionFromAdviser' | 'globalPerformanceFromAdviser';
 
 export type Decision = {
     gameNumber: string;

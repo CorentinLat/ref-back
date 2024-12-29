@@ -1,13 +1,10 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { VgApiService } from '@videogular/ngx-videogular/core';
 import { Subscription } from 'rxjs';
 
 import { Action, Game } from '../../../../../../type/refBack';
 
 import { CommunicationService } from '../../../service/CommunicationService';
-
-import { EditGameCommentModalComponent } from '../../../component/modal/edit-game-comment-modal/edit-game-comment-modal.component';
 
 @Component({
     selector: 'app-handle-match-analysis',
@@ -26,10 +23,7 @@ export class HandleMatchAnalysisComponent implements OnInit, OnDestroy {
 
     private editActionSubscription$?: Subscription;
 
-    constructor(
-        private communicationService: CommunicationService,
-        private modalService: NgbModal,
-    ) {}
+    constructor(private communicationService: CommunicationService) {}
 
     ngOnInit() {
         this.editActionSubscription$ = this.communicationService.editAction.subscribe(action => {
@@ -44,18 +38,6 @@ export class HandleMatchAnalysisComponent implements OnInit, OnDestroy {
 
     handleDisplayActionForm(): void {
         this.displayActionForm = true;
-    }
-
-    handleUpdateGameDescription(): void {
-        const modal = this.modalService.open(EditGameCommentModalComponent, { centered: true, size: 'lg' });
-        modal.componentInstance.game = this.game;
-        modal.componentInstance.keyToEdit = 'gameDescription';
-    }
-
-    handleUpdateGlobalPerformance(): void {
-        const modal = this.modalService.open(EditGameCommentModalComponent, { centered: true, size: 'lg' });
-        modal.componentInstance.game = this.game;
-        modal.componentInstance.keyToEdit = 'globalPerformance';
     }
 
     handleActionAdded(action: Action): void {

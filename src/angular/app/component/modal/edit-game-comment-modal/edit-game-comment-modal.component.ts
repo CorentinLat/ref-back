@@ -2,7 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { adviserPrefix, EditableGameComment, Game } from '../../../../../../type/refBack';
+import { adviserPrefix, AllEditableGameComment, EditableGameComment, Game } from '../../../../../../type/refBack';
 
 import { ElectronService } from '../../../service/ElectronService';
 import { RoleService } from '../../../service/RoleService';
@@ -11,7 +11,7 @@ import { ToastService } from '../../../service/ToastService';
 @Component({ templateUrl: './edit-game-comment-modal.component.html' })
 export class EditGameCommentModalComponent implements OnInit {
     @Input() game!: Game;
-    @Input() keyToEdit!: 'gameDescription' | 'globalPerformance';
+    @Input() keyToEdit!: EditableGameComment;
 
     form = new FormGroup({ gameComment: new FormControl() });
 
@@ -22,7 +22,7 @@ export class EditGameCommentModalComponent implements OnInit {
         private readonly toastService: ToastService,
     ) {}
 
-    get fullKeyToEdit(): EditableGameComment {
+    get fullKeyToEdit(): AllEditableGameComment {
         const keyPrefix = this.roleService.role === 'referee' ? '' : adviserPrefix;
         return `${this.keyToEdit}${keyPrefix}`;
     }
