@@ -9,9 +9,28 @@ $header-gap: 20px;
     margin: $match-analysis-component-margin;
 
     .match-analysis-header {
+        position: relative;
         display: flex;
         align-items: center;
         height: $header-height;
+
+        .left-container, .right-container {
+            position: absolute;
+            display: flex;
+            align-items: center;
+            gap: 40px;
+        }
+
+        .left-container { left: 0; }
+        .right-container { right: 0; }
+
+        .role-options-toggle {
+            .btn {
+                box-shadow: none;
+                outline: none;
+                white-space: nowrap;
+            }
+        }
 
         .game-information-container {
             display: flex;

@@ -142,6 +142,10 @@
     "MATCH_ANALYSIS": {
       "BACK_HOME": "Accueil",
       "BACK": "Retour",
+      "ROLE": {
+        "ADVISER": "Conseiller",
+        "REFEREE": "Arbitre"
+      },
       "ACTIONS": {
         "TITLE": "Décisions",
         "NO_ACTION": "Aucune décision n'a été ajoutée pour le moment.",

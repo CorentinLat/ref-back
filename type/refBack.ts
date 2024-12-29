@@ -8,6 +8,7 @@ export type Action = {
     fault: string;
     precise: 'YES' | 'NO' | 'DOUBT';
     comment?: string;
+    commentFromAdviser?: string;
     clip?: { start: number; end: number };
 };
 export type NewAction = Omit<Action, 'id'>;
@@ -31,7 +32,9 @@ export type Game = {
     actions: Action[];
     information: GameInformation;
     gameDescription?: string;
+    gameDescriptionFromAdviser?: string;
     globalPerformance?: string;
+    globalPerformanceFromAdviser?: string;
 };
 
 export type Decision = {
@@ -44,6 +47,8 @@ export type Decision = {
     type: 'PLAY_ON' | 'TOUCH' | 'SCRUM' | 'FREE_KICK' | 'PENALTY' | 'RETURNED_PENALTY' | 'PENALTY_TRY' | 'TRY' | 'NO_TRY' | 'RESTART_KICK';
     card?: 'WARNING' | 'RED' | 'YELLOW' | 'WHITE';
     comment?: string;
+    commentFromAdviser?: string;
+    fromAdviser?: boolean;
 };
 
 export type SummaryExportType = 'excel' | 'pdf';
