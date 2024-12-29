@@ -37,6 +37,11 @@ export type Game = {
     globalPerformanceFromAdviser?: string;
 };
 
+export type EditableGameComment = 'gameDescription'
+    | 'gameDescriptionFromAdviser'
+    | 'globalPerformance'
+    | 'globalPerformanceFromAdviser';
+
 export type Decision = {
     gameNumber: string;
     videoPath: string;
@@ -50,5 +55,7 @@ export type Decision = {
     commentFromAdviser?: string;
     fromAdviser?: boolean;
 };
+
+export const adviserPrefix = 'FromAdviser';
 
 export type SummaryExportType = 'excel' | 'pdf';
