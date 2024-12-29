@@ -3,7 +3,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { VgApiService } from '@videogular/ngx-videogular/core';
 import { Subscription } from 'rxjs';
 
-import { Action, Game } from '../../../domain/game';
+import { Action, Game } from '../../../../../../type/refBack';
 
 import { CommunicationService } from '../../../service/CommunicationService';
 

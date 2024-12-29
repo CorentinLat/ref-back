@@ -2,15 +2,12 @@ import { app, shell } from 'electron';
 import IpcMain = Electron.IpcMain;
 import IpcMainEvent = Electron.IpcMainEvent;
 
-import { SummaryExportType } from '../../type/refBack';
+import { Action, NewAction, NewGameInformation, SummaryExportType } from '../../type/refBack';
 
 import { getDecisionsForGames } from './utils/decision';
 import { askSaveDirectory, askSaveFile, askSaveVideoPath } from './utils/dialog';
 import { extractFileExtension } from './utils/file';
 import {
-    Action,
-    NewAction,
-    NewGameInformation,
     addNewActionToGame,
     createNewGameFile,
     editActionFromGame,

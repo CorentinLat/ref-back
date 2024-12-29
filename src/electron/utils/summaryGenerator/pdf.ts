@@ -1,8 +1,9 @@
 import fs from 'fs';
 import PDFDocument from 'pdfkit';
 
+import { Action, Game } from '../../../../type/refBack';
+
 import { convertSecondsToMMSS, getLongDateString } from '../date';
-import { Action, Game } from '../game';
 import translate from '../../translation';
 
 type Key = 'second' | 'type' | 'against' | 'sector' | 'fault' | 'precise' | 'comment';

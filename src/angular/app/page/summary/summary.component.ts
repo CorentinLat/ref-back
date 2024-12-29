@@ -2,9 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { SummaryExportType } from '../../../../../type/refBack';
-
-import { Action, Game } from '../../domain/game';
+import { Action, Game, SummaryExportType } from '../../../../../type/refBack';
 
 import { ClipProcessLoaderModalComponent } from '../../component/modal/process-loader/clip-process-loader-modal.component';
 

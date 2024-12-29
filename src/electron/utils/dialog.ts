@@ -1,8 +1,10 @@
 import { dialog } from 'electron';
 import path from 'path';
 
+import { Game } from '../../../type/refBack';
+
 import { extractFileExtension } from './file';
-import { Game, getDefaultGameVideoFilename } from './game';
+import { getDefaultGameVideoFilename } from './game';
 import { downloadPath } from './path';
 
 export function askSaveVideoPath(game: Game): string|null {

@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Observable } from 'rxjs';
 
-import { Action } from '../../../domain/game';
+import { Action } from '../../../../../../type/refBack';
 
 @Component({
     selector: 'app-actions',

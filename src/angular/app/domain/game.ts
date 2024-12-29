@@ -1,17 +1,3 @@
-export type Action = {
-    id: string;
-    second: number;
-    type: 'PLAY_ON' | 'TOUCH' | 'SCRUM' | 'FREE_KICK' | 'PENALTY' | 'RETURNED_PENALTY' | 'PENALTY_TRY' | 'TRY' | 'NO_TRY' | 'RESTART_KICK';
-    card?: 'WARNING' | 'RED' | 'YELLOW' | 'WHITE';
-    against: 'LOCAL' | 'VISITOR';
-    sector: 'SCRUM' | 'FOUL_PLAY' | 'SPACE' | 'RUCK-TACKLE' | 'LINE_OUT-MAUL' | 'ADVANTAGE';
-    fault: string;
-    precise: 'YES' | 'NO' | 'DOUBT';
-    comment?: string;
-    clip?: { start: number; end: number };
-};
-export type NewAction = Omit<Action, 'id'>;
-
 export type ActionSector = 'SCRUM' | 'FOUL_PLAY' | 'SPACE' | 'TACKLE-RUCK' | 'LINE_OUT-MAUL' | 'ADVANTAGE';
 
 export const actionTypes = ['PLAY_ON', 'TOUCH', 'SCRUM', 'FREE_KICK', 'PENALTY', 'RETURNED_PENALTY', 'PENALTY_TRY', 'TRY', 'NO_TRY', 'RESTART_KICK'];
@@ -108,25 +94,3 @@ export const actionFaults = {
     ],
 };
 export const actionPrecises = ['YES', 'NO', 'DOUBT'];
-
-export type GameInformation = {
-    gameNumber: string;
-    date: string;
-    teams: { local: string; visitor: string };
-    score: { local: number; visitor: number };
-    videoPath: string;
-};
-export type NewGameInformation = Omit<GameInformation, 'videoPath'> & {
-    video: {
-        option: 'file' | 'veo';
-        videoPaths: string[];
-        veo?: string;
-    };
-};
-
-export type Game = {
-    actions: Action[];
-    information: GameInformation;
-    gameDescription?: string;
-    globalPerformance?: string;
-};

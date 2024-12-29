@@ -3,13 +3,15 @@ import path from 'path';
 
 import IpcMainEvent = Electron.IpcMainEvent;
 
+import { Game, NewGameInformation } from '../../../type/refBack';
+
 import { CancelVideoProcessingError } from '../domain/error/CancelVideoProcessingError';
 import { NoVideoError } from '../domain/error/NoVideoError';
 import { UnexpectedError } from '../domain/error/UnexpectedError';
 
 import { cancelCurrentDownload, downloadUrlToPath } from './download';
 import { copyFileToPath, extractFileExtension, removeFile } from './file';
-import { Game, getDefaultGameVideoFilename, NewGameInformation } from './game';
+import { getDefaultGameVideoFilename } from './game';
 import logger from './logger';
 import { ffmpegElectronPath, ffprobeElectronPath, tempPath, workPath } from './path';
 import throwIfNotEnoughRemainingSpaceForFilePaths from './storage';

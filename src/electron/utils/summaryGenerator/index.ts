@@ -1,6 +1,6 @@
 import { SummaryExportType } from '../../../../type/refBack';
 
-import { Game } from '../game';
+import { Game } from '../../../../type/refBack';
 
 import { generateExcelSummary } from './excel';
 import { generatePdfSummary } from './pdf';

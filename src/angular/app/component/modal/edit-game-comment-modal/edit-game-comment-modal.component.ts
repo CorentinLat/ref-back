@@ -2,7 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { Game } from '../../../domain/game';
+import { Game } from '../../../../../../type/refBack';
 
 import { ElectronService } from '../../../service/ElectronService';
 import { ToastService } from '../../../service/ToastService';

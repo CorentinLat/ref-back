@@ -4,9 +4,15 @@ import * as childProcess from 'child_process';
 import * as fs from 'fs';
 import { Observable } from 'rxjs';
 
-import { Decision, SummaryExportType } from '../../../../type/refBack';
-
-import { Action, Game, GameInformation, NewAction, NewGameInformation } from '../domain/game';
+import {
+    Action,
+    Decision,
+    Game,
+    GameInformation,
+    NewAction,
+    NewGameInformation,
+    SummaryExportType,
+} from '../../../../type/refBack';
 
 type InitAppPayload = { appVersion: string; games: GameInformation[] };
 

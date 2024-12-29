@@ -4,7 +4,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { VgApiService } from '@videogular/ngx-videogular/core';
 import { Subject } from 'rxjs';
 
-import { Action, Game } from '../../domain/game';
+import { Action, Game } from '../../../../../type/refBack';
 
 import { ElectronService } from '../../service/ElectronService';
 import { NavigationService } from '../../service/NavigationService';

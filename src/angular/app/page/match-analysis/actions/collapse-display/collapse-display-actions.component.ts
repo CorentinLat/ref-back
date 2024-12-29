@@ -1,7 +1,7 @@
 import { Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
 
-import { Action } from '../../../../domain/game';
+import { Action } from '../../../../../../../type/refBack';
 
 import { DateTimeService } from '../../../../service/DateTimeService';
 

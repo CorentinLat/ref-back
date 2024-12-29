@@ -3,9 +3,9 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { VgApiService } from '@videogular/ngx-videogular/core';
 import { Subscription } from 'rxjs';
 
+import { Action, NewAction } from '../../../../../../../type/refBack';
+
 import {
-    Action,
-    NewAction,
     actionAgainsts,
     actionCardTypes,
     actionCards,

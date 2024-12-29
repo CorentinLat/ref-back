@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 
-import { Action } from '../../../../../domain/game';
+import { Action } from '../../../../../../../../type/refBack';
 
 import { CommunicationService } from '../../../../../service/CommunicationService';
 import { DateTimeService } from '../../../../../service/DateTimeService';
