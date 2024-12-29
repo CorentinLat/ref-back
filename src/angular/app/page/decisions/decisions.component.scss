@@ -1,6 +1,5 @@
 $decisions-component-margin: 20px;
 $header-height: 30px;
-$header-margin-bottom: 20px;
 
 .decisions-component {
     display: flex;
@@ -13,7 +12,6 @@ $header-margin-bottom: 20px;
 
     .decisions-header {
         height: $header-height;
-        margin-bottom: $header-margin-bottom;
 
         .title {
             margin: 0;

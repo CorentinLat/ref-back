@@ -1,6 +1,5 @@
 $summary-component-margin: 20px;
 $header-height: 30px;
-$header-margin-bottom: 20px;
 
 .summary-component {
     display: flex;
@@ -13,7 +12,6 @@ $header-margin-bottom: 20px;
 
     .summary-header {
         height: $header-height;
-        margin-bottom: $header-margin-bottom;
 
         .title {
             margin: 0;
@@ -27,6 +25,16 @@ $header-margin-bottom: 20px;
 
         .all-game-information-container {
             width: 100%;
+
+            .game-comments {
+                display: flex;
+                margin: 1rem 1rem 0 1rem;
+                gap: 2rem;
+
+                .comment-display-component {
+                    width: 100%;
+                }
+            }
         }
 
         .summary-buttons {
