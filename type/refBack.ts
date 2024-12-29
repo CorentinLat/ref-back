@@ -9,9 +9,11 @@ export type Action = {
     precise: 'YES' | 'NO' | 'DOUBT';
     comment?: string;
     commentFromAdviser?: string;
+    fromAdviser?: boolean;
     clip?: { start: number; end: number };
 };
 export type NewAction = Omit<Action, 'id'>;
+export type ActionForm = Omit<Action, 'id' | 'commentFromAdviser' | 'fromAdviser'>;
 
 export type GameInformation = {
     gameNumber: string;
@@ -51,7 +53,6 @@ export type Decision = {
     card?: 'WARNING' | 'RED' | 'YELLOW' | 'WHITE';
     comment?: string;
     commentFromAdviser?: string;
-    fromAdviser?: boolean;
 };
 
 export const adviserPrefix = 'FromAdviser';

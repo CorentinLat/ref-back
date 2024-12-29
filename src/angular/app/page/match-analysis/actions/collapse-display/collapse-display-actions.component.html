@@ -21,6 +21,9 @@
 
         <section class="d-flex align-items-center justify-content-between">
             <article class="type">
+                <i class="bi-eye-fill" *ngIf="action.fromAdviser"></i>
+                <i class="bi-person-raised-hand" *ngIf="!action.fromAdviser"></i>
+
                 {{ 'PAGE.MATCH_ANALYSIS.ACTIONS.ACTION.TYPE.' + action.type + '_SHORT' | translate }}
             </article>
 
@@ -34,14 +37,21 @@
                 {{ 'PAGE.MATCH_ANALYSIS.ACTIONS.ACTION.SECTOR.' + action.sector + '_SHORT' | translate }}
             </article>
 
-            <article class="comment" *ngIf="action.comment">
+            <article class="comment" *ngIf="action.comment || action.commentFromAdviser">
+                <ng-template #popContent>
+                    <app-action-comments-display [action]="action"></app-action-comments-display>
+                </ng-template>
                 <i
                     class="bi bi-chat text-primary"
-                    [ngbPopover]="action.comment"
+                    [ngbPopover]="popContent"
                     [openDelay]="400"
+                    container="body"
                     triggers="mouseenter:mouseleave"
                     placement="left"
-                ></i>
+                >
+                    <span class="count text-primary" *ngIf="!action.comment || !action.commentFromAdviser">1</span>
+                    <span class="count text-primary" *ngIf="action.comment && action.commentFromAdviser">2</span>
+                </i>
             </article>
         </section>
     </section>

@@ -1,4 +1,8 @@
 <section class="action-full-component">
+    <article class="box role">
+        <i class="bi-person-raised-hand" *ngIf="!action.fromAdviser"></i>
+        <i class="bi-eye-fill" *ngIf="action.fromAdviser"></i>
+    </article>
     <section class="box minute">
         <button
             class="btn btn-link p-0"
@@ -50,18 +54,21 @@
         {{ 'PAGE.MATCH_ANALYSIS.ACTIONS.ACTION.PRECISE.' + action.precise | translate }}
     </article>
 
+    <ng-template #popContent>
+        <app-action-comments-display [action]="action"></app-action-comments-display>
+    </ng-template>
     <article
         class="box comment"
-        [ngbPopover]="action.comment"
+        [ngbPopover]="popContent"
         [openDelay]="800"
         triggers="mouseenter:mouseleave"
         placement="left"
         *ngIf="!isSummaryDisplay"
     >
-        {{ action.comment }}
+        <app-action-comments-display [action]="action" [inline]="true"></app-action-comments-display>
     </article>
-    <article class="box comment summary" *ngIf="isSummaryDisplay">
-        {{ action.comment }}
+    <article class="box comment" *ngIf="isSummaryDisplay">
+        <app-action-comments-display [action]="action"></app-action-comments-display>
     </article>
 
     <section class="box actions text-end" role="group" *ngIf="!isSummaryDisplay">

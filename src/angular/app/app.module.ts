@@ -35,6 +35,7 @@ import { LoadGamesExistingModalComponent } from './component/modal/load-games-ex
 import { NotEnoughRemainingSpaceModalComponent } from './component/modal/not-enough-remaining-space-modal/not-enough-remaining-space-modal.component';
 import { VideoProcessLoaderModalComponent } from './component/modal/process-loader/video-process-loader-modal.component';
 import { VideoEditorModalComponent } from './component/modal/video-editor-modal/video-editor-modal.component';
+import { ActionCommentsDisplayComponent } from './component/shared/action-comments-display/action-comments-display.component';
 import { CardComponent } from './component/shared/card/card.component';
 import { GameInformationComponent } from './component/shared/game-information/game-information.component';
 import { VideoViewerComponent } from './component/shared/video-viewer/video-viewer.component';
@@ -47,6 +48,7 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader => new Transla
 
 @NgModule({
     declarations: [
+        ActionCommentsDisplayComponent,
         ActionFullComponent,
         ActionsComponent,
         AddEditActionComponent,
@@ -58,6 +60,7 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader => new Transla
         EditGameCommentModalComponent,
         FullDisplayActionsComponent,
         GameCommentDisplayComponent,
+        GameInformationComponent,
         GameNumberExistingModalComponent,
         HandleMatchAnalysisComponent,
         HomeComponent,
@@ -71,7 +74,6 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader => new Transla
         VideoEditorModalComponent,
         VideoProcessLoaderModalComponent,
         VideoViewerComponent,
-        GameInformationComponent,
     ],
     imports: [
         AppRoutingModule,

@@ -1,0 +1,15 @@
+<p class="action-comments-display-component" [ngClass]="{ 'inline': inline }">
+    <span *ngIf="action.comment">
+        <span class="role">
+            {{ 'PAGE.MATCH_ANALYSIS.ROLE.REFEREE' | translate }} :
+        </span>
+        {{ action.comment }}
+    </span>
+    <br *ngIf="action.comment && action.commentFromAdviser && !inline">
+    <span *ngIf="action.commentFromAdviser">
+        <span class="role">
+            {{ 'PAGE.MATCH_ANALYSIS.ROLE.ADVISER' | translate }} :
+        </span>
+        {{ action.commentFromAdviser }}
+    </span>
+</p>

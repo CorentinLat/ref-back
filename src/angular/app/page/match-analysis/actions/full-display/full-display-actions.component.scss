@@ -4,24 +4,34 @@
     overflow: hidden;
 
     .actions-header {
-        display: flex;
-        gap: 5px;
-
         font-size: 18px;
         font-weight: bold;
         padding: 0 5px 10px 5px;
         border-bottom: 2px solid black;
+    }
+
+    .actions-header, .action-full-component {
+        display: flex;
+        align-items: center;
+        gap: 5px;
 
         .box {
-            flex-basis: 0;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
 
-            &.against, &.minute, &.precise { flex-grow: 1; }
-            &.type, &.sector { flex-grow: 2; }
-            &.comment, &.fault { flex-grow: 3; }
             &.actions { min-width: 90px; }
+            &.against { min-width: 90px; }
+            &.fault { min-width: 280px; }
+            &.minute { min-width: 110px; }
+            &.precise { min-width: 100px; }
+            &.role { min-width: 20px; }
+            &.sector { min-width: 140px; }
+            &.type { min-width: 200px; }
+            &.comment {
+                min-width: 130px;
+                width: calc(100%);
+            }
         }
     }
 

@@ -29,5 +29,19 @@
             .no { color: #dc3545; }
             .doubt { color: #ffc107; }
         }
+
+        .comment {
+            position: relative;
+
+            .count {
+                position: absolute;
+                left: 0;
+                width: 16px;
+                text-align: center;
+                height: 24px;
+                font-size: 11px;
+                top: 4px;
+            }
+        }
     }
 }

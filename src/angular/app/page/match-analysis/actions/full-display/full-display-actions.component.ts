@@ -1,4 +1,14 @@
-import { Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
+import {
+    Component,
+    ElementRef,
+    EventEmitter,
+    Input,
+    OnDestroy,
+    OnInit,
+    Output,
+    ViewChild,
+    ViewEncapsulation,
+} from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
 
 import { Action } from '../../../../../../../type/refBack';
@@ -7,9 +17,10 @@ import { ElectronService } from '../../../../service/ElectronService';
 import { ToastService } from '../../../../service/ToastService';
 
 @Component({
-  selector: 'app-full-display-actions',
-  templateUrl: './full-display-actions.component.html',
-  styleUrls: ['./full-display-actions.component.scss']
+    selector: 'app-full-display-actions',
+    templateUrl: './full-display-actions.component.html',
+    styleUrls: ['./full-display-actions.component.scss'],
+    encapsulation: ViewEncapsulation.None,
 })
 export class FullDisplayActionsComponent implements OnInit, OnDestroy {
     @Input() actions!: Action[];
@@ -60,10 +71,10 @@ export class FullDisplayActionsComponent implements OnInit, OnDestroy {
     }
 
     async removeAction(actionId: string): Promise<void> {
-        if (this.isSummaryDisplay) { return; }
+        if (this.isSummaryDisplay) return;
 
         const actionIndex = this.actions.findIndex(action => action.id === actionId);
-        if (actionIndex === -1) { return; }
+        if (actionIndex === -1) return;
 
         try {
             await this.electron.removeActionFromGame(actionId, this.gameNumber);
