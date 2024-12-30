@@ -55,6 +55,7 @@ export type Decision = {
     commentFromAdviser?: string;
 };
 
+export type Role = 'referee' | 'adviser';
 export const adviserPrefix = 'FromAdviser';
 
 export type SummaryExportType = 'excel' | 'pdf';

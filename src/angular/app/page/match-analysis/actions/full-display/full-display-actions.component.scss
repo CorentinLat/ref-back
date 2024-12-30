@@ -21,16 +21,28 @@
             white-space: nowrap;
 
             &.actions { min-width: 90px; }
-            &.against { min-width: 90px; }
-            &.fault { min-width: 280px; }
-            &.minute { min-width: 110px; }
+            &.against { min-width: 70px; }
+            &.fault { min-width: 150px; max-width: 280px; width: 100% }
+            &.minute { min-width: 70px; text-align: center; }
             &.precise { min-width: 100px; }
-            &.role { min-width: 20px; }
+            &.role { min-width: 16px; }
             &.sector { min-width: 140px; }
-            &.type { min-width: 200px; }
+            &.type { min-width: 160px; }
             &.comment {
                 min-width: 130px;
                 width: calc(100%);
+            }
+
+            @media (max-width: 1600px) {
+                &.against { min-width: 60px; }
+                &.fault { min-width: 50px; max-width: 280px; width: 100% }
+                &.precise { min-width: 80px; }
+                &.sector { min-width: 80px; }
+                &.type { min-width: 74px; }
+                &.comment {
+                    min-width: 80px;
+                    width: calc(100%);
+                }
             }
         }
     }

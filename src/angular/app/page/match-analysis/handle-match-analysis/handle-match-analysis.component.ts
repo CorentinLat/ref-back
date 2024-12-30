@@ -2,9 +2,10 @@ import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angu
 import { VgApiService } from '@videogular/ngx-videogular/core';
 import { Subscription } from 'rxjs';
 
-import { Action, Game } from '../../../../../../type/refBack';
+import { Action, Game, Role } from '../../../../../../type/refBack';
 
 import { CommunicationService } from '../../../service/CommunicationService';
+import { RoleService } from '../../../service/RoleService';
 
 @Component({
     selector: 'app-handle-match-analysis',
@@ -20,10 +21,16 @@ export class HandleMatchAnalysisComponent implements OnInit, OnDestroy {
 
     currentAction?: Action;
     displayActionForm = false;
+    role: Role;
 
     private editActionSubscription$?: Subscription;
 
-    constructor(private communicationService: CommunicationService) {}
+    constructor(
+        private readonly communicationService: CommunicationService,
+        private readonly roleService: RoleService,
+    ) {
+        this.role = this.roleService.role;
+    }
 
     ngOnInit() {
         this.editActionSubscription$ = this.communicationService.editAction.subscribe(action => {
@@ -39,6 +46,8 @@ export class HandleMatchAnalysisComponent implements OnInit, OnDestroy {
     handleDisplayActionForm(): void {
         this.displayActionForm = true;
     }
+
+    handleToggleRole = () => this.roleService.toggleRole();
 
     handleActionAdded(action: Action): void {
         this.game.actions.push(action);

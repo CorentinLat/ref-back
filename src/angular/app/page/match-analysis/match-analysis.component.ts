@@ -8,7 +8,6 @@ import { Action, Game } from '../../../../../type/refBack';
 
 import { ElectronService } from '../../service/ElectronService';
 import { NavigationService } from '../../service/NavigationService';
-import { RoleService } from '../../service/RoleService';
 import { ToastService } from '../../service/ToastService';
 
 import { VideoEditorModalComponent } from '../../component/modal/video-editor-modal/video-editor-modal.component';
@@ -26,9 +25,7 @@ export class MatchAnalysisComponent implements OnInit {
 
     public videoApiService!: VgApiService;
 
-    public collapse = { actions: true };
-
-    public role: 'referee' | 'adviser';
+    public collapse = { actions: false };
 
     public newActionAdded = new Subject<Action>();
     public refreshVideoMedia = new Subject<string>();
@@ -38,12 +35,9 @@ export class MatchAnalysisComponent implements OnInit {
         private electron: ElectronService,
         private modalService: NgbModal,
         private navigation: NavigationService,
-        private roleService: RoleService,
         public route: ActivatedRoute,
         private toastService: ToastService,
-    ) {
-        this.role = this.roleService.role;
-    }
+    ) {}
 
     ngOnInit(): void {
         const gameNumber = this.route.snapshot.queryParamMap.get('gameNumber');
@@ -72,8 +66,6 @@ export class MatchAnalysisComponent implements OnInit {
 
         this.cdr.detectChanges();
     };
-
-    handleToggleRole = () => this.roleService.toggleRole();
 
     handleOpenGameVideoEditorModal() {
         this.videoApiService.pause();

@@ -31,7 +31,10 @@
         </article>
 
         <span *ngIf="isSummaryDisplay && !action.clip">{{ exposeActionMinutes() }}</span>
-        <span *ngIf="isSummaryDisplay && action.clip">{{ exposeClipStartMinutes() }} - {{ exposeClipEndMinutes() }}</span>
+        <span *ngIf="isSummaryDisplay && action.clip">
+            {{ exposeClipStartMinutes() }}<br>
+            {{ exposeClipEndMinutes() }}
+        </span>
     </section>
     <article class="box type">
         {{ 'PAGE.MATCH_ANALYSIS.ACTIONS.ACTION.TYPE.' + action.type | translate }}

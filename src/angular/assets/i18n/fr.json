@@ -159,7 +159,7 @@
         "NO_ACTION": "Aucune décision n'a été ajoutée pour le moment.",
         "NO_ACTION_SHORT": "Aucune décision",
         "EDIT_VIDEO_GAME": "Couper la vidéo",
-        "MINUTE": "Minutage",
+        "MINUTE": "Timing",
         "TYPE": "Décision",
         "AGAINST": "Contre",
         "SECTOR": "Secteur",
@@ -302,7 +302,7 @@
         "CANCEL": "Annuler",
         "UPDATE": "Mettre à jour",
         "LABEL": {
-          "SECOND": "Minutage",
+          "SECOND": "Timing",
           "TYPE": "Décision",
           "CARD": "Carton",
           "AGAINST": "Contre",

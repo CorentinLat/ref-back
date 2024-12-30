@@ -18,11 +18,41 @@
         </section>
 
         <article class="buttons-container">
-            <button class="add-decision-btn btn btn-success" (click)="handleDisplayActionForm()">
+            <article class="role-options-toggle btn-group btn-group-sm">
+                <input
+                    id="referee-role"
+                    name="role-option"
+                    type="radio"
+                    class="btn-check"
+                    value="referee"
+                    [(ngModel)]="role"
+                    (change)="handleToggleRole()"
+                >
+                <label class="btn btn-outline-primary" for="referee-role">
+                    <i class="bi-person-raised-hand"></i>
+                    {{ 'PAGE.MATCH_ANALYSIS.ROLE.REFEREE' | translate }}
+                </label>
+
+                <input
+                    id="adviser-role"
+                    name="role-option"
+                    type="radio"
+                    class="btn-check"
+                    value="adviser"
+                    [(ngModel)]="role"
+                    (change)="handleToggleRole()"
+                >
+                <label class="btn btn-outline-primary" for="adviser-role">
+                    <i class="bi-eye-fill"></i>
+                    {{ 'PAGE.MATCH_ANALYSIS.ROLE.ADVISER' | translate }}
+                </label>
+            </article>
+
+            <button class="add-decision-btn btn btn-success btn-sm" (click)="handleDisplayActionForm()">
                 <i class="bi bi-plus"></i> {{ 'PAGE.MATCH_ANALYSIS.BUTTONS.ADD_DECISION' | translate }}
             </button>
 
-            <button class="collapse-btn btn btn-outline-dark" (click)="collapse.actions = !collapse.actions">
+            <button class="collapse-btn btn btn-outline-dark btn-sm" (click)="collapse.actions = !collapse.actions">
                 <span *ngIf="!collapse.actions">
                     {{ 'PAGE.MATCH_ANALYSIS.BUTTONS.REDUCE' | translate }}
                     <i class="bi bi-chevron-right"></i>

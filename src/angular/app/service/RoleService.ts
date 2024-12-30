@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
 
-type Role = 'referee' | 'adviser';
+import { Role }  from '../../../../type/refBack';
 
 @Injectable({ providedIn: 'root' })
 export class RoleService {
