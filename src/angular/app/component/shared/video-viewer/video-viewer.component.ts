@@ -61,9 +61,9 @@ export class VideoViewerComponent implements OnInit, OnDestroy {
 
     @HostListener('document:mousewheel', ['$event'])
     handleMouseWheelEvent(event: WheelEvent) {
+        if (!(event.target as HTMLElement).classList.contains('vg-overlay-play')) return;
         if (!this.videoApiService?.isPlayerReady) return;
         if (Math.abs(event.deltaY) >= Math.abs(event.deltaX)) return;
-        event.preventDefault();
 
         if (event.deltaX > 0) {
             this.handleVideoTimeChange(event, false);
