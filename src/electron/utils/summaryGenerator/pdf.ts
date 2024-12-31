@@ -6,9 +6,9 @@ import { Action, Game } from '../../../../type/refBack';
 import { convertSecondsToMMSS, getLongDateString } from '../date';
 import translate from '../../translation';
 
-type Key = 'second' | 'type' | 'against' | 'sector' | 'fault' | 'precise' | 'comment';
-type ColumnAction = { content: string; colSpan: number; color: string };
-type ColumnStructure = { key: Key; colSpan: number };
+type Key = 'role' | 'second' | 'type' | 'against' | 'sector' | 'fault' | 'precise' | 'comment';
+type ColumnAction = { content: string; colSpan: number; color: string } | { content: string; width: number; color: string };
+type ColumnStructure = { key: Key; colSpan: number } | { key: Key; width: number };
 type DecisionsBy = { [key: string]: Action[] };
 
 const A4_HEIGHT = 841;
@@ -27,23 +27,23 @@ const COLORS: [number, number, number][] = [
 ];
 
 const ALL_COLUMNS: ColumnStructure[] = [
-    { key: 'second', colSpan: 1 },
-    { key: 'type', colSpan: 2 },
-    { key: 'against', colSpan: 1 },
-    { key: 'sector', colSpan: 2 },
-    { key: 'fault', colSpan: 3 },
-    { key: 'precise', colSpan: 1 },
-    { key: 'comment', colSpan: 3 },
+    { key: 'role', width: 10 },
+    { key: 'second', width: 30 },
+    { key: 'type', width: 55 },
+    { key: 'against', width: 40 },
+    { key: 'sector', width: 50 },
+    { key: 'fault', width: 100 },
+    { key: 'precise', width: 30 },
+    { key: 'comment', colSpan: 1 },
 ];
 
 let currentYPosition = MARGIN;
 
-export function generatePdfSummary(game: Game, saveDirectory: string): void {
+export function generatePdfSummary(game: Game, savePath: string): void {
     const { information: { date, gameNumber, score, teams } } = game;
-    const summaryFileName = `${gameNumber}.pdf`;
 
     const doc = new PDFDocument({ margin: MARGIN, size: 'A4' });
-    doc.pipe(fs.createWriteStream(`${saveDirectory}/${summaryFileName}`));
+    doc.pipe(fs.createWriteStream(savePath));
     currentYPosition = MARGIN;
 
     addTwoColumnsLine(doc, getLongDateString(date), gameNumber);
@@ -362,14 +362,22 @@ function getDecisionsBy(key: 'against'|'sector', actions: Action[]): DecisionsBy
 }
 
 function addDecisionsTable(doc: typeof PDFDocument, title: string, columnsStructure: ColumnStructure[], actions: Action[]): void {
+    if (!actions.length) return;
+
     addSection(doc, title);
 
-    const headerColumns = columnsStructure.map(({ colSpan, key }) => ({ colSpan, content: translate(key), color: 'black' }));
+    const headerColumns = columnsStructure.map(structure =>
+        'colSpan' in structure
+            ? { colSpan: structure.colSpan, content: translate(structure.key), color: 'black' }
+            : { width: structure.width, content: translate(structure.key), color: 'black' }
+    );
     addTableRow(doc, true, headerColumns);
 
     actions.forEach(action => {
         const columns = formatColumnActions(action, columnsStructure);
-        if (!addTableRow(doc, false, columns)) {
+        const isAdded = addTableRow(doc, false, columns);
+
+        if (!isAdded) {
             doc.addPage();
             currentYPosition = MARGIN;
             addSection(doc, title, true);
@@ -395,47 +403,31 @@ function addSection(doc: typeof PDFDocument, titleKey: string, isContinued = fal
 }
 
 function addTableRow(doc: typeof PDFDocument, isHeader: boolean, columns: ColumnAction[]): boolean {
-    doc.font(isHeader ? 'Helvetica-Bold' : 'Helvetica').fontSize(10);
+    doc.font(isHeader ? 'Helvetica-Bold' : 'Helvetica').fontSize(9);
 
-    const colSpansTotal = columns.reduce((total, { colSpan }) => total + colSpan, 0);
-    const colSpanWidth = PAGE_WIDTH / colSpansTotal;
-    const maxHeight = columns.reduce(
-        (max, { content, colSpan }) =>
-            Math.max(max, doc.heightOfString(content, { width: colSpanWidth * colSpan })),
-        0
-    );
+    const { colSpanWidth, height } = getColSpanWidthAndHeight(doc, columns);
+    if (currentYPosition + height > PAGE_HEIGHT) { return false; }
 
-    if (currentYPosition + maxHeight > PAGE_HEIGHT) { return false; }
-
-    let curX = MARGIN;
-    columns.forEach(({ content, colSpan, color }) => {
-        const width = colSpanWidth * colSpan;
-
-        doc.fillColor(color);
-        doc.text(content, curX, currentYPosition, { width });
-        curX += width;
-    });
-
-    doc
-        .lineWidth(isHeader ? 1 : 0.5)
-        .moveTo(MARGIN, currentYPosition + maxHeight + 4)
-        .lineTo(PAGE_WIDTH, currentYPosition + maxHeight + 4)
-        .stroke();
-
-    currentYPosition += maxHeight + MARGIN * 1.2;
+    fillTableLine(doc, columns, isHeader, colSpanWidth, height);
 
     return true;
 }
 
 function formatColumnActions(action: Action, columnsStructure: ColumnStructure[]): ColumnAction[] {
-    return columnsStructure.map(({ colSpan, key }) => {
+    return columnsStructure.map(structure => {
+        const { key } = structure;
         let content;
         let color = 'black';
 
-        if (key === 'second') {
+        if (key === 'role') {
+            content = action.fromAdviser ? translate('ADVISER_SHORT') : translate('REFEREE_SHORT');
+        } else if (key === 'second') {
             content = convertSecondsToMMSS(action.second);
         } else if (key === 'comment') {
-            content = action.comment || '';
+            content = '';
+            if (action.comment) content = `${translate('REFEREE')} : ${action.comment}`;
+            if (action.comment && action.commentFromAdviser) content += '\n';
+            if (action.commentFromAdviser) content += `${translate('ADVISER')} : ${action.commentFromAdviser}`;
         } else if (key === 'type') {
             const type = translate(action.type);
             const card = action.card ? ` (${translate(action.card)})` : '';
@@ -454,8 +446,46 @@ function formatColumnActions(action: Action, columnsStructure: ColumnStructure[]
             }
         }
 
-        return { content, colSpan, color };
+        return 'colSpan' in structure
+            ? { content, color, colSpan: structure.colSpan }
+            : { content, color, width: structure.width };
     });
+}
+
+function getColSpanWidthAndHeight(doc: typeof PDFDocument, columns: ColumnAction[]): { colSpanWidth: number; height: number } {
+    const colSpansTotal = columns.reduce((total, column) => total + ('colSpan' in column ? column.colSpan : 0), 0);
+    const colWidthsTotal = columns.reduce((total, column) => total + ('width' in column ? column.width : 0), 0);
+    const colSpanWidth = (PAGE_WIDTH - colWidthsTotal) / colSpansTotal;
+
+    const height = columns.reduce(
+        (max, column) =>
+            Math.max(max, doc.heightOfString(column.content, {
+                width: 'colSpan' in column ? colSpanWidth * column.colSpan : column.width
+            })),
+        0
+    );
+
+    return { colSpanWidth, height };
+}
+
+function fillTableLine(doc: typeof PDFDocument, columns: ColumnAction[], isHeader: boolean, colSpanWidth: number, height: number): void {
+    let curX = MARGIN;
+    columns.forEach(column => {
+        const { content, color } = column;
+        const width = 'colSpan' in column ? colSpanWidth * column.colSpan : column.width;
+
+        doc.fillColor(color);
+        doc.text(content, curX, currentYPosition, { width });
+        curX += width;
+    });
+
+    doc
+        .lineWidth(isHeader ? 1 : 0.5)
+        .moveTo(MARGIN, currentYPosition + height + 4)
+        .lineTo(PAGE_WIDTH, currentYPosition + height + 4)
+        .stroke();
+
+    currentYPosition += height + MARGIN * 1.2;
 }
 
 function getActionsSortedByTime(actions: Action[]): Action[] {

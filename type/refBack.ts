@@ -59,3 +59,7 @@ export type Role = 'referee' | 'adviser';
 export const adviserPrefix = 'FromAdviser';
 
 export type SummaryExportType = 'excel' | 'pdf';
+export const extensionByExportType: Record<SummaryExportType, string> = {
+    excel: 'xlsx',
+    pdf: 'pdf',
+};

@@ -25,7 +25,7 @@ export class MatchAnalysisComponent implements OnInit {
 
     public videoApiService!: VgApiService;
 
-    public collapse = { actions: false };
+    public collapse = { actions: true };
 
     public newActionAdded = new Subject<Action>();
     public refreshVideoMedia = new Subject<string>();

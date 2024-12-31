@@ -2,7 +2,7 @@ import { app, shell } from 'electron';
 import IpcMain = Electron.IpcMain;
 import IpcMainEvent = Electron.IpcMainEvent;
 
-import { Action, NewAction, NewGameInformation, SummaryExportType } from '../../type/refBack';
+import { Action, extensionByExportType, NewAction, NewGameInformation, SummaryExportType } from '../../type/refBack';
 
 import { getDecisionsForGames } from './utils/decision';
 import { askSaveDirectory, askSaveFile, askSaveVideoPath } from './utils/dialog';
@@ -264,16 +264,17 @@ const onDownloadSummaryListener = async (event: IpcMainEvent, { exportType, game
         return;
     }
 
-    const saveDirectory = askSaveDirectory();
-    logger.debug(`Summary save directory : ${saveDirectory}`);
-    if (!saveDirectory) {
+    const extension = extensionByExportType[exportType];
+    const savePath = askSaveFile(gameNumber, extension);
+    logger.debug(`Summary save path : ${savePath}`);
+    if (!savePath) {
         logger.debug(`Download ${exportType.toUpperCase()} summary closed`);
         event.reply('download_summary_failed', { closed: true });
         return;
     }
 
     try {
-        generateSummary(game, saveDirectory, exportType);
+        generateSummary(game, savePath, exportType);
         event.reply('download_summary_succeeded');
     } catch (error) {
         logger.error(`Error on download ${exportType} summary: ${error}`);
