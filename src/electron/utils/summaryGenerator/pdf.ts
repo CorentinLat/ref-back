@@ -27,7 +27,7 @@ const COLORS: [number, number, number][] = [
 ];
 
 const ALL_COLUMNS: ColumnStructure[] = [
-    { key: 'role', width: 10 },
+    { key: 'role', width: 12 },
     { key: 'second', width: 30 },
     { key: 'type', width: 55 },
     { key: 'against', width: 40 },
@@ -37,12 +37,19 @@ const ALL_COLUMNS: ColumnStructure[] = [
     { key: 'comment', colSpan: 1 },
 ];
 
+type Icon = 'adviser' | 'referee' | 'warning' | 'whiteCard' | 'yellowCard' | 'redCard';
+const ICON_PREFIX = '<icon-';
+const ICON_SUFFIX = '>';
+const ICONS: Record<Icon, string> = { adviser: '', referee: '', warning: '', whiteCard: '', yellowCard: '', redCard: '' };
+
 let currentYPosition = MARGIN;
 
 export function generatePdfSummary(game: Game, savePath: string): void {
     const { information: { date, gameNumber, score, teams } } = game;
 
     const doc = new PDFDocument({ margin: MARGIN, size: 'A4' });
+    doc.registerFont('Icons', 'assets/fonts/bootstrap-icons.woff');
+
     doc.pipe(fs.createWriteStream(savePath));
     currentYPosition = MARGIN;
 
@@ -403,12 +410,14 @@ function addSection(doc: typeof PDFDocument, titleKey: string, isContinued = fal
 }
 
 function addTableRow(doc: typeof PDFDocument, isHeader: boolean, columns: ColumnAction[]): boolean {
-    doc.font(isHeader ? 'Helvetica-Bold' : 'Helvetica').fontSize(9);
+    const font = isHeader ? 'Helvetica-Bold' : 'Helvetica';
+    doc.font(font).fontSize(9);
 
     const { colSpanWidth, height } = getColSpanWidthAndHeight(doc, columns);
     if (currentYPosition + height > PAGE_HEIGHT) { return false; }
 
-    fillTableLine(doc, columns, isHeader, colSpanWidth, height);
+    const lineWidth = isHeader ? 1 : 0.5;
+    fillTableLine(doc, columns, { font, colSpanWidth, height, lineWidth });
 
     return true;
 }
@@ -420,7 +429,7 @@ function formatColumnActions(action: Action, columnsStructure: ColumnStructure[]
         let color = 'black';
 
         if (key === 'role') {
-            content = action.fromAdviser ? translate('ADVISER_SHORT') : translate('REFEREE_SHORT');
+            content = action.fromAdviser ? '<icon-adviser>' : '<icon-referee>';
         } else if (key === 'second') {
             content = convertSecondsToMMSS(action.second);
         } else if (key === 'comment') {
@@ -430,7 +439,7 @@ function formatColumnActions(action: Action, columnsStructure: ColumnStructure[]
             if (action.commentFromAdviser) content += `${translate('ADVISER')} : ${action.commentFromAdviser}`;
         } else if (key === 'type') {
             const type = translate(action.type);
-            const card = action.card ? ` (${translate(action.card)})` : '';
+            const card = action.card ? ` ${getIconForCard(action)}` : '';
             content = `${type}${card}`;
         } else {
             content = translate(action[key]);
@@ -459,7 +468,7 @@ function getColSpanWidthAndHeight(doc: typeof PDFDocument, columns: ColumnAction
 
     const height = columns.reduce(
         (max, column) =>
-            Math.max(max, doc.heightOfString(column.content, {
+            Math.max(max, doc.heightOfString(column.content.replace(/<icon-[a-z]+>/, ' '), {
                 width: 'colSpan' in column ? colSpanWidth * column.colSpan : column.width
             })),
         0
@@ -468,24 +477,65 @@ function getColSpanWidthAndHeight(doc: typeof PDFDocument, columns: ColumnAction
     return { colSpanWidth, height };
 }
 
-function fillTableLine(doc: typeof PDFDocument, columns: ColumnAction[], isHeader: boolean, colSpanWidth: number, height: number): void {
+type FillTableLineOptions = { font: string; colSpanWidth: number; height: number; lineWidth: number };
+function fillTableLine(doc: typeof PDFDocument, columns: ColumnAction[], options: FillTableLineOptions): void {
     let curX = MARGIN;
     columns.forEach(column => {
-        const { content, color } = column;
-        const width = 'colSpan' in column ? colSpanWidth * column.colSpan : column.width;
-
-        doc.fillColor(color);
-        doc.text(content, curX, currentYPosition, { width });
-        curX += width;
+        curX += formatColumnAction(doc, column, { ...options, curX });
     });
 
     doc
-        .lineWidth(isHeader ? 1 : 0.5)
-        .moveTo(MARGIN, currentYPosition + height + 4)
-        .lineTo(PAGE_WIDTH, currentYPosition + height + 4)
+        .lineWidth(options.lineWidth)
+        .moveTo(MARGIN, currentYPosition + options.height + 4)
+        .lineTo(PAGE_WIDTH, currentYPosition + options.height + 4)
         .stroke();
 
-    currentYPosition += height + MARGIN * 1.2;
+    currentYPosition += options.height + MARGIN * 1.2;
+}
+
+type FormatColumnActionOptions = FillTableLineOptions & { curX: number };
+function formatColumnAction(doc: typeof PDFDocument, column: ColumnAction, options: FormatColumnActionOptions): number {
+    const { content, color } = column;
+    const width = 'colSpan' in column ? options.colSpanWidth * column.colSpan : column.width;
+
+    doc.fillColor(color);
+    if (content.startsWith('<icon-') && content.endsWith('>')) {
+        const icon = content.slice(6, -1) as Icon;
+        writeIcon(doc, icon, { ...options, color, width });
+    } else if (content.includes('<icon-')) {
+        const [text, icon] = content.split('<icon-');
+        writeIcon(doc, icon.slice(0, -1) as Icon, { ...options, color, width });
+        doc.text(`     ${text}`, options.curX, currentYPosition, { width });
+    } else {
+        doc.text(content, options.curX, currentYPosition, { width });
+    }
+
+    return width;
+}
+
+type WriteIconOptions = FormatColumnActionOptions & { color: string; width: number };
+function writeIcon(doc: typeof PDFDocument, icon: Icon, options: WriteIconOptions): void {
+    if (icon in ICONS) {
+        const currentFont = doc.options.font || 'Helvetica';
+        let color = options.color;
+
+        if (icon === 'yellowCard') color = '#ffc107';
+        else if (icon === 'redCard') color = '#dc3545';
+
+        doc.font('Icons').fillColor(color);
+        doc.text(ICONS[icon], options.curX, currentYPosition, { width: options.width });
+        doc.font(currentFont).fillColor(options.color);
+    }
+}
+
+function getIconForCard(action: Action): `${typeof ICON_PREFIX}${Icon}${typeof ICON_SUFFIX}` {
+    let icon: Icon;
+    if (action.card === 'YELLOW') icon = 'yellowCard';
+    else if (action.card === 'RED') icon = 'redCard';
+    else if (action.card === 'WHITE')  icon = 'whiteCard';
+    else icon = 'warning';
+
+    return `${ICON_PREFIX}${icon}${ICON_SUFFIX}`;
 }
 
 function getActionsSortedByTime(actions: Action[]): Action[] {

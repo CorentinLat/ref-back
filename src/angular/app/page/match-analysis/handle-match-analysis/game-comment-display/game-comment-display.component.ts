@@ -1,7 +1,12 @@
 import { Component, Input } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { adviserPrefix, EditableGameComment, Game } from '../../../../../../../type/refBack';
+import {
+    adviserPrefix,
+    RefereeEditableGameComment,
+    Game,
+    AdviserEditableGameComment,
+} from '../../../../../../../type/refBack';
 
 import { EditGameCommentModalComponent } from '../../../../component/modal/edit-game-comment-modal/edit-game-comment-modal.component';
 
@@ -13,13 +18,13 @@ import { EditGameCommentModalComponent } from '../../../../component/modal/edit-
 export class GameCommentDisplayComponent {
     @Input() game!: Game;
     @Input() isEditable = false;
-    @Input() keyToDisplay!: EditableGameComment;
+    @Input() keyToDisplay!: RefereeEditableGameComment;
     @Input() keyLabel!: string;
 
     constructor(private modalService: NgbModal) {}
 
-    get adviserCommentKey(): string { return `${this.keyToDisplay}${adviserPrefix}`; }
-    get refereeCommentKey(): string { return this.keyToDisplay; }
+    get adviserCommentKey(): AdviserEditableGameComment { return `${this.keyToDisplay}${adviserPrefix}`; }
+    get refereeCommentKey(): RefereeEditableGameComment { return this.keyToDisplay; }
 
     handleUpdateGameComment(): void {
         const modal = this.modalService.open(EditGameCommentModalComponent, { centered: true, size: 'lg' });
