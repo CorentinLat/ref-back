@@ -23,19 +23,16 @@
     <section class="match-analysis-body" *ngIf="game">
         <app-handle-match-analysis
             class="controls"
-            [collapse]="collapse"
             [game]="game"
             [videoApiService]="videoApiService"
-            (actionAdded)="onActionAdded($event)"
             *ngIf="videoApiService"
         ></app-handle-match-analysis>
 
-        <section class="video-and-annotations" [ngClass]="{ collapsed: collapse.actions }">
+        <section class="video-and-annotations" [ngClass]="{ collapsed: isCollapsed }">
             <app-video-viewer
                 class="video"
                 [videoPath]="game.information.videoPath"
                 [timing]="route.snapshot.queryParams.second"
-                [refreshVideoMedia]="refreshVideoMedia"
                 (videoReady)="handleVideoReady($event)"
             ></app-video-viewer>
 
@@ -43,11 +40,7 @@
                 <app-annotations
                     class="annotations"
                     [annotations]="game.actions"
-                    [collapsed]="collapse.actions"
                     [gameNumber]="gameNumber"
-                    [newActionAdded]="newActionAdded.asObservable()"
-                    [putVideoAtSecond]="putVideoAtSecond"
-                    (editVideo)="handleOpenGameVideoEditorModal()"
                 ></app-annotations>
             </section>
         </section>

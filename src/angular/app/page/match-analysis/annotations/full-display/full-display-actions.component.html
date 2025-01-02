@@ -31,7 +31,6 @@
         <app-full-action
             *ngFor="let action of exposeActions()"
             [action]="action"
-            [putVideoAtSecond]="putVideoAtSecond"
             [isSummaryDisplay]="isSummaryDisplay"
             [isBySectorDisplay]="exposeIsBySectorDisplay()"
             (removeActionEvent)="removeAction($event)"
@@ -41,7 +40,7 @@
     <article class="no-action" *ngIf="annotations.length === 0">
         <h5>{{ 'PAGE.MATCH_ANALYSIS.ACTIONS.NO_ACTION' | translate }}</h5>
 
-        <button class="btn btn-primary" (click)="editVideo.emit()" *ngIf="!isSummaryDisplay">
+        <button class="btn btn-primary" (click)="handleEditVideoMedia()" *ngIf="!isSummaryDisplay">
             <i class="bi bi-scissors"></i>
             {{ 'PAGE.MATCH_ANALYSIS.ACTIONS.EDIT_VIDEO_GAME' | translate }}
         </button>

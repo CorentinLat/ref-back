@@ -5,7 +5,7 @@
                 <button
                     class="btn btn-link p-0"
                     [ngClass]="{ yes: action.precise === 'YES', no: action.precise === 'NO', doubt: action.precise === 'DOUBT' }"
-                    (click)="putVideoAtSecond(action.second)"
+                    (click)="handlePutVideoAtSecond(action.second)"
                 >
                     {{ exposeActionMinutes(action.second) }}
                 </button>
@@ -59,7 +59,7 @@
     <p class="decision-card no-decision" *ngIf="!annotations.length">
         {{ 'PAGE.MATCH_ANALYSIS.ACTIONS.NO_ACTION_SHORT' | translate }}
 
-        <button class="btn btn-primary btn-sm" (click)="editVideo.emit()">
+        <button class="btn btn-primary btn-sm" (click)="handleEditVideoMedia()">
             <i class="bi bi-film"></i>
             <i class="bi bi-scissors"></i>
             <i class="bi bi-film"></i>

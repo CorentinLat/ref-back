@@ -10,7 +10,9 @@ import {
 } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { VgApiService } from '@videogular/ngx-videogular/core';
-import { Observable, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
+
+import { VideoViewerService } from '../../../service/VideoViewerService';
 
 @Component({
     selector: 'app-video-viewer',
@@ -19,8 +21,6 @@ import { Observable, Subscription } from 'rxjs';
 export class VideoViewerComponent implements OnInit, OnDestroy {
     @Input() videoPath!: string;
     @Input() timing?: number;
-
-    @Input() refreshVideoMedia?: Observable<string>;
 
     @Output() videoReady = new EventEmitter<{ currentTime: number; vgApiService: VgApiService }>();
     @Output() videoPaused = new EventEmitter<number>();
@@ -33,10 +33,12 @@ export class VideoViewerComponent implements OnInit, OnDestroy {
     videoPathSafe!: SafeResourceUrl;
 
     private refreshVideoMediaSubscription$?: Subscription;
+    private videoTimeUpdatedSubscription$?: Subscription;
 
     constructor(
-        private cdr: ChangeDetectorRef,
-        private sanitizer: DomSanitizer,
+        private readonly cdr: ChangeDetectorRef,
+        private readonly sanitizer: DomSanitizer,
+        private readonly videoViewerService: VideoViewerService,
     ) {}
 
     @HostListener('document:keydown', ['$event'])
@@ -75,7 +77,7 @@ export class VideoViewerComponent implements OnInit, OnDestroy {
     ngOnInit(): void {
         this.videoPathSafe = this.sanitizer.bypassSecurityTrustResourceUrl(`video://${this.videoPath}`);
 
-        this.refreshVideoMediaSubscription$ = this.refreshVideoMedia?.subscribe((newPath) => {
+        this.refreshVideoMediaSubscription$ = this.videoViewerService.videoMediaRefreshed.subscribe(newPath => {
             this.videoApiService.pause();
             this.putVideoAtSecond(0);
 
@@ -84,10 +86,13 @@ export class VideoViewerComponent implements OnInit, OnDestroy {
 
             setTimeout(() => this.isHidingVideo = false);
         });
+
+        this.videoTimeUpdatedSubscription$ = this.videoViewerService.videoTimeUpdated.subscribe(second => this.putVideoAtSecond(second));
     }
 
     ngOnDestroy(): void {
         this.refreshVideoMediaSubscription$?.unsubscribe();
+        this.videoTimeUpdatedSubscription$?.unsubscribe();
     }
 
     onPlayerReady = (api: VgApiService): void => {

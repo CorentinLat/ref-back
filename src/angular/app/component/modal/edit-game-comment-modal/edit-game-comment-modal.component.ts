@@ -5,7 +5,7 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { adviserPrefix, AllEditableGameComment, RefereeEditableGameComment, Game } from '../../../../../../type/refBack';
 
 import { ElectronService } from '../../../service/ElectronService';
-import { RoleService } from '../../../service/RoleService';
+import { MatchAnalysisService } from '../../../service/MatchAnalysisService';
 import { ToastService } from '../../../service/ToastService';
 
 @Component({ templateUrl: './edit-game-comment-modal.component.html' })
@@ -18,12 +18,12 @@ export class EditGameCommentModalComponent implements OnInit {
     constructor(
         private readonly electronService: ElectronService,
         public readonly modal: NgbActiveModal,
-        private readonly roleService: RoleService,
+        private readonly matchAnalysisService: MatchAnalysisService,
         private readonly toastService: ToastService,
     ) {}
 
     get fullKeyToEdit(): AllEditableGameComment {
-        const keyPrefix = this.roleService.role === 'referee' ? '' : adviserPrefix;
+        const keyPrefix = this.matchAnalysisService.role === 'referee' ? '' : adviserPrefix;
         return `${this.keyToEdit}${keyPrefix}`;
     }
 

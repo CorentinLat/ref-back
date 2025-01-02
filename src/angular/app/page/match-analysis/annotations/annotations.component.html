@@ -2,16 +2,10 @@
     class="display-annotations"
     [annotations]="exposeAnnotationsSortedByTime()"
     [gameNumber]="gameNumber"
-    [putVideoAtSecond]="putVideoAtSecond"
-    [newActionAdded]="newActionAdded"
-    (editVideo)="editVideo.emit()"
-    *ngIf="!collapsed"
+    *ngIf="!isCollapsed"
 ></app-full-display-annotations>
 <app-collapse-display-annotations
     class="display-annotations"
     [annotations]="exposeAnnotationsSortedByTime()"
-    [putVideoAtSecond]="putVideoAtSecond"
-    [newActionAdded]="newActionAdded"
-    (editVideo)="editVideo.emit()"
-    *ngIf="collapsed"
+    *ngIf="isCollapsed"
 ></app-collapse-display-annotations>

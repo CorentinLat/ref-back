@@ -24,6 +24,7 @@ import { FullDisplayActionsComponent } from './page/match-analysis/annotations/f
 import { ActionFullComponent } from './page/match-analysis/annotations/full-display/action/action-full.component';
 import { HandleMatchAnalysisComponent } from './page/match-analysis/handle-match-analysis/handle-match-analysis.component';
 import { AddEditActionComponent } from './page/match-analysis/handle-match-analysis/add-edit-action/add-edit-action.component';
+import { AddEditAnnotationComponent } from './page/match-analysis/handle-match-analysis/add-edit-annotation/add-edit-annotation.component';
 import { GameCommentDisplayComponent } from './page/match-analysis/handle-match-analysis/game-comment-display/game-comment-display.component';
 import { SummaryComponent } from './page/summary/summary.component';
 import { StatisticsComponent } from './page/summary/statistics/statistics.component';
@@ -52,6 +53,7 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader => new Transla
         ActionFullComponent,
         AnnotationsComponent,
         AddEditActionComponent,
+        AddEditAnnotationComponent,
         AppComponent,
         CardComponent,
         ClipProcessLoaderModalComponent,

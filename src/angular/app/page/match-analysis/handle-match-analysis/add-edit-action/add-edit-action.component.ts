@@ -3,7 +3,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { VgApiService } from '@videogular/ngx-videogular/core';
 import { Subscription } from 'rxjs';
 
-import { Action, ActionForm, NewAction } from '../../../../../../../type/refBack';
+import { Action, ActionForm, isAction, NewAction } from '../../../../../../../type/refBack';
 
 import {
     actionAgainsts,
@@ -15,10 +15,9 @@ import {
     actionPrecises,
 } from '../../../../domain/game';
 
-import { CommunicationService } from '../../../../service/CommunicationService';
 import { DateTimeService } from '../../../../service/DateTimeService';
 import { ElectronService } from '../../../../service/ElectronService';
-import { RoleService } from '../../../../service/RoleService';
+import { MatchAnalysisService } from '../../../../service/MatchAnalysisService';
 import { ToastService } from '../../../../service/ToastService';
 
 @Component({
@@ -57,10 +56,9 @@ export class AddEditActionComponent implements OnInit, OnDestroy {
     private roleUpdatedSubscription$?: Subscription;
 
     constructor(
-        private readonly communicationService: CommunicationService,
         private readonly dateTimeService: DateTimeService,
         private readonly electron: ElectronService,
-        private readonly roleService: RoleService,
+        private readonly matchAnalysisService: MatchAnalysisService,
         private readonly toastService: ToastService,
     ) {}
 
@@ -84,7 +82,7 @@ export class AddEditActionComponent implements OnInit, OnDestroy {
     get actionTypes(): string[] { return actionTypes; }
     get actionPrecises(): string[] { return actionPrecises; }
 
-    get role() { return this.roleService.role; }
+    get role() { return this.matchAnalysisService.role; }
 
     ngOnInit(): void {
         this.currentVideoTimeSubscription$ = this.videoApiService.getDefaultMedia()
@@ -102,11 +100,13 @@ export class AddEditActionComponent implements OnInit, OnDestroy {
                     this.endClipControl.setValue(currentTime);
                 }
             });
-        this.editActionSubscription$ = this.communicationService.editAction.subscribe(action => {
-            this.action = action;
-            this.fillActionForm();
+        this.editActionSubscription$ = this.matchAnalysisService.annotationEdited.subscribe(action => {
+            if (isAction(action)) {
+                this.action = action;
+                this.fillActionForm();
+            }
         });
-        this.roleUpdatedSubscription$ = this.roleService.roleUpdated.subscribe(role => {
+        this.roleUpdatedSubscription$ = this.matchAnalysisService.roleUpdated.subscribe(role => {
             if (this.action) {
                 this.commentControl.setValue(role === 'referee' ? this.action.comment : this.action.commentFromAdviser);
             }

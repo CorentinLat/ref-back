@@ -2,8 +2,9 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 import { Action } from '../../../../../../../../type/refBack';
 
-import { CommunicationService } from '../../../../../service/CommunicationService';
 import { DateTimeService } from '../../../../../service/DateTimeService';
+import { MatchAnalysisService } from '../../../../../service/MatchAnalysisService';
+import { VideoViewerService } from '../../../../../service/VideoViewerService';
 
 @Component({
     selector: 'app-full-action',
@@ -16,14 +17,24 @@ export class ActionFullComponent {
     @Input() isSummaryDisplay = false;
     @Input() isBySectorDisplay = false;
 
-    @Input() putVideoAtSecond!: (second: number) => void;
-
     @Output() removeActionEvent = new EventEmitter<string>();
 
     constructor(
-        private communicationService: CommunicationService,
-        private dateTimeService: DateTimeService,
+        private readonly dateTimeService: DateTimeService,
+        private readonly matchAnalysisService: MatchAnalysisService,
+        private readonly videoViewerService: VideoViewerService,
     ) {}
+
+    handleEditAction(): void {
+        this.handlePutVideoAtSecond(this.action.second);
+        this.matchAnalysisService.editAnnotation(this.action);
+    }
+
+    handleRemoveAction(): void {
+        this.removeActionEvent.emit(this.action.id);
+    }
+
+    handlePutVideoAtSecond = (second: number) => this.videoViewerService.updateVideoTime(second);
 
     exposeActionMinutes(): string {
         return this.dateTimeService.convertSecondsToMMSS(this.action.second);
@@ -37,14 +48,5 @@ export class ActionFullComponent {
     exposeClipEndMinutes(): string {
         // @ts-ignore Called only when this.action.clip is defined
         return this.dateTimeService.convertSecondsToMMSS(this.action.clip?.end);
-    }
-
-    handleEditAction(): void {
-        this.putVideoAtSecond(this.action.second);
-        this.communicationService.editAction.next(this.action);
-    }
-
-    handleRemoveAction(): void {
-        this.removeActionEvent.emit(this.action.id);
     }
 }

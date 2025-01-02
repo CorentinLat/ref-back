@@ -1,14 +1,16 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { VgApiService } from '@videogular/ngx-videogular/core';
-import { Subject } from 'rxjs';
+import { Subscription } from 'rxjs';
 
-import { Action, Game } from '../../../../../type/refBack';
+import { Game } from '../../../../../type/refBack';
 
 import { ElectronService } from '../../service/ElectronService';
+import { MatchAnalysisService } from '../../service/MatchAnalysisService';
 import { NavigationService } from '../../service/NavigationService';
 import { ToastService } from '../../service/ToastService';
+import { VideoViewerService } from '../../service/VideoViewerService';
 
 import { VideoEditorModalComponent } from '../../component/modal/video-editor-modal/video-editor-modal.component';
 
@@ -17,7 +19,7 @@ import { VideoEditorModalComponent } from '../../component/modal/video-editor-mo
     templateUrl: './match-analysis.component.html',
     styleUrls: ['./match-analysis.component.scss'],
 })
-export class MatchAnalysisComponent implements OnInit {
+export class MatchAnalysisComponent implements OnInit, OnDestroy {
     public originPath: string|null = null;
 
     public game!: Game;
@@ -25,19 +27,23 @@ export class MatchAnalysisComponent implements OnInit {
 
     public videoApiService!: VgApiService;
 
-    public collapse = { actions: true };
+    public isCollapsed: boolean;
 
-    public newActionAdded = new Subject<Action>();
-    public refreshVideoMedia = new Subject<string>();
+    private editVideoMediaSubscription$?: Subscription;
+    private isCollapsedUpdatedSubscription$?: Subscription;
 
     constructor(
-        private cdr: ChangeDetectorRef,
-        private electron: ElectronService,
-        private modalService: NgbModal,
-        private navigation: NavigationService,
-        public route: ActivatedRoute,
-        private toastService: ToastService,
-    ) {}
+        private readonly cdr: ChangeDetectorRef,
+        private readonly electron: ElectronService,
+        private readonly modalService: NgbModal,
+        private readonly matchAnalysisService: MatchAnalysisService,
+        private readonly navigation: NavigationService,
+        public readonly route: ActivatedRoute,
+        private readonly toastService: ToastService,
+        private readonly videoViewerService: VideoViewerService,
+    ) {
+        this.isCollapsed = this.matchAnalysisService.isCollapsed;
+    }
 
     ngOnInit(): void {
         const gameNumber = this.route.snapshot.queryParamMap.get('gameNumber');
@@ -56,6 +62,14 @@ export class MatchAnalysisComponent implements OnInit {
                 this.toastService.showError('TOAST.ERROR.PROCESS_GAME');
                 this.handleNavigateToOriginOrHome();
             });
+
+        this.editVideoMediaSubscription$ = this.videoViewerService.videoMediaEdit.subscribe(() => this.handleOpenGameVideoEditorModal());
+        this.isCollapsedUpdatedSubscription$ = this.matchAnalysisService.isCollapsedUpdated.subscribe(isCollapsed => this.isCollapsed = isCollapsed);
+    }
+
+    ngOnDestroy() {
+        this.editVideoMediaSubscription$?.unsubscribe();
+        this.isCollapsedUpdatedSubscription$?.unsubscribe();
     }
 
     public handleNavigateToOriginOrHome = () => this.navigation.navigateTo(this.originPath || '/');
@@ -77,17 +91,9 @@ export class MatchAnalysisComponent implements OnInit {
         modalRef.result.then(
             (newPath: string) => {
                 this.game.information.videoPath = newPath;
-                this.refreshVideoMedia.next(newPath);
+                this.videoViewerService.refreshVideoMedia(newPath);
             },
             () => {}
         );
     }
-
-    public putVideoAtSecond = (second: number): void => {
-        this.videoApiService.getDefaultMedia().currentTime = second;
-    };
-
-    public onActionAdded = (action: Action): void => {
-        setTimeout(() => this.newActionAdded.next(action), 100);
-    };
 }

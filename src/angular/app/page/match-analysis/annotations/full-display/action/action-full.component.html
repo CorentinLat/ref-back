@@ -7,7 +7,7 @@
         <button
             class="btn btn-link p-0"
             [ngClass]="{ yes: action.precise === 'YES', no: action.precise === 'NO', doubt: action.precise === 'DOUBT' }"
-            (click)="putVideoAtSecond(action.second)"
+            (click)="handlePutVideoAtSecond(action.second)"
             *ngIf="!isSummaryDisplay && !action.clip"
         >
             {{ exposeActionMinutes() }}
@@ -17,14 +17,14 @@
             <button
                 class="btn btn-link p-0"
                 [ngClass]="{ yes: action.precise === 'YES', no: action.precise === 'NO', doubt: action.precise === 'DOUBT' }"
-                (click)="putVideoAtSecond(action.clip.start)"
+                (click)="handlePutVideoAtSecond(action.clip.start)"
             >
                 {{ exposeClipStartMinutes() }}
             </button>
             <button
                 class="btn btn-link p-0"
                 [ngClass]="{ yes: action.precise === 'YES', no: action.precise === 'NO', doubt: action.precise === 'DOUBT' }"
-                (click)="putVideoAtSecond(action.clip.end)"
+                (click)="handlePutVideoAtSecond(action.clip.end)"
             >
                 {{ exposeClipEndMinutes() }}
             </button>
