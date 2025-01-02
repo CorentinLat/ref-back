@@ -1,7 +1,7 @@
 import { Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Subscription } from 'rxjs';
 
-import { Action, Annotation } from '../../../../../../../type/refBack';
+import { Action, Annotation, isAction, isAnnotation } from '../../../../../../../type/refBack';
 
 import { DateTimeService } from '../../../../service/DateTimeService';
 import { MatchAnalysisService } from '../../../../service/MatchAnalysisService';
@@ -16,6 +16,9 @@ export class CollapseDisplayAnnotationsComponent implements OnInit, OnDestroy {
     @Input() annotations!: (Action|Annotation)[];
 
     @ViewChild('scrollable') scrollable!: ElementRef;
+
+    readonly isAction = isAction;
+    readonly isAnnotation = isAnnotation;
 
     private readonly annotationHeightPx = 100;
     private readonly gapPx = 14;
@@ -48,7 +51,5 @@ export class CollapseDisplayAnnotationsComponent implements OnInit, OnDestroy {
     handleEditVideoMedia = () => this.videoViewerService.editVideoMedia();
     handlePutVideoAtSecond = (second: number) => this.videoViewerService.updateVideoTime(second);
 
-    exposeActionMinutes(second: number): string {
-        return this.dateTimeService.convertSecondsToMMSS(second);
-    }
+    exposeActionMinutes = (second: number) => this.dateTimeService.convertSecondsToMMSS(second);
 }

@@ -43,5 +43,21 @@
                 top: 4px;
             }
         }
+
+        .comments {
+            display: flex;
+            height: 100%;
+            font-size: 1.3rem;
+
+            .referee, .adviser {
+                display: flex;
+                justify-content: center;
+                flex-basis: 0;
+                flex-grow: 1;
+
+                .role { align-self: flex-end }
+                .comment { align-self: flex-start }
+            }
+        }
     }
 }
