@@ -1,9 +1,11 @@
 import fs from 'fs';
+import { join } from 'path';
 import PDFDocument from 'pdfkit';
 
 import { Action, Game } from '../../../../type/refBack';
 
 import { convertSecondsToMMSS, getLongDateString } from '../date';
+import { assetsPath } from '../path';
 import translate from '../../translation';
 
 type Key = 'role' | 'second' | 'type' | 'against' | 'sector' | 'fault' | 'precise' | 'comment';
@@ -48,7 +50,7 @@ export function generatePdfSummary(game: Game, savePath: string): void {
     const { information: { date, gameNumber, score, teams } } = game;
 
     const doc = new PDFDocument({ margin: MARGIN, size: 'A4' });
-    doc.registerFont('Icons', 'assets/fonts/bootstrap-icons.woff');
+    doc.registerFont('Icons', join(assetsPath, 'fonts', 'bootstrap-icons.woff'));
 
     doc.pipe(fs.createWriteStream(savePath));
     currentYPosition = MARGIN;

@@ -9,6 +9,7 @@ import { GameAlreadyExistsError } from '../domain/error/GameAlreadyExistsError';
 
 import logger from './logger';
 
+export const assetsPath = path.join(__dirname, '..', '..', '..', 'assets');
 export const downloadPath = app.getPath('downloads');
 export const tempPath = app.getPath('temp');
 export const userDataPath = app.getPath('userData');
