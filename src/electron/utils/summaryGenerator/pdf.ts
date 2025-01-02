@@ -8,8 +8,8 @@ import { convertSecondsToMMSS, getLongDateString } from '../date';
 import { assetsPath } from '../path';
 import translate from '../../translation';
 
-type Key = 'role' | 'second' | 'type' | 'against' | 'sector' | 'fault' | 'precise' | 'comment';
-type ColumnAnnotation = { content: string; colSpan: number; color: string } | { content: string; width: number; color: string };
+type Key = 'role' | 'second' | 'type' | 'against' | 'sector' | 'fault' | 'precise' | 'comment' | 'commentFromAdviser';
+type ColumnFormat = { content: string; colSpan: number; color: string } | { content: string; width: number; color: string };
 type ColumnStructure = { key: Key; colSpan: number } | { key: Key; width: number };
 type DecisionsBy = { [key: string]: Action[] };
 
@@ -32,14 +32,17 @@ const ANNOTATIONS_COLUMNS: ColumnStructure[] = [
     { key: 'role', width: 12 },
     { key: 'second', width: 30 },
     { key: 'comment', colSpan: 1 },
+    { key: 'commentFromAdviser', colSpan: 1 },
 ];
 const ACTIONS_COLUMNS: ColumnStructure[] = [
-    ...ANNOTATIONS_COLUMNS,
+    { key: 'role', width: 12 },
+    { key: 'second', width: 30 },
     { key: 'type', width: 55 },
     { key: 'against', width: 40 },
     { key: 'sector', width: 50 },
     { key: 'fault', width: 100 },
     { key: 'precise', width: 30 },
+    { key: 'comment', colSpan: 1 },
 ];
 
 type Icon = 'adviser' | 'referee' | 'warning' | 'whiteCard' | 'yellowCard' | 'redCard';
@@ -118,14 +121,16 @@ function addThreeColumnsLine(doc: typeof PDFDocument, font: string, left: string
 }
 
 function addGameComments(doc: typeof PDFDocument, game: Game): void {
-    if (game.gameDescription) {
+    if (game.gameDescription || game.gameDescriptionFromAdviser) {
         addSection(doc, 'GAME_DESCRIPTION');
-        addParagraph(doc, game.gameDescription);
+        if (game.gameDescription) addParagraph(doc, `${translate('REFEREE')}: ${game.gameDescription}`);
+        if (game.gameDescriptionFromAdviser) addParagraph(doc, `${translate('ADVISER')}: ${game.gameDescriptionFromAdviser}`);
     }
 
-    if (game.globalPerformance) {
+    if (game.globalPerformance || game.globalPerformanceFromAdviser) {
         addSection(doc, 'GLOBAL_PERFORMANCE');
-        addParagraph(doc, game.globalPerformance);
+        if (game.globalPerformance) addParagraph(doc, `${translate('REFEREE')}: ${game.globalPerformance}`);
+        if (game.globalPerformanceFromAdviser) addParagraph(doc, `${translate('ADVISER')}: ${game.globalPerformanceFromAdviser}`);
     }
 }
 
@@ -396,7 +401,9 @@ function addAnnotationsTable(doc: typeof PDFDocument, title: string, columnsStru
     addTableRow(doc, true, headerColumns);
 
     annotations.forEach(annotation => {
-        const columns = formatColumnAnnotations(annotation, columnsStructure);
+        const columns = isAction(annotation)
+            ? formatColumnAction(annotation, columnsStructure)
+            : formatColumnAnnotation(annotation, ANNOTATIONS_COLUMNS);
         const isAdded = addTableRow(doc, false, columns);
 
         if (!isAdded) {
@@ -424,7 +431,7 @@ function addSection(doc: typeof PDFDocument, titleKey: string, isContinued = fal
     currentYPosition += doc.heightOfString(title) + MARGIN / 2;
 }
 
-function addTableRow(doc: typeof PDFDocument, isHeader: boolean, columns: ColumnAnnotation[]): boolean {
+function addTableRow(doc: typeof PDFDocument, isHeader: boolean, columns: ColumnFormat[]): boolean {
     const font = isHeader ? 'Helvetica-Bold' : 'Helvetica';
     doc.font(font).fontSize(9);
 
@@ -437,10 +444,10 @@ function addTableRow(doc: typeof PDFDocument, isHeader: boolean, columns: Column
     return true;
 }
 
-function formatColumnAnnotations(action: Annotation, columnsStructure: ColumnStructure[]): ColumnAnnotation[] {
+function formatColumnAction(action: Action, columnsStructure: ColumnStructure[]): ColumnFormat[] {
     return columnsStructure.map(structure => {
         const { key } = structure;
-        let content = '';
+        let content;
         let color = 'black';
 
         if (key === 'role') {
@@ -452,23 +459,22 @@ function formatColumnAnnotations(action: Annotation, columnsStructure: ColumnStr
             if (action.comment) content = `${translate('REFEREE')} : ${action.comment}`;
             if (action.comment && action.commentFromAdviser) content += '\n';
             if (action.commentFromAdviser) content += `${translate('ADVISER')} : ${action.commentFromAdviser}`;
-        } else if (isAction(action)) {
-            if (key === 'type') {
-                const type = translate(action.type);
-                const card = action.card ? ` ${getIconForCard(action)}` : '';
-                content = `${type}${card}`;
-            } else {
-                content = translate(action[key]);
-            }
+        } else if (key === 'type') {
+            const type = translate(action.type);
+            const card = action.card ? ` ${getIconForCard(action)}` : '';
+            content = `${type}${card}`;
+        } else {
+            // @ts-ignore Key can not be commentFromAdviser for action
+            content = translate(action[key]);
+        }
 
-            if (key === 'precise') {
-                if (action.precise === 'YES') {
-                    color = '#20c997';
-                } else if (action.precise === 'NO') {
-                    color = '#dc3545';
-                } else {
-                    color = '#ffc107';
-                }
+        if (key === 'precise') {
+            if (action.precise === 'YES') {
+                color = '#20c997';
+            } else if (action.precise === 'NO') {
+                color = '#dc3545';
+            } else {
+                color = '#ffc107';
             }
         }
 
@@ -478,7 +484,28 @@ function formatColumnAnnotations(action: Annotation, columnsStructure: ColumnStr
     });
 }
 
-function getColSpanWidthAndHeight(doc: typeof PDFDocument, columns: ColumnAnnotation[]): { colSpanWidth: number; height: number } {
+function formatColumnAnnotation(annotation: Annotation, columnsStructure: ColumnStructure[]): ColumnFormat[] {
+    return columnsStructure.map(structure => {
+        const { key } = structure;
+        let content = '';
+
+        if (key === 'role') {
+            content = annotation.fromAdviser ? '<icon-adviser>' : '<icon-referee>';
+        } else if (key === 'second') {
+            content = convertSecondsToMMSS(annotation.second);
+        } else if (key === 'comment' && annotation.comment) {
+            content = `${translate('REFEREE')} : ${annotation.comment}`;
+        } else if (key === 'commentFromAdviser' && annotation.commentFromAdviser) {
+            content = `${translate('ADVISER')} : ${annotation.commentFromAdviser}`;
+        }
+
+        return 'colSpan' in structure
+            ? { content, color: 'black', colSpan: structure.colSpan }
+            : { content, color: 'black', width: structure.width };
+    });
+}
+
+function getColSpanWidthAndHeight(doc: typeof PDFDocument, columns: ColumnFormat[]): { colSpanWidth: number; height: number } {
     const colSpansTotal = columns.reduce((total, column) => total + ('colSpan' in column ? column.colSpan : 0), 0);
     const colWidthsTotal = columns.reduce((total, column) => total + ('width' in column ? column.width : 0), 0);
     const colSpanWidth = (PAGE_WIDTH - colWidthsTotal) / colSpansTotal;
@@ -495,10 +522,10 @@ function getColSpanWidthAndHeight(doc: typeof PDFDocument, columns: ColumnAnnota
 }
 
 type FillTableLineOptions = { font: string; colSpanWidth: number; height: number; lineWidth: number };
-function fillTableLine(doc: typeof PDFDocument, columns: ColumnAnnotation[], options: FillTableLineOptions): void {
+function fillTableLine(doc: typeof PDFDocument, columns: ColumnFormat[], options: FillTableLineOptions): void {
     let curX = MARGIN;
     columns.forEach(column => {
-        curX += formatColumnAction(doc, column, { ...options, curX });
+        curX += formatColumnFormat(doc, column, { ...options, curX });
     });
 
     doc
@@ -510,8 +537,8 @@ function fillTableLine(doc: typeof PDFDocument, columns: ColumnAnnotation[], opt
     currentYPosition += options.height + MARGIN * 1.2;
 }
 
-type FormatColumnActionOptions = FillTableLineOptions & { curX: number };
-function formatColumnAction(doc: typeof PDFDocument, column: ColumnAnnotation, options: FormatColumnActionOptions): number {
+type FormatColumnFormatOptions = FillTableLineOptions & { curX: number };
+function formatColumnFormat(doc: typeof PDFDocument, column: ColumnFormat, options: FormatColumnFormatOptions): number {
     const { content, color } = column;
     const width = 'colSpan' in column ? options.colSpanWidth * column.colSpan : column.width;
 
@@ -530,7 +557,7 @@ function formatColumnAction(doc: typeof PDFDocument, column: ColumnAnnotation, o
     return width;
 }
 
-type WriteIconOptions = FormatColumnActionOptions & { color: string; width: number };
+type WriteIconOptions = FormatColumnFormatOptions & { color: string; width: number };
 function writeIcon(doc: typeof PDFDocument, icon: Icon, options: WriteIconOptions): void {
     if (icon in ICONS) {
         const currentFont = doc.options.font || 'Helvetica';
