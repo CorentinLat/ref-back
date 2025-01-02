@@ -292,6 +292,7 @@
         }
       },
       "BUTTONS": {
+        "ADD_COMMENT": "Ajouter un commentaire",
         "ADD_DECISION": "Ajouter une décision",
         "NAVIGATE_TO_SUMMARY": "Récapitulatif",
         "ENLARGE": "Agrandir",

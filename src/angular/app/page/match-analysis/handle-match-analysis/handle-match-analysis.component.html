@@ -1,5 +1,5 @@
 <section class="handle-match-analysis-component">
-    <section class="w-100 d-flex gap-5" *ngIf="!displayActionForm">
+    <section class="w-100 d-flex gap-5" *ngIf="!displayActionForm && !displayAnnotationForm">
         <section class="comments-container">
             <app-game-comment-display
                 class="comment-display-component"
@@ -50,6 +50,10 @@
 
             <button class="add-decision-btn btn btn-success btn-sm" (click)="handleDisplayActionForm()">
                 <i class="bi bi-plus"></i> {{ 'PAGE.MATCH_ANALYSIS.BUTTONS.ADD_DECISION' | translate }}
+            </button>
+
+            <button class="add-decision-btn btn btn-secondary btn-sm" (click)="handleDisplayAnnotationForm()">
+                <i class="bi bi-plus"></i> {{ 'PAGE.MATCH_ANALYSIS.BUTTONS.ADD_COMMENT' | translate }}
             </button>
 
             <button class="collapse-btn btn btn-outline-dark btn-sm" (click)="handleToggleCollapse()">

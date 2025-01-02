@@ -4,8 +4,10 @@
 
 @import 'styles/ng-multiselect-dropdown.scss';
 
-button.accordion-button:focus,
-button.btn:focus {
+button:focus,
+input:focus,
+select:focus,
+textarea:focus {
     box-shadow: none !important;
 }
 
