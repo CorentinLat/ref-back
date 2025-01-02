@@ -1,17 +1,17 @@
-<app-full-display-actions
-    class="display-actions"
-    [actions]="exposeActionsSortedByTime()"
+<app-full-display-annotations
+    class="display-annotations"
+    [annotations]="exposeAnnotationsSortedByTime()"
     [gameNumber]="gameNumber"
     [putVideoAtSecond]="putVideoAtSecond"
     [newActionAdded]="newActionAdded"
     (editVideo)="editVideo.emit()"
     *ngIf="!collapsed"
-></app-full-display-actions>
-<app-collapse-display-actions
-    class="display-actions"
-    [actions]="exposeActionsSortedByTime()"
+></app-full-display-annotations>
+<app-collapse-display-annotations
+    class="display-annotations"
+    [annotations]="exposeAnnotationsSortedByTime()"
     [putVideoAtSecond]="putVideoAtSecond"
     [newActionAdded]="newActionAdded"
     (editVideo)="editVideo.emit()"
     *ngIf="collapsed"
-></app-collapse-display-actions>
+></app-collapse-display-annotations>

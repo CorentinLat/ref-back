@@ -2,14 +2,14 @@ import fs from 'fs';
 import { join } from 'path';
 import PDFDocument from 'pdfkit';
 
-import { Action, Game } from '../../../../type/refBack';
+import { Action, Annotation, Game, isAction } from '../../../../type/refBack';
 
 import { convertSecondsToMMSS, getLongDateString } from '../date';
 import { assetsPath } from '../path';
 import translate from '../../translation';
 
 type Key = 'role' | 'second' | 'type' | 'against' | 'sector' | 'fault' | 'precise' | 'comment';
-type ColumnAction = { content: string; colSpan: number; color: string } | { content: string; width: number; color: string };
+type ColumnAnnotation = { content: string; colSpan: number; color: string } | { content: string; width: number; color: string };
 type ColumnStructure = { key: Key; colSpan: number } | { key: Key; width: number };
 type DecisionsBy = { [key: string]: Action[] };
 
@@ -28,15 +28,18 @@ const COLORS: [number, number, number][] = [
     [242, 68, 5],
 ];
 
-const ALL_COLUMNS: ColumnStructure[] = [
+const ANNOTATIONS_COLUMNS: ColumnStructure[] = [
     { key: 'role', width: 12 },
     { key: 'second', width: 30 },
+    { key: 'comment', colSpan: 1 },
+];
+const ACTIONS_COLUMNS: ColumnStructure[] = [
+    ...ANNOTATIONS_COLUMNS,
     { key: 'type', width: 55 },
     { key: 'against', width: 40 },
     { key: 'sector', width: 50 },
     { key: 'fault', width: 100 },
     { key: 'precise', width: 30 },
-    { key: 'comment', colSpan: 1 },
 ];
 
 type Icon = 'adviser' | 'referee' | 'warning' | 'whiteCard' | 'yellowCard' | 'redCard';
@@ -62,17 +65,19 @@ export function generatePdfSummary(game: Game, savePath: string): void {
 
     addGameComments(doc, game);
 
-    const decisions = getActionsSortedByTime(game.actions);
+    const annotations = getAnnotationsSortedByTime(game.actions);
 
-    addStatistics(doc, decisions);
+    addStatistics(doc, annotations);
 
-    addDecisionsTable(doc, 'ALL_ACTIONS', ALL_COLUMNS, decisions);
+    addAnnotationsTable(doc, 'ALL_ACTIONS', ACTIONS_COLUMNS, annotations);
 
-    const columnsBySector = ALL_COLUMNS.filter(({ key }) => key !== 'sector');
-    getSectorsWithAtLeastOneDecision(decisions).forEach(sector => {
-        const sectorDecisions = decisions.filter(action => action.sector === sector);
+    const columnsBySector = ACTIONS_COLUMNS.filter(({ key }) => key !== 'sector');
+    getSectorsWithAtLeastOneAction(annotations).forEach(sector => {
+        const sectorDecisions = annotations.filter(annotation =>
+            isAction(annotation) && annotation.sector === sector
+        );
 
-        addDecisionsTable(doc, sector, columnsBySector, sectorDecisions);
+        addAnnotationsTable(doc, sector, columnsBySector, sectorDecisions);
     });
 
     doc.end();
@@ -130,11 +135,19 @@ function addParagraph(doc: typeof PDFDocument, text: string): void {
     currentYPosition += doc.heightOfString(text, { align: 'justify' }) + MARGIN;
 }
 
-function addStatistics(doc: typeof PDFDocument, actions: Action[]): void {
+function addStatistics(doc: typeof PDFDocument, annotations: Annotation[]): void {
     addSection(doc, 'STATISTICS');
 
-    const penalties = actions.filter(action => action.type === 'PENALTY' || action.type === 'RETURNED_PENALTY');
-    const freeKicks = actions.filter(action => action.type === 'FREE_KICK');
+    const penalties = annotations.reduce<Action[]>((acc, annotation) =>
+        isAction(annotation) && (annotation.type === 'PENALTY' || annotation.type === 'RETURNED_PENALTY')
+            ? [...acc, annotation]
+            : acc
+    , []);
+    const freeKicks = annotations.reduce<Action[]>((acc, annotation) =>
+        isAction(annotation) && annotation.type === 'FREE_KICK'
+            ? [...acc, annotation]
+            : acc
+    , []);
     const penaltiesByTeam = getDecisionsBy('against', penalties);
     const freeKicksByTeam = getDecisionsBy('against', freeKicks);
     const penaltiesBySector = getDecisionsBy('sector', penalties);
@@ -370,8 +383,8 @@ function getDecisionsBy(key: 'against'|'sector', actions: Action[]): DecisionsBy
     }, {} as { [key: string]: Action[] });
 }
 
-function addDecisionsTable(doc: typeof PDFDocument, title: string, columnsStructure: ColumnStructure[], actions: Action[]): void {
-    if (!actions.length) return;
+function addAnnotationsTable(doc: typeof PDFDocument, title: string, columnsStructure: ColumnStructure[], annotations: Annotation[]): void {
+    if (!annotations.length) return;
 
     addSection(doc, title);
 
@@ -382,8 +395,8 @@ function addDecisionsTable(doc: typeof PDFDocument, title: string, columnsStruct
     );
     addTableRow(doc, true, headerColumns);
 
-    actions.forEach(action => {
-        const columns = formatColumnActions(action, columnsStructure);
+    annotations.forEach(annotation => {
+        const columns = formatColumnAnnotations(annotation, columnsStructure);
         const isAdded = addTableRow(doc, false, columns);
 
         if (!isAdded) {
@@ -411,7 +424,7 @@ function addSection(doc: typeof PDFDocument, titleKey: string, isContinued = fal
     currentYPosition += doc.heightOfString(title) + MARGIN / 2;
 }
 
-function addTableRow(doc: typeof PDFDocument, isHeader: boolean, columns: ColumnAction[]): boolean {
+function addTableRow(doc: typeof PDFDocument, isHeader: boolean, columns: ColumnAnnotation[]): boolean {
     const font = isHeader ? 'Helvetica-Bold' : 'Helvetica';
     doc.font(font).fontSize(9);
 
@@ -424,10 +437,10 @@ function addTableRow(doc: typeof PDFDocument, isHeader: boolean, columns: Column
     return true;
 }
 
-function formatColumnActions(action: Action, columnsStructure: ColumnStructure[]): ColumnAction[] {
+function formatColumnAnnotations(action: Annotation, columnsStructure: ColumnStructure[]): ColumnAnnotation[] {
     return columnsStructure.map(structure => {
         const { key } = structure;
-        let content;
+        let content = '';
         let color = 'black';
 
         if (key === 'role') {
@@ -439,21 +452,23 @@ function formatColumnActions(action: Action, columnsStructure: ColumnStructure[]
             if (action.comment) content = `${translate('REFEREE')} : ${action.comment}`;
             if (action.comment && action.commentFromAdviser) content += '\n';
             if (action.commentFromAdviser) content += `${translate('ADVISER')} : ${action.commentFromAdviser}`;
-        } else if (key === 'type') {
-            const type = translate(action.type);
-            const card = action.card ? ` ${getIconForCard(action)}` : '';
-            content = `${type}${card}`;
-        } else {
-            content = translate(action[key]);
-        }
-
-        if (key === 'precise') {
-            if (action.precise === 'YES') {
-                color = '#20c997';
-            } else if (action.precise === 'NO') {
-                color = '#dc3545';
+        } else if (isAction(action)) {
+            if (key === 'type') {
+                const type = translate(action.type);
+                const card = action.card ? ` ${getIconForCard(action)}` : '';
+                content = `${type}${card}`;
             } else {
-                color = '#ffc107';
+                content = translate(action[key]);
+            }
+
+            if (key === 'precise') {
+                if (action.precise === 'YES') {
+                    color = '#20c997';
+                } else if (action.precise === 'NO') {
+                    color = '#dc3545';
+                } else {
+                    color = '#ffc107';
+                }
             }
         }
 
@@ -463,7 +478,7 @@ function formatColumnActions(action: Action, columnsStructure: ColumnStructure[]
     });
 }
 
-function getColSpanWidthAndHeight(doc: typeof PDFDocument, columns: ColumnAction[]): { colSpanWidth: number; height: number } {
+function getColSpanWidthAndHeight(doc: typeof PDFDocument, columns: ColumnAnnotation[]): { colSpanWidth: number; height: number } {
     const colSpansTotal = columns.reduce((total, column) => total + ('colSpan' in column ? column.colSpan : 0), 0);
     const colWidthsTotal = columns.reduce((total, column) => total + ('width' in column ? column.width : 0), 0);
     const colSpanWidth = (PAGE_WIDTH - colWidthsTotal) / colSpansTotal;
@@ -480,7 +495,7 @@ function getColSpanWidthAndHeight(doc: typeof PDFDocument, columns: ColumnAction
 }
 
 type FillTableLineOptions = { font: string; colSpanWidth: number; height: number; lineWidth: number };
-function fillTableLine(doc: typeof PDFDocument, columns: ColumnAction[], options: FillTableLineOptions): void {
+function fillTableLine(doc: typeof PDFDocument, columns: ColumnAnnotation[], options: FillTableLineOptions): void {
     let curX = MARGIN;
     columns.forEach(column => {
         curX += formatColumnAction(doc, column, { ...options, curX });
@@ -496,7 +511,7 @@ function fillTableLine(doc: typeof PDFDocument, columns: ColumnAction[], options
 }
 
 type FormatColumnActionOptions = FillTableLineOptions & { curX: number };
-function formatColumnAction(doc: typeof PDFDocument, column: ColumnAction, options: FormatColumnActionOptions): number {
+function formatColumnAction(doc: typeof PDFDocument, column: ColumnAnnotation, options: FormatColumnActionOptions): number {
     const { content, color } = column;
     const width = 'colSpan' in column ? options.colSpanWidth * column.colSpan : column.width;
 
@@ -540,14 +555,14 @@ function getIconForCard(action: Action): `${typeof ICON_PREFIX}${Icon}${typeof I
     return `${ICON_PREFIX}${icon}${ICON_SUFFIX}`;
 }
 
-function getActionsSortedByTime(actions: Action[]): Action[] {
-    return actions.sort((a, b) => a.second - b.second);
+function getAnnotationsSortedByTime(annotations: Annotation[]): Annotation[] {
+    return annotations.sort((a, b) => a.second - b.second);
 }
 
-function getSectorsWithAtLeastOneDecision(actions: Action[]): string[] {
-    const uniqueSectors = actions
-        .reduce<Set<string>>((sectors, action) => {
-            sectors.add(action.sector);
+function getSectorsWithAtLeastOneAction(annotations: Annotation[]): string[] {
+    const uniqueSectors = annotations
+        .reduce<Set<string>>((sectors, annotation) => {
+            if (isAction(annotation)) sectors.add(annotation.sector);
             return sectors;
         }, new Set());
 

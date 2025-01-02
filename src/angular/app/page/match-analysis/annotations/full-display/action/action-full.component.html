@@ -58,7 +58,7 @@
     </article>
 
     <ng-template #popContent>
-        <app-action-comments-display [action]="action"></app-action-comments-display>
+        <app-annotation-comments-display [annotation]="action"></app-annotation-comments-display>
     </ng-template>
     <article
         class="box comment"
@@ -68,10 +68,10 @@
         placement="left"
         *ngIf="!isSummaryDisplay"
     >
-        <app-action-comments-display [action]="action" [inline]="true"></app-action-comments-display>
+        <app-annotation-comments-display [annotation]="action" [inline]="true"></app-annotation-comments-display>
     </article>
     <article class="box comment" *ngIf="isSummaryDisplay">
-        <app-action-comments-display [action]="action"></app-action-comments-display>
+        <app-annotation-comments-display [annotation]="action"></app-annotation-comments-display>
     </article>
 
     <section class="box actions text-end" role="group" *ngIf="!isSummaryDisplay">

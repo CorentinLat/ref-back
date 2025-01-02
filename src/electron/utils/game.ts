@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { v4 as uuidv4 } from 'uuid';
 
-import { Action, Game, GameInformation, NewAction } from '../../../type/refBack';
+import { Action, Annotation, Game, GameInformation, NewAction, NewAnnotation } from '../../../type/refBack';
 
 import logger from './logger';
 import { removeGameFolder, workPath } from './path';
@@ -65,35 +65,35 @@ export function removeGame(gameNumber: string): boolean {
     }
 }
 
-export function addNewActionToGame(gameNumber: string, newAction: NewAction): Action|null {
+export function addNewAnnotationToGame(gameNumber: string, newAnnotation: NewAction|NewAnnotation): Action|Annotation|null {
     const game = getGame(gameNumber);
     if (!game) { return null; }
 
     const gameFile = path.join(workPath, gameNumber, 'game.json');
     try {
-        const action: Action = { ...newAction, id: uuidv4() };
+        const action: Action|Annotation = { ...newAnnotation, id: uuidv4() };
         game.actions.push(action);
         fs.writeFileSync(gameFile, JSON.stringify(game));
 
         return action;
     } catch (error) {
-        logger.error(`error addNewActionToGame: ${error}`);
+        logger.error(`error addNewAnnotationToGame: ${error}`);
         return null;
     }
 }
 
-export function editActionFromGame(gameNumber: string, actionToEdit: Action): Action|null {
+export function editAnnotationFromGame(gameNumber: string, annotationToEdit: Action|Annotation): Action|Annotation|null {
     const game = getGame(gameNumber);
     if (!game) { return null; }
 
     const gameFile = path.join(workPath, gameNumber, 'game.json');
     try {
-        game.actions = game.actions.map(action => (action.id === actionToEdit.id ? actionToEdit : action));
+        game.actions = game.actions.map(action => (action.id === annotationToEdit.id ? annotationToEdit : action));
         fs.writeFileSync(gameFile, JSON.stringify(game));
 
-        return game.actions.find(({ id }) => id === actionToEdit.id) || null;
+        return game.actions.find(({ id }) => id === annotationToEdit.id) || null;
     } catch (error) {
-        logger.error(`error editActionFromGame: ${error}`);
+        logger.error(`error editAnnotationFromGame: ${error}`);
         return null;
     }
 }
@@ -115,18 +115,18 @@ export function editGameVideoPath(videoPath: string) {
     }
 }
 
-export function removeActionFromGame(gameNumber: string, actionId: string): boolean {
+export function removeAnnotationFromGame(gameNumber: string, annotationId: string): boolean {
     const game = getGame(gameNumber);
     if (!game) { return false; }
 
     const gameFile = path.join(workPath, gameNumber, 'game.json');
     try {
-        game.actions = game.actions.filter(action => action.id !== actionId);
+        game.actions = game.actions.filter(annotation => annotation.id !== annotationId);
         fs.writeFileSync(gameFile, JSON.stringify(game));
 
         return true;
     } catch (error) {
-        logger.error(`error removeActionFromGame: ${error}`);
+        logger.error(`error removeAnnotationFromGame: ${error}`);
         return false;
     }
 }

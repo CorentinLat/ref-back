@@ -2,19 +2,27 @@ import { app, shell } from 'electron';
 import IpcMain = Electron.IpcMain;
 import IpcMainEvent = Electron.IpcMainEvent;
 
-import { Action, extensionByExportType, NewAction, NewGameInformation, SummaryExportType } from '../../type/refBack';
+import {
+    Action,
+    Annotation,
+    extensionByExportType,
+    NewAction,
+    NewAnnotation,
+    NewGameInformation,
+    SummaryExportType,
+} from '../../type/refBack';
 
 import { getDecisionsForGames } from './utils/decision';
 import { askSaveDirectory, askSaveFile, askSaveVideoPath } from './utils/dialog';
 import { extractFileExtension } from './utils/file';
 import {
-    addNewActionToGame,
+    addNewAnnotationToGame,
     createNewGameFile,
-    editActionFromGame,
+    editAnnotationFromGame,
     editGameVideoPath,
     getGame,
     getGamesInformation,
-    removeActionFromGame,
+    removeAnnotationFromGame,
     removeGame,
     updateGameComment,
 } from './utils/game';
@@ -38,8 +46,8 @@ export default function(ipcMain: IpcMain) {
     ipcMain.on('get_game', onGetGameListener);
     ipcMain.on('update_game_comment', onUpdateGameCommentListener);
     ipcMain.on('remove_game', onRemoveGameListener);
-    ipcMain.on('add_action', onAddActionListener);
-    ipcMain.on('edit_action', onEditActionListener);
+    ipcMain.on('add_annotation', onAddAnnotationListener);
+    ipcMain.on('edit_annotation', onEditAnnotationListener);
     ipcMain.on('remove_action', onRemoveActionListener);
     ipcMain.on('download_video_game', onDownloadVideoGameListener);
     ipcMain.on('download_video_clips', onDownloadVideoClipsListener);
@@ -128,27 +136,27 @@ const onRemoveGameListener = (event: IpcMainEvent, { gameNumber }: OnRemoveGameL
     }
 };
 
-type OnAddActionListenerArgs = { newAction: NewAction; gameNumber: string };
-const onAddActionListener = (event: IpcMainEvent, { newAction, gameNumber }: OnAddActionListenerArgs) => {
-    logger.debug('OnAddActionListener');
+type OnAddAnnotationListenerArgs = { annotationToCreate: NewAction|NewAnnotation; gameNumber: string };
+const onAddAnnotationListener = (event: IpcMainEvent, { annotationToCreate, gameNumber }: OnAddAnnotationListenerArgs) => {
+    logger.debug('OnAddAnnotationListener');
 
-    const action = addNewActionToGame(gameNumber, newAction);
-    if (action) {
-        event.reply('add_action_succeeded', action);
+    const annotationAdded = addNewAnnotationToGame(gameNumber, annotationToCreate);
+    if (annotationAdded) {
+        event.reply('add_annotation_succeeded', annotationAdded);
     } else {
-        event.reply('add_action_failed');
+        event.reply('add_annotation_failed');
     }
 };
 
-type OnEditActionListenerArgs = { actionToEdit: Action; gameNumber: string };
-const onEditActionListener = (event: IpcMainEvent, { actionToEdit, gameNumber }: OnEditActionListenerArgs) => {
-    logger.debug('OnEditActionListener');
+type OnEditAnnotationListenerArgs = { annotationToEdit: Action|Annotation; gameNumber: string };
+const onEditAnnotationListener = (event: IpcMainEvent, { annotationToEdit, gameNumber }: OnEditAnnotationListenerArgs) => {
+    logger.debug('OnEditAnnotationListener');
 
-    const action = editActionFromGame(gameNumber, actionToEdit);
-    if (action) {
-        event.reply('edit_action_succeeded', action);
+    const annotationEdited = editAnnotationFromGame(gameNumber, annotationToEdit);
+    if (annotationEdited) {
+        event.reply('edit_annotation_succeeded', annotationEdited);
     } else {
-        event.reply('edit_action_failed');
+        event.reply('edit_annotation_failed');
     }
 };
 
@@ -156,7 +164,7 @@ type OnRemoveActionListenerArgs = { actionId: string; gameNumber: string };
 const onRemoveActionListener = (event: IpcMainEvent, { actionId, gameNumber }: OnRemoveActionListenerArgs) => {
     logger.debug('OnRemoveActionListener');
 
-    const isRemoved = removeActionFromGame(gameNumber, actionId);
+    const isRemoved = removeAnnotationFromGame(gameNumber, actionId);
     if (isRemoved) {
         event.reply('remove_action_succeeded');
     } else {

@@ -11,19 +11,19 @@ import {
 } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
 
-import { Action } from '../../../../../../../type/refBack';
+import { Action, Annotation, isAction } from '../../../../../../../type/refBack';
 
 import { ElectronService } from '../../../../service/ElectronService';
 import { ToastService } from '../../../../service/ToastService';
 
 @Component({
-    selector: 'app-full-display-actions',
+    selector: 'app-full-display-annotations',
     templateUrl: './full-display-actions.component.html',
     styleUrls: ['./full-display-actions.component.scss'],
     encapsulation: ViewEncapsulation.None,
 })
 export class FullDisplayActionsComponent implements OnInit, OnDestroy {
-    @Input() actions!: Action[];
+    @Input() annotations!: (Action|Annotation)[];
     @Input() gameNumber!: string;
 
     @Input() isSummaryDisplay = false;
@@ -49,7 +49,7 @@ export class FullDisplayActionsComponent implements OnInit, OnDestroy {
 
     ngOnInit(): void {
         this.newActionSubscription = this.newActionAdded?.subscribe(action => {
-            const index = this.actions.findIndex(({ id }) => id === action.id);
+            const index = this.annotations.findIndex(({ id }) => id === action.id);
             const actionPosition = Math.max(index * this.actionHeightPx - this.topMarginPx, 0);
 
             this.scrollable.nativeElement.scroll({ top: actionPosition, behavior: 'smooth' });
@@ -65,20 +65,28 @@ export class FullDisplayActionsComponent implements OnInit, OnDestroy {
     }
 
     exposeActions(): Action[] {
-        return this.exposeIsBySectorDisplay()
-            ? this.actions.filter(({ sector }) => sector === this.sector)
-            : this.actions;
+        return this.annotations.reduce<Action[]>((acc, annotation) => {
+            if (isAction(annotation)) {
+                if (this.exposeIsBySectorDisplay() && annotation.sector === this.sector) {
+                    acc.push(annotation);
+                } else {
+                    acc.push(annotation);
+                }
+            }
+
+            return acc;
+        }, []);
     }
 
     async removeAction(actionId: string): Promise<void> {
         if (this.isSummaryDisplay) return;
 
-        const actionIndex = this.actions.findIndex(action => action.id === actionId);
+        const actionIndex = this.annotations.findIndex(action => action.id === actionId);
         if (actionIndex === -1) return;
 
         try {
             await this.electron.removeActionFromGame(actionId, this.gameNumber);
-            this.actions.splice(actionIndex, 1);
+            this.annotations.splice(actionIndex, 1);
         } catch (_) {
             this.toastService.showError('TOAST.ERROR.PROCESS_ACTION_REMOVED');
         }

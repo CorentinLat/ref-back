@@ -73,7 +73,7 @@
                 ></article>
             </button>
 
-            <article ngbDropdown class="d-inline-block" *ngIf="exposeHasDecisions()">
+            <article ngbDropdown class="d-inline-block" *ngIf="exposeHasAnnotations()">
                 <button ngbDropdownToggle class="btn btn-primary" [disabled]="isDownloadingSummary">
                     {{ 'PAGE.SUMMARY.BUTTONS.EXPORT_SUMMARY.' | translate }}
                     <i class="bi bi-table mx-1" *ngIf="!isDownloadingSummary"></i>
@@ -104,7 +104,7 @@
         class="summary-body"
         [closeOthers]="true"
         activeIds="statistics"
-        *ngIf="exposeHasDecisions()"
+        *ngIf="exposeHasAnnotations()"
     >
         <ngb-panel
             id="statistics"
@@ -112,37 +112,37 @@
             *ngIf="exposeHasStatistics()"
         >
             <ng-template ngbPanelContent>
-                <app-summary-statistics [actions]="game.actions"></app-summary-statistics>
+                <app-summary-statistics [actions]="actions"></app-summary-statistics>
             </ng-template>
         </ngb-panel>
 
         <ngb-panel id="all_actions" title="{{ 'PAGE.SUMMARY.PANEL.ALL_ACTIONS' | translate }}">
             <ng-template ngbPanelContent>
-                <app-full-display-actions
-                    [actions]="exposeActionsSortedByTime()"
+                <app-full-display-annotations
+                    [annotations]="exposeAnnotationsSortedByTime()"
                     [gameNumber]="gameNumber"
                     [isSummaryDisplay]="true"
-                ></app-full-display-actions>
+                ></app-full-display-annotations>
             </ng-template>
         </ngb-panel>
 
         <ngb-panel
             [id]="sector"
             title="{{ 'PAGE.SUMMARY.PANEL.' + sector | translate }}"
-            *ngFor="let sector of exposeSectorsWithAtLeastOneDecision()"
+            *ngFor="let sector of exposeSectorsWithAtLeastOneAction()"
         >
             <ng-template ngbPanelContent>
-                <app-full-display-actions
-                    [actions]="exposeActionsSortedByTime()"
+                <app-full-display-annotations
+                    [annotations]="exposeAnnotationsSortedByTime()"
                     [gameNumber]="gameNumber"
                     [isSummaryDisplay]="true"
                     [sector]="sector"
-                ></app-full-display-actions>
+                ></app-full-display-annotations>
             </ng-template>
         </ngb-panel>
     </ngb-accordion>
 
-    <article class="no-summary" *ngIf="!exposeHasDecisions()">
+    <article class="no-summary" *ngIf="!exposeHasAnnotations()">
         {{ 'PAGE.SUMMARY.NO_DECISION' | translate }}
     </article>
 </section>

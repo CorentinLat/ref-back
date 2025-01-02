@@ -32,7 +32,7 @@ $header-gap: 20px;
 
         height: calc(100vh - #{$match-analysis-component-margin} * 2 - #{$header-height} - #{$header-gap});
 
-        .video-and-actions {
+        .video-and-annotations {
             display: flex;
             gap: 20px;
             height: 100%;
@@ -43,14 +43,14 @@ $header-gap: 20px;
                 flex-grow: 2;
             }
 
-            .actions-container {
+            .annotations-container {
                 display: flex;
                 flex-direction: column;
                 flex-basis: 0;
                 flex-grow: 3;
                 overflow: hidden;
 
-                .actions {
+                .annotations {
                     display: flex;
                     flex-direction: column;
                     overflow: hidden;
@@ -58,7 +58,7 @@ $header-gap: 20px;
             }
 
             &.collapsed {
-                .actions-container {
+                .annotations-container {
                     flex-grow: 0;
                     min-width: 100px;
                 }

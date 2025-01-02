@@ -1,0 +1,15 @@
+<p class="annotation-comments-display-component" [ngClass]="{ 'inline': inline }">
+    <span *ngIf="annotation.comment">
+        <span class="role">
+            {{ 'PAGE.MATCH_ANALYSIS.ROLE.REFEREE' | translate }} :
+        </span>
+        {{ annotation.comment }}
+    </span>
+    <br *ngIf="annotation.comment && annotation.commentFromAdviser && !inline">
+    <span *ngIf="annotation.commentFromAdviser">
+        <span class="role">
+            {{ 'PAGE.MATCH_ANALYSIS.ROLE.ADVISER' | translate }} :
+        </span>
+        {{ annotation.commentFromAdviser }}
+    </span>
+</p>

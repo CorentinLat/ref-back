@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { Action, Game, SummaryExportType } from '../../../../../type/refBack';
+import { Action, Annotation, Game, isAction, SummaryExportType } from '../../../../../type/refBack';
 
 import { ClipProcessLoaderModalComponent } from '../../component/modal/process-loader/clip-process-loader-modal.component';
 
@@ -28,6 +28,10 @@ export class SummaryComponent implements OnInit {
         private router: Router,
         private toastService: ToastService,
     ) {}
+
+    get actions(): Action[] {
+        return this.game.actions.filter(isAction);
+    }
 
     ngOnInit(): void {
         const gameNumber = this.route.snapshot.queryParamMap.get('gameNumber');
@@ -126,24 +130,24 @@ export class SummaryComponent implements OnInit {
         return this.game.actions.some(action => action.clip);
     }
 
-    exposeHasDecisions(): boolean {
+    exposeHasAnnotations(): boolean {
         return Boolean(this.game?.actions?.length);
     }
 
     exposeHasStatistics(): boolean {
         return this.game.actions.some(action =>
-            action.type === 'PENALTY' || action.type === 'FREE_KICK'
+            isAction(action) && (action.type === 'PENALTY' || action.type === 'FREE_KICK')
         );
     }
 
-    exposeActionsSortedByTime(): Action[] {
+    exposeAnnotationsSortedByTime(): (Action|Annotation)[] {
         return this.game.actions.sort((a, b) => a.second - b.second);
     }
 
-    exposeSectorsWithAtLeastOneDecision(): string[] {
+    exposeSectorsWithAtLeastOneAction(): string[] {
         const uniqueSectors = this.game.actions
             .reduce<Set<string>>((sectors, action) => {
-                sectors.add(action.sector);
+                if(isAction(action)) sectors.add(action.sector);
                 return sectors;
             }, new Set());
 

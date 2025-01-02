@@ -1,17 +1,17 @@
 import { Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
 
-import { Action } from '../../../../../../../type/refBack';
+import { Action, Annotation } from '../../../../../../../type/refBack';
 
 import { DateTimeService } from '../../../../service/DateTimeService';
 
 @Component({
-  selector: 'app-collapse-display-actions',
-  templateUrl: './collapse-display-actions.component.html',
-  styleUrls: ['./collapse-display-actions.component.scss']
+  selector: 'app-collapse-display-annotations',
+  templateUrl: './collapse-display-annotations.component.html',
+  styleUrls: ['./collapse-display-annotations.component.scss']
 })
-export class CollapseDisplayActionsComponent implements OnInit, OnDestroy {
-    @Input() actions!: Action[];
+export class CollapseDisplayAnnotationsComponent implements OnInit, OnDestroy {
+    @Input() annotations!: (Action|Annotation)[];
 
     @Input() newActionAdded!: Observable<Action>;
 
@@ -31,7 +31,7 @@ export class CollapseDisplayActionsComponent implements OnInit, OnDestroy {
 
     ngOnInit(): void {
         this.newActionSubscription = this.newActionAdded.subscribe(action => {
-            const index = this.actions.findIndex(({ id }) => id === action.id);
+            const index = this.annotations.findIndex(({ id }) => id === action.id);
             const actionPosition = Math.max(
                 index * this.actionHeightPx + Math.max(index - 1, 0) * this.gapPx - this.topMarginPx,
                 0

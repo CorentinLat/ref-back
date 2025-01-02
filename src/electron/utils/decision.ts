@@ -1,4 +1,4 @@
-import { Decision } from '../../../type/refBack';
+import { Decision, isAction } from '../../../type/refBack';
 
 import { getGame } from './game';
 
@@ -7,20 +7,24 @@ export const getDecisionsForGames = (gameNumbers: string[]): Decision[] =>
 
 const getDecisionsForGame = (gameNumber: string): Decision[] => {
     const game = getGame(gameNumber);
-    if (!game) { return []; }
+    if (!game) return [];
 
     const videoPath = game.information.videoPath;
 
-    return game.actions.map(action => ({
-        gameNumber,
-        videoPath,
-        second: action.second,
-        sector: action.sector,
-        fault: action.fault,
-        precise: action.precise,
-        type: action.type,
-        card: action.card,
-        comment: action.comment,
-        commentFromAdviser: action.commentFromAdviser,
-    }));
+    return game.actions.reduce<Decision[]>((acc, action) =>
+            isAction(action)
+                ? [...acc, {
+                    gameNumber,
+                    videoPath,
+                    second: action.second,
+                    sector: action.sector,
+                    fault: action.fault,
+                    precise: action.precise,
+                    type: action.type,
+                    card: action.card,
+                    comment: action.comment,
+                    commentFromAdviser: action.commentFromAdviser,
+                }]
+                : acc
+        , []);
 };

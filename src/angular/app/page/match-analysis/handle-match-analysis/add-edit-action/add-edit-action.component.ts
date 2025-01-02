@@ -166,7 +166,7 @@ export class AddEditActionComponent implements OnInit, OnDestroy {
         };
 
         try {
-            const actionCreated = await this.electron.addActionToGame(newAction, this.gameNumber);
+            const actionCreated = await this.electron.addAnnotationToGame<Action>(newAction, this.gameNumber);
             this.toastService.showSuccess('TOAST.SUCCESS.PROCESS_ACTION_ADDED');
             this.actionAdded.emit(actionCreated);
         } catch (_) {
@@ -187,7 +187,7 @@ export class AddEditActionComponent implements OnInit, OnDestroy {
         };
 
         try {
-            const actionEdited = await this.electron.editActionFromGame(actionToEdit, this.gameNumber);
+            const actionEdited = await this.electron.editAnnotationFromGame(actionToEdit, this.gameNumber);
             this.toastService.showSuccess('TOAST.SUCCESS.PROCESS_ACTION_EDITED');
             this.actionEdited.emit(actionEdited);
         } catch (_) {

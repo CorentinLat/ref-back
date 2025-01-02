@@ -1,5 +1,5 @@
-<section class="collapse-display-actions-component" #scrollable>
-    <section class="decision-card decision" *ngFor="let action of actions">
+<section class="collapse-display-annotations-component" #scrollable>
+    <section class="decision-card decision" *ngFor="let action of annotations">
         <section class="d-flex align-items-center justify-content-between">
             <article class="second">
                 <button
@@ -39,7 +39,7 @@
 
             <article class="comment" *ngIf="action.comment || action.commentFromAdviser">
                 <ng-template #popContent>
-                    <app-action-comments-display [action]="action"></app-action-comments-display>
+                    <app-annotation-comments-display [annotation]="action"></app-annotation-comments-display>
                 </ng-template>
                 <i
                     class="bi bi-chat text-primary"
@@ -56,7 +56,7 @@
         </section>
     </section>
 
-    <p class="decision-card no-decision" *ngIf="!actions.length">
+    <p class="decision-card no-decision" *ngIf="!annotations.length">
         {{ 'PAGE.MATCH_ANALYSIS.ACTIONS.NO_ACTION_SHORT' | translate }}
 
         <button class="btn btn-primary btn-sm" (click)="editVideo.emit()">

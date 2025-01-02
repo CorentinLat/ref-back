@@ -3,7 +3,7 @@ import path from 'path';
 
 import IpcMainEvent = Electron.IpcMainEvent;
 
-import { Game, NewGameInformation } from '../../../type/refBack';
+import { Game, isAction, NewGameInformation } from '../../../type/refBack';
 
 import { CancelVideoProcessingError } from '../domain/error/CancelVideoProcessingError';
 import { NoVideoError } from '../domain/error/NoVideoError';
@@ -140,12 +140,14 @@ export async function generateGameClips(game: Game, destClipsDirectory: string, 
     const videoExtension = extractFileExtension(videoPath);
 
     await Promise.all(game.actions.map((action, index) => {
-        const { fault, clip } = action;
+        const { clip } = action;
         if (!clip) {
             return Promise.resolve();
         }
 
-        const clipName = `#${index + 1} ${translate(fault)}.${videoExtension}`;
+        const clipName = isAction(action)
+            ? `#${index + 1} ${translate(action.fault)}.${videoExtension}`
+            : `#${index + 1} ${(action.comment || action.commentFromAdviser || '').slice(0, 20)}.${videoExtension}`;
         const clipPath = path.join(destClipsDirectory, clipName);
         const clipDuration = clip.end - clip.start;
         const startTime = Date.now();

@@ -5,11 +5,10 @@ import * as fs from 'fs';
 import { Observable } from 'rxjs';
 
 import {
-    Action,
+    Annotation,
     Decision,
     Game,
     GameInformation,
-    NewAction,
     NewGameInformation,
     SummaryExportType,
 } from '../../../../type/refBack';
@@ -132,33 +131,33 @@ export class ElectronService {
         });
     }
 
-    addActionToGame(newAction: NewAction, gameNumber: string): Promise<Action> {
-        return new Promise<Action>((resolve, reject) => {
-            this.ipcRenderer?.once('add_action_succeeded', (_, action: Action) => {
-                this.ipcRenderer?.removeAllListeners('add_action_failed');
-                resolve(action);
+    addAnnotationToGame<T extends Annotation>(annotationToCreate: Omit<T, 'id'>, gameNumber: string): Promise<T> {
+        return new Promise<T>((resolve, reject) => {
+            this.ipcRenderer?.once('add_annotation_succeeded', (_, annotation: T) => {
+                this.ipcRenderer?.removeAllListeners('add_annotation_failed');
+                resolve(annotation);
             });
-            this.ipcRenderer?.once('add_action_failed', () => {
-                this.ipcRenderer?.removeAllListeners('add_action_succeeded');
+            this.ipcRenderer?.once('add_annotation_failed', () => {
+                this.ipcRenderer?.removeAllListeners('add_annotation_succeeded');
                 reject();
             });
 
-            this.ipcRenderer?.send('add_action', { newAction, gameNumber });
+            this.ipcRenderer?.send('add_annotation', { annotationToCreate, gameNumber });
         });
     }
 
-    editActionFromGame(actionToEdit: Action, gameNumber: string): Promise<Action> {
-        return new Promise<Action>((resolve, reject) => {
-            this.ipcRenderer?.once('edit_action_succeeded', (_, action: Action) => {
-                this.ipcRenderer?.removeAllListeners('edit_action_failed');
-                resolve(action);
+    editAnnotationFromGame<T extends Annotation>(annotationToEdit: T, gameNumber: string): Promise<T> {
+        return new Promise<T>((resolve, reject) => {
+            this.ipcRenderer?.once('edit_annotation_succeeded', (_, annotation: T) => {
+                this.ipcRenderer?.removeAllListeners('edit_annotation_failed');
+                resolve(annotation);
             });
-            this.ipcRenderer?.once('edit_action_failed', () => {
-                this.ipcRenderer?.removeAllListeners('edit_action_succeeded');
+            this.ipcRenderer?.once('edit_annotation_failed', () => {
+                this.ipcRenderer?.removeAllListeners('edit_annotation_succeeded');
                 reject();
             });
 
-            this.ipcRenderer?.send('edit_action', { actionToEdit, gameNumber });
+            this.ipcRenderer?.send('edit_annotation', { annotationToEdit, gameNumber });
         });
     }
 

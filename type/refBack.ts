@@ -1,19 +1,26 @@
-export type Action = {
+export type Annotation = {
     id: string;
     second: number;
+    comment?: string;
+    commentFromAdviser?: string;
+    fromAdviser?: boolean;
+    clip?: { start: number; end: number };
+};
+export type Action = Annotation & {
     type: 'PLAY_ON' | 'TOUCH' | 'SCRUM' | 'FREE_KICK' | 'PENALTY' | 'RETURNED_PENALTY' | 'PENALTY_TRY' | 'TRY' | 'NO_TRY' | 'RESTART_KICK';
     card?: 'WARNING' | 'RED' | 'YELLOW' | 'WHITE';
     against: 'LOCAL' | 'VISITOR';
     sector: 'SCRUM' | 'FOUL_PLAY' | 'SPACE' | 'RUCK-TACKLE' | 'LINE_OUT-MAUL' | 'ADVANTAGE';
     fault: string;
     precise: 'YES' | 'NO' | 'DOUBT';
-    comment?: string;
-    commentFromAdviser?: string;
-    fromAdviser?: boolean;
-    clip?: { start: number; end: number };
 };
+export type NewAnnotation = Omit<Annotation, 'id'>;
 export type NewAction = Omit<Action, 'id'>;
+export type AnnotationForm = Omit<Annotation, 'id' | 'commentFromAdviser' | 'fromAdviser'>;
 export type ActionForm = Omit<Action, 'id' | 'commentFromAdviser' | 'fromAdviser'>;
+
+export const isAction = (annotation: Action|Annotation): annotation is Action => 'type' in annotation;
+export const isAnnotation = (annotation: Action|Annotation): annotation is Annotation => !('type' in annotation);
 
 export type GameInformation = {
     gameNumber: string;
@@ -31,7 +38,7 @@ export type NewGameInformation = Omit<GameInformation, 'videoPath'> & {
 };
 
 export type Game = {
-    actions: Action[];
+    actions: (Action|Annotation)[];
     information: GameInformation;
     gameDescription?: string;
     gameDescriptionFromAdviser?: string;
