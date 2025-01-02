@@ -1,0 +1,22 @@
+.annotation-full-component {
+    border-bottom: 1px solid lightgray;
+    padding: 10px 5px;
+
+    .box {
+        .clip-minute {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        &.comments {
+            display: flex;
+            gap: 5px;
+            width: 100%;
+
+            .referee, .adviser {
+                width: 50%;
+            }
+        }
+    }
+}

@@ -28,13 +28,22 @@
     </section>
 
     <section class="actions-container" *ngIf="annotations.length > 0" #scrollable>
-        <app-full-action
-            *ngFor="let action of exposeActions()"
-            [action]="action"
-            [isSummaryDisplay]="isSummaryDisplay"
-            [isBySectorDisplay]="exposeIsBySectorDisplay()"
-            (removeActionEvent)="removeAction($event)"
-        ></app-full-action>
+        <article *ngFor="let annotation of exposeAnnotations()">
+            <app-full-action
+                [action]="annotation"
+                [isSummaryDisplay]="isSummaryDisplay"
+                [isBySectorDisplay]="exposeIsBySectorDisplay()"
+                (removeActionEvent)="removeAnnotation($event)"
+                *ngIf="isAction(annotation)"
+            ></app-full-action>
+
+            <app-full-annotation
+                [annotation]="annotation"
+                [isSummaryDisplay]="isSummaryDisplay"
+                (removeAnnotationEvent)="removeAnnotation($event)"
+                *ngIf="isAnnotation(annotation)"
+            ></app-full-annotation>
+        </article>
     </section>
 
     <article class="no-action" *ngIf="annotations.length === 0">

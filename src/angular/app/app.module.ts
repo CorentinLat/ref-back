@@ -22,6 +22,7 @@ import { AnnotationsComponent } from './page/match-analysis/annotations/annotati
 import { CollapseDisplayAnnotationsComponent } from './page/match-analysis/annotations/collapse-display/collapse-display-annotations.component';
 import { FullDisplayActionsComponent } from './page/match-analysis/annotations/full-display/full-display-actions.component';
 import { ActionFullComponent } from './page/match-analysis/annotations/full-display/action/action-full.component';
+import { AnnotationFullComponent } from './page/match-analysis/annotations/full-display/annotation/annotation-full.component';
 import { HandleMatchAnalysisComponent } from './page/match-analysis/handle-match-analysis/handle-match-analysis.component';
 import { AddEditActionComponent } from './page/match-analysis/handle-match-analysis/add-edit-action/add-edit-action.component';
 import { AddEditAnnotationComponent } from './page/match-analysis/handle-match-analysis/add-edit-annotation/add-edit-annotation.component';
@@ -36,7 +37,8 @@ import { LoadGamesExistingModalComponent } from './component/modal/load-games-ex
 import { NotEnoughRemainingSpaceModalComponent } from './component/modal/not-enough-remaining-space-modal/not-enough-remaining-space-modal.component';
 import { VideoProcessLoaderModalComponent } from './component/modal/process-loader/video-process-loader-modal.component';
 import { VideoEditorModalComponent } from './component/modal/video-editor-modal/video-editor-modal.component';
-import { AnnotationCommentsDisplayComponent } from './component/shared/action-comments-display/annotation-comments-display.component';
+import { AnnotationCommentDisplayComponent } from './component/shared/annotation-comment-display/annotation-comment-display.component';
+import { AnnotationCommentsDisplayComponent } from './component/shared/annotation-comments-display/annotation-comments-display.component';
 import { CardComponent } from './component/shared/card/card.component';
 import { GameInformationComponent } from './component/shared/game-information/game-information.component';
 import { VideoViewerComponent } from './component/shared/video-viewer/video-viewer.component';
@@ -49,11 +51,13 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader => new Transla
 
 @NgModule({
     declarations: [
-        AnnotationCommentsDisplayComponent,
         ActionFullComponent,
-        AnnotationsComponent,
         AddEditActionComponent,
         AddEditAnnotationComponent,
+        AnnotationCommentDisplayComponent,
+        AnnotationCommentsDisplayComponent,
+        AnnotationFullComponent,
+        AnnotationsComponent,
         AppComponent,
         CardComponent,
         ClipProcessLoaderModalComponent,

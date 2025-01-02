@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 
-import { Action, Annotation } from '../../../../../../type/refBack';
+import { Annotation } from '../../../../../../type/refBack';
 
 @Component({
   selector: 'app-annotation-comments-display',
@@ -8,6 +8,6 @@ import { Action, Annotation } from '../../../../../../type/refBack';
   styleUrls: ['./annotation-comments-display.component.scss']
 })
 export class AnnotationCommentsDisplayComponent {
-    @Input() annotation!: Action|Annotation;
+    @Input() annotation!: Annotation;
     @Input() inline = false;
 }

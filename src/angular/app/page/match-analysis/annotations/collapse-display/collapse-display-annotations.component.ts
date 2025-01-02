@@ -17,8 +17,8 @@ export class CollapseDisplayAnnotationsComponent implements OnInit, OnDestroy {
 
     @ViewChild('scrollable') scrollable!: ElementRef;
 
-    readonly isAction = isAction;
-    readonly isAnnotation = isAnnotation;
+    protected readonly isAction = isAction;
+    protected readonly isAnnotation = isAnnotation;
 
     private readonly annotationHeightPx = 100;
     private readonly gapPx = 14;

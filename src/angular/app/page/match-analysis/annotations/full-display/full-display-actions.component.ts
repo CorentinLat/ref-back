@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import { Subscription } from 'rxjs';
 
-import { Action, Annotation, isAction } from '../../../../../../../type/refBack';
+import { Action, Annotation, isAction, isAnnotation } from '../../../../../../../type/refBack';
 
 import { ElectronService } from '../../../../service/ElectronService';
 import { MatchAnalysisService } from '../../../../service/MatchAnalysisService';
@@ -31,6 +31,9 @@ export class FullDisplayActionsComponent implements OnInit, OnDestroy {
 
     @ViewChild('scrollable') scrollable!: ElementRef;
 
+    protected readonly isAction = isAction;
+    protected readonly isAnnotation = isAnnotation;
+
     private readonly annotationHeightPx = 59;
     private readonly topMarginPx = 10;
 
@@ -41,8 +44,7 @@ export class FullDisplayActionsComponent implements OnInit, OnDestroy {
         private readonly matchAnalysisService: MatchAnalysisService,
         private readonly toastService: ToastService,
         private readonly videoViewerService: VideoViewerService,
-    ) {
-    }
+    ) {}
 
     ngOnInit(): void {
         this.newAnnotationSubscription = this.matchAnalysisService.annotationAdded.subscribe(annotation => {
@@ -63,31 +65,29 @@ export class FullDisplayActionsComponent implements OnInit, OnDestroy {
         return this.sector !== null;
     }
 
-    exposeActions(): Action[] {
-        return this.annotations.reduce<Action[]>((acc, annotation) => {
-            if (isAction(annotation)) {
-                if (this.exposeIsBySectorDisplay()) {
-                    if (annotation.sector === this.sector) {
-                        acc.push(annotation);
-                    }
-                } else {
+    exposeAnnotations(): (Action|Annotation)[] {
+        return this.annotations.reduce<(Action|Annotation)[]>((acc, annotation) => {
+            if (this.exposeIsBySectorDisplay()) {
+                if (isAction(annotation) && annotation.sector === this.sector) {
                     acc.push(annotation);
                 }
+            } else {
+                acc.push(annotation);
             }
 
             return acc;
         }, []);
     }
 
-    async removeAction(actionId: string): Promise<void> {
+    async removeAnnotation(annotationId: string): Promise<void> {
         if (this.isSummaryDisplay) return;
 
-        const actionIndex = this.annotations.findIndex(action => action.id === actionId);
-        if (actionIndex === -1) return;
+        const annotationIndex = this.annotations.findIndex(action => action.id === annotationId);
+        if (annotationIndex === -1) return;
 
         try {
-            await this.electron.removeActionFromGame(actionId, this.gameNumber);
-            this.annotations.splice(actionIndex, 1);
+            await this.electron.removeActionFromGame(annotationId, this.gameNumber);
+            this.annotations.splice(annotationIndex, 1);
         } catch (_) {
             this.toastService.showError('TOAST.ERROR.PROCESS_ACTION_REMOVED');
         }
