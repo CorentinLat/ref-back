@@ -23,11 +23,11 @@ import { VideoViewerService } from '../../../../service/VideoViewerService';
     encapsulation: ViewEncapsulation.None,
 })
 export class FullDisplayActionsComponent implements OnInit, OnDestroy {
-    @Input() annotations!: (Action|Annotation)[];
+    @Input() annotations!: (Action | Annotation)[];
     @Input() gameNumber!: string;
 
     @Input() isSummaryDisplay = false;
-    @Input() sector: string|null = null;
+    @Input() sector: string | null = null;
 
     @ViewChild('scrollable') scrollable!: ElementRef;
 
@@ -41,7 +41,8 @@ export class FullDisplayActionsComponent implements OnInit, OnDestroy {
         private readonly matchAnalysisService: MatchAnalysisService,
         private readonly toastService: ToastService,
         private readonly videoViewerService: VideoViewerService,
-    ) {}
+    ) {
+    }
 
     ngOnInit(): void {
         this.newAnnotationSubscription = this.matchAnalysisService.annotationAdded.subscribe(annotation => {
@@ -65,8 +66,10 @@ export class FullDisplayActionsComponent implements OnInit, OnDestroy {
     exposeActions(): Action[] {
         return this.annotations.reduce<Action[]>((acc, annotation) => {
             if (isAction(annotation)) {
-                if (this.exposeIsBySectorDisplay() && annotation.sector === this.sector) {
-                    acc.push(annotation);
+                if (this.exposeIsBySectorDisplay()) {
+                    if (annotation.sector === this.sector) {
+                        acc.push(annotation);
+                    }
                 } else {
                     acc.push(annotation);
                 }
