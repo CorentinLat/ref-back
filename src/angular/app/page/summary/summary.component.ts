@@ -5,6 +5,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Action, Annotation, Game, isAction, SummaryExportType } from '../../../../../type/refBack';
 
 import { ClipProcessLoaderModalComponent } from '../../component/modal/process-loader/clip-process-loader-modal.component';
+import { ExportGameModalComponent } from '../../component/modal/export-game-modal/export-game-modal.component';
 
 import { ElectronService } from '../../service/ElectronService';
 import { ToastService } from '../../service/ToastService';
@@ -120,6 +121,11 @@ export class SummaryComponent implements OnInit {
         } finally {
             this.isDownloadingSummary = false;
         }
+    }
+
+    async handleOpenExportGameModal(): Promise<void> {
+        const modal = this.modalService.open(ExportGameModalComponent, { backdrop: 'static', centered: true });
+        modal.componentInstance.gameNumber = this.gameNumber;
     }
 
     handleNavigateToHome(): void {

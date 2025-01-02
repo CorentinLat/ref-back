@@ -32,6 +32,7 @@ import { StatisticsComponent } from './page/summary/statistics/statistics.compon
 
 import { ClipProcessLoaderModalComponent } from './component/modal/process-loader/clip-process-loader-modal.component';
 import { EditGameCommentModalComponent } from './component/modal/edit-game-comment-modal/edit-game-comment-modal.component';
+import { ExportGameModalComponent } from './component/modal/export-game-modal/export-game-modal.component';
 import { GameNumberExistingModalComponent } from './component/modal/game-number-existing-modal/game-number-existing-modal.component';
 import { LoadGamesExistingModalComponent } from './component/modal/load-games-existing-modal/load-games-existing-modal.component';
 import { NotEnoughRemainingSpaceModalComponent } from './component/modal/not-enough-remaining-space-modal/not-enough-remaining-space-modal.component';
@@ -64,6 +65,7 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader => new Transla
         CollapseDisplayAnnotationsComponent,
         DecisionsComponent,
         EditGameCommentModalComponent,
+        ExportGameModalComponent,
         FullDisplayActionsComponent,
         GameCommentDisplayComponent,
         GameInformationComponent,

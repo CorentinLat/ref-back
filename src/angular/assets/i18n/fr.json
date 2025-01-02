@@ -5,9 +5,16 @@
         "gameDescription": "Description du Jeu",
         "globalPerformance": "Performance Globale"
       },
-      "COMMENT": "Comment",
       "CANCEL": "Annuler",
       "SAVE": "Sauvegarder"
+    },
+    "EXPORT_GAME": {
+      "TITLE": "Exporter le Match",
+      "INCLUDE_VIDEO": "Inclure la vidéo dans l'export du match ?",
+      "YES": "Oui",
+      "NO": "Non",
+      "CANCEL": "Annuler",
+      "EXPORT": "Exporter"
     },
     "GAME_NUMBER_EXISTING": {
       "TITLE": "Rencontre existante",
@@ -341,7 +348,8 @@
         "EXPORT_SUMMARY": {
           "": "Exporter",
           "EXCEL": "Excel",
-          "PDF": "Pdf"
+          "PDF": "Pdf",
+          "SHARE": "Partager"
         },
         "NAVIGATE_HOME": "Terminer"
       },
@@ -386,6 +394,7 @@
       "PROCESS_DOWNLOAD_CLIPS": "Impossible de télécharger les clips...",
       "PROCESS_DOWNLOAD_VIDEOS": "Impossible de télécharger les vidéos...",
       "PROCESS_DOWNLOAD_SUMMARY": "Impossible d'exporter le résumé...",
+      "PROCESS_EXPORT_GAME": "Impossible d'exporter le match...",
       "PROCESS_GAME": "Impossible de charger le match...",
       "PROCESS_GAME_COMMENT": "Impossible de mettre à jour le commentaire...",
       "PROCESS_VIDEO": "Impossible de traiter la vidéo..."
@@ -399,6 +408,7 @@
       "PROCESS_ACTION_ADDED": "Action ajoutée !",
       "PROCESS_ACTION_EDITED": "Action mise à jour !",
       "PROCESS_CUT_VIDEO": "Vidéo éditée !",
+      "PROCESS_EXPORT_GAME": "Match exporté !",
       "gameDescription_EDITED": "Description mise à jour !",
       "globalPerformance_EDITED": "Performance mise à jour !"
     }

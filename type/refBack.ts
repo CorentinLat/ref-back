@@ -45,6 +45,7 @@ export type Game = {
     globalPerformance?: string;
     globalPerformanceFromAdviser?: string;
 };
+export type GameToExport = Omit<Game, 'actions' | 'information'> & { information: Omit<GameInformation, 'videoPath'> };
 
 export type AdviserEditableGameComment = 'gameDescriptionFromAdviser' | 'globalPerformanceFromAdviser';
 export type RefereeEditableGameComment = 'gameDescription' | 'globalPerformance';

@@ -14,6 +14,7 @@ import {
 
 import { getDecisionsForGames } from './utils/decision';
 import { askSaveDirectory, askSaveFile, askSaveVideoPath } from './utils/dialog';
+import { exportGame } from './utils/exportImportGame';
 import { extractFileExtension } from './utils/file';
 import {
     addNewAnnotationToGame,
@@ -56,6 +57,7 @@ export default function(ipcMain: IpcMain) {
     ipcMain.on('open_url_in_browser', onOpenUrlInBrowserListener);
     ipcMain.on('get_decisions', onGetDecisionsListener);
     ipcMain.on('cut_video', onCutVideoListener);
+    ipcMain.on('export_game', onExportGameListener);
 }
 
 const onInitAppListener = async (event: IpcMainEvent) => {
@@ -355,5 +357,32 @@ const onCutVideoListener = async (event: IpcMainEvent, { videoPath, cuts, editGa
             logger.error(`error onCutVideoListener: ${error}`);
             event.reply('cut_video_failed');
         }
+    }
+};
+
+type OnExportGameListenerArgs = { gameNumber: string; withVideo: boolean };
+const onExportGameListener = async (event: IpcMainEvent, { gameNumber, withVideo }: OnExportGameListenerArgs)=> {
+    logger.debug('OnExportGameListener');
+
+    const game = getGame(gameNumber);
+    if (!game) {
+        logger.debug('Game not found.');
+        event.reply('export_game_failed');
+        return;
+    }
+
+    const savePath = askSaveFile(gameNumber, 'ref');
+    logger.debug(`Export save path : ${savePath}`);
+    if (!savePath) {
+        logger.debug(`Export game ${gameNumber} closed`);
+        event.reply('export_game_failed', { closed: true });
+        return;
+    }
+
+    const isExported = await exportGame(game, savePath, withVideo);
+    if (isExported) {
+        event.reply('export_game_succeeded');
+    } else {
+        event.reply('export_game_failed');
     }
 };

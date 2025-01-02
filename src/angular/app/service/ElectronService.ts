@@ -269,4 +269,19 @@ export class ElectronService {
             this.ipcRenderer?.send('cut_video', { videoPath, cuts, editGame });
         });
     }
+
+    exportGame(gameNumber: string, withVideo: boolean): Promise<void> {
+        return new Promise((resolve, reject) => {
+            this.ipcRenderer?.once('export_game_succeeded', () => {
+                this.ipcRenderer?.removeAllListeners('export_game_failed');
+                resolve();
+            });
+            this.ipcRenderer?.once('export_game_failed', (_, error: any) => {
+                this.ipcRenderer?.removeAllListeners('export_game_succeeded');
+                reject(error);
+            });
+
+            this.ipcRenderer?.send('export_game', { gameNumber, withVideo });
+        });
+    }
 }
