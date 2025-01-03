@@ -8,7 +8,8 @@ import {
     Annotation,
     Decision,
     Game,
-    GameInformation,
+    GameInformation, ImportGameCommandArgs,
+    ImportGameInitCommandOutput,
     NewGameInformation,
     SummaryExportType,
 } from '../../../../type/refBack';
@@ -282,6 +283,36 @@ export class ElectronService {
             });
 
             this.ipcRenderer?.send('export_game', { gameNumber, withVideo });
+        });
+    }
+
+    importGameInit(): Promise<ImportGameInitCommandOutput> {
+        return new Promise<ImportGameInitCommandOutput>((resolve, reject) => {
+            this.ipcRenderer?.once('import_game_init_succeeded', (_, output: ImportGameInitCommandOutput) => {
+                this.ipcRenderer?.removeAllListeners('import_game_init_failed');
+                resolve(output);
+            });
+            this.ipcRenderer?.once('import_game_init_failed', (_, error: any) => {
+                this.ipcRenderer?.removeAllListeners('import_game_init_succeeded');
+                reject(error);
+            });
+
+            this.ipcRenderer?.send('import_game_init');
+        });
+    }
+
+    importGame(args: ImportGameCommandArgs): Promise<void> {
+        return new Promise<void>((resolve, reject) => {
+            this.ipcRenderer?.once('import_game_succeeded', () => {
+                this.ipcRenderer?.removeAllListeners('import_game_failed');
+                resolve();
+            });
+            this.ipcRenderer?.once('import_game_failed', (_, error: any) => {
+                this.ipcRenderer?.removeAllListeners('import_game_succeeded');
+                reject(error);
+            });
+
+            this.ipcRenderer?.send('import_game', args);
         });
     }
 }

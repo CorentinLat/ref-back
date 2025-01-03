@@ -34,6 +34,7 @@ import { ClipProcessLoaderModalComponent } from './component/modal/process-loade
 import { EditGameCommentModalComponent } from './component/modal/edit-game-comment-modal/edit-game-comment-modal.component';
 import { ExportGameModalComponent } from './component/modal/export-game-modal/export-game-modal.component';
 import { GameNumberExistingModalComponent } from './component/modal/game-number-existing-modal/game-number-existing-modal.component';
+import { ImportGameModalComponent } from './component/modal/import-game-modal/import-game-modal.component';
 import { LoadGamesExistingModalComponent } from './component/modal/load-games-existing-modal/load-games-existing-modal.component';
 import { NotEnoughRemainingSpaceModalComponent } from './component/modal/not-enough-remaining-space-modal/not-enough-remaining-space-modal.component';
 import { VideoProcessLoaderModalComponent } from './component/modal/process-loader/video-process-loader-modal.component';
@@ -72,6 +73,7 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader => new Transla
         GameNumberExistingModalComponent,
         HandleMatchAnalysisComponent,
         HomeComponent,
+        ImportGameModalComponent,
         LoadGamesExistingModalComponent,
         MatchAnalysisComponent,
         NotEnoughRemainingSpaceModalComponent,

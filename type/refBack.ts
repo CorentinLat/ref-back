@@ -72,3 +72,16 @@ export const extensionByExportType: Record<SummaryExportType, string> = {
     excel: 'xlsx',
     pdf: 'pdf',
 };
+
+export type ImportGameInitCommandOutput = {
+    gameTitle: string;
+    hasVideo: boolean;
+    gameNumberAlreadyExists: boolean;
+    hasOtherGames: boolean;
+};
+
+export type ImportGameCommandArgs = {
+    isCreatingNewGame?: boolean;
+    isOverriding?: boolean;
+    gameNumberToUse?: string;
+};

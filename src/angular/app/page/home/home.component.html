@@ -4,6 +4,13 @@
 
         <section class="actions-container" *ngIf="hasExistingGames">
             <button
+                class="btn btn-link"
+                (click)="handleOpenImportGame()"
+            >
+                <i class="bi bi-download"></i>
+                {{ 'PAGE.HOME.IMPORT_GAME' | translate }}
+            </button>
+            <button
                 class="btn btn-outline-primary"
                 (click)="handleDisplayExistingGames()"
             >

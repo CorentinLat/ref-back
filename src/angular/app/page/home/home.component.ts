@@ -5,24 +5,19 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Observable, of, OperatorFunction } from 'rxjs';
 import { catchError, debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 
-import {
-    GameNumberExistingModalComponent,
-} from '../../component/modal/game-number-existing-modal/game-number-existing-modal.component';
-import {
-    LoadGamesExistingModalComponent,
-} from '../../component/modal/load-games-existing-modal/load-games-existing-modal.component';
-import {
-    NotEnoughRemainingSpaceModalComponent,
-} from '../../component/modal/not-enough-remaining-space-modal/not-enough-remaining-space-modal.component';
-import {
-    VideoProcessLoaderModalComponent,
-} from '../../component/modal/process-loader/video-process-loader-modal.component';
+import { GameInformation } from '../../../../../type/refBack';
 
 import { DateTimeService } from '../../service/DateTimeService';
 import { ElectronService } from '../../service/ElectronService';
 import { FfrService } from '../../service/FfrService';
 import { FileService } from '../../service/FileService';
 import { ToastService } from '../../service/ToastService';
+
+import { GameNumberExistingModalComponent } from '../../component/modal/game-number-existing-modal/game-number-existing-modal.component';
+import { ImportGameModalComponent } from '../../component/modal/import-game-modal/import-game-modal.component';
+import { LoadGamesExistingModalComponent } from '../../component/modal/load-games-existing-modal/load-games-existing-modal.component';
+import { NotEnoughRemainingSpaceModalComponent } from '../../component/modal/not-enough-remaining-space-modal/not-enough-remaining-space-modal.component';
+import { VideoProcessLoaderModalComponent } from '../../component/modal/process-loader/video-process-loader-modal.component';
 
 @Component({
     selector: 'app-home',
@@ -38,26 +33,18 @@ export class HomeComponent implements OnInit {
 
     appVersion = '';
     hasExistingGames = false;
+    games: GameInformation[] = [];
 
     gameForm = new FormGroup({
-        gameNumber: new FormControl(
-            '',
-            [Validators.required, Validators.pattern('^\\d{2}\\s\\d{4}\\s\\d{4}$')],
-        ),
+        gameNumber: new FormControl('', [Validators.required, Validators.pattern('^\\d{2}\\s\\d{4}\\s\\d{4}$')]),
         date: new FormControl(this.dateService.getLastSundayDate(), Validators.required),
         teams: new FormGroup({
             local: new FormControl('', Validators.required),
             visitor: new FormControl('', Validators.required),
         }),
         score: new FormGroup({
-            local: new FormControl(
-                0,
-                [Validators.required, Validators.pattern('^\\d{1,3}$')],
-            ),
-            visitor: new FormControl(
-                0,
-                [Validators.required, Validators.pattern('^\\d{1,3}$')],
-            ),
+            local: new FormControl(0, [Validators.required, Validators.pattern('^\\d{1,3}$')]),
+            visitor: new FormControl(0, [Validators.required, Validators.pattern('^\\d{1,3}$')]),
         }),
         video: new FormGroup(
             {
@@ -144,6 +131,7 @@ export class HomeComponent implements OnInit {
             .initApp()
             .then(({ appVersion, games }) => {
                 this.appVersion = appVersion;
+                this.games = games;
                 this.hasExistingGames = games.length > 0;
             });
     }
@@ -218,13 +206,14 @@ export class HomeComponent implements OnInit {
             });
     };
 
-    async navigateToExploreDecisionsPage() {
-        await this.router.navigate(['/decisions']);
-    }
+    navigateToExploreDecisionsPage = () => this.router.navigate(['/decisions']);
 
-    handleOpenUrlInBrowser(url: string) {
-        this.electron.openUrlInBrowser(url);
-    }
+    handleOpenImportGame = () => {
+        const modal = this.modalService.open(ImportGameModalComponent, { centered: true });
+        modal.componentInstance.gameInformations = this.games;
+    };
+
+    handleOpenUrlInBrowser = (url: string) => this.electron.openUrlInBrowser(url);
 
     handleVideoSourceUpdated() {
         this.videoFileControl.reset();

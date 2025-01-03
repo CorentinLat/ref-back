@@ -1,0 +1,180 @@
+<section class="import-game-modal-component">
+    <article class="modal-header">
+        <h5 class="modal-title">{{ 'MODAL.IMPORT_GAME.TITLE' | translate }}</h5>
+        <button
+            type="button"
+            class="btn-close"
+            [disabled]="isImportingGame || !importDetails"
+            (click)="handleCloseModal()"
+        ></button>
+    </article>
+
+    <section class="modal-body text-center" *ngIf="importDetails">
+        <h5>{{ importDetails.gameTitle }}</h5>
+
+        <section *ngIf="!isImportingGame">
+            <p class="text-danger m-0 no-video-and-existing" *ngIf="!isImportValid">
+                {{ 'MODAL.IMPORT_GAME.NO_VIDEO_AND_EXISTING' | translate }}
+            </p>
+
+            <section class="configure-import" *ngIf="isImportValid">
+                <article *ngIf="importDetails.hasVideo">
+                    <p class="pre-line">{{ 'MODAL.IMPORT_GAME.HAS_VIDEO' | translate }}</p>
+
+                    <article class="btn-group btn-group-sm">
+                        <input
+                            id="yes"
+                            name="create-new"
+                            type="radio"
+                            class="btn-check"
+                            [disabled]="isImportingGame"
+                            [value]="true"
+                            [(ngModel)]="isCreatingNewGame"
+                            (change)="handleCreateGameChanged()"
+                        >
+                        <label class="btn btn-outline-primary" for="yes">
+                            {{ 'MODAL.IMPORT_GAME.CREATE_NEW' | translate }}
+                        </label>
+
+                        <input
+                            id="no"
+                            name="create-new"
+                            type="radio"
+                            class="btn-check"
+                            [disabled]="isImportingGame"
+                            [value]="false"
+                            [(ngModel)]="isCreatingNewGame"
+                            (change)="handleCreateGameChanged()"
+                        >
+                        <label class="btn btn-outline-primary" for="no">
+                            {{ 'MODAL.IMPORT_GAME.IMPORT_DECISIONS' | translate }}
+                        </label>
+                    </article>
+                </article>
+
+                <article *ngIf="isCreatingNewGame && importDetails.gameNumberAlreadyExists">
+                    <p class="pre-line">{{ 'MODAL.IMPORT_GAME.GAME_NUMBER_ALREADY_EXISTS' | translate }}</p>
+
+                    <article class="btn-group btn-group-sm">
+                        <input
+                            id="overrides"
+                            name="override-game"
+                            type="radio"
+                            class="btn-check"
+                            [disabled]="isImportingGame"
+                            [value]="true"
+                            [(ngModel)]="isOverriding"
+                        >
+                        <label class="btn btn-outline-danger" for="overrides">
+                            {{ 'MODAL.IMPORT_GAME.OVERRIDES' | translate }}
+                        </label>
+
+                        <input
+                            id="new"
+                            name="override-game"
+                            type="radio"
+                            class="btn-check"
+                            [disabled]="isImportingGame"
+                            [value]="false"
+                            [(ngModel)]="isOverriding"
+                        >
+                        <label class="btn btn-outline-success" for="new">
+                            {{ 'MODAL.IMPORT_GAME.CREATE_NEW' | translate }}
+                        </label>
+                    </article>
+                </article>
+
+                <article *ngIf="isCreatingNewGame && isOverriding === false">
+                    <p>{{ 'MODAL.IMPORT_GAME.INPUT_NEW_GAME_NUMBER' | translate }}</p>
+
+                    <div class="input-group">
+                        <span class="input-group-text">{{ gameNumberPrefix }}</span>
+                        <input
+                            class="form-control"
+                            id="game-number"
+                            type="text"
+                            [(ngModel)]="gameNumberToUse"
+                            game-number
+                        >
+                        <span class="input-group-text">{{ gameNumberSuffix }}</span>
+                    </div>
+                </article>
+
+                <p *ngIf="!importDetails.hasVideo">{{ 'MODAL.IMPORT_GAME.NO_VIDEO' | translate }}</p>
+
+                <article *ngIf="!importDetails.hasVideo || isCreatingNewGame === false">
+                    <p>{{ 'MODAL.IMPORT_GAME.CHOOSE_GAME_FOR_DECISIONS_IMPORT' | translate }}</p>
+
+                    <select class="form-select" [(ngModel)]="gameNumberToUse">
+                        <option selected></option>
+                        <option *ngFor="let game of gameInformations" [value]="game.gameNumber">
+                            {{ game.teams.local }} - {{ game.teams.visitor }}
+                        </option>
+                    </select>
+                </article>
+
+                <article *ngIf="!isCreatingNewGame && gameNumberToUse">
+                    <p>{{ 'MODAL.IMPORT_GAME.DECISIONS_CHOICE_OVERRIDE_CONCAT' | translate }}</p>
+
+                    <article class="btn-group btn-group-sm">
+                        <input
+                            id="overrides-decisions"
+                            name="override-decisions"
+                            type="radio"
+                            class="btn-check"
+                            [disabled]="isImportingGame"
+                            [value]="true"
+                            [(ngModel)]="isOverriding"
+                        >
+                        <label class="btn btn-outline-danger" for="overrides-decisions">
+                            {{ 'MODAL.IMPORT_GAME.OVERRIDES' | translate }}
+                        </label>
+
+                        <input
+                            id="concat-decisions"
+                            name="override-decisions"
+                            type="radio"
+                            class="btn-check"
+                            [disabled]="isImportingGame"
+                            [value]="false"
+                            [(ngModel)]="isOverriding"
+                        >
+                        <label class="btn btn-outline-primary" for="concat-decisions">
+                            {{ 'MODAL.IMPORT_GAME.CONCAT' | translate }}
+                        </label>
+                    </article>
+                </article>
+            </section>
+        </section>
+
+        <article class="importing" *ngIf="isImportingGame">
+            {{ 'MODAL.IMPORT_GAME.IMPORTING' | translate }}
+            <div class="spinner-border spinner-border-sm text-primary" role="status">
+                <span class="visually-hidden">{{ 'MODAL.IMPORT_GAME.IMPORTING' | translate }}</span>
+            </div>
+        </article>
+    </section>
+
+    <section class="modal-body text-center" *ngIf="!importDetails">
+        <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+    </section>
+
+    <article class="modal-footer">
+        <button
+            type="button"
+            class="btn btn-outline-danger"
+            [disabled]="isImportingGame || !importDetails"
+            (click)="handleCloseModal()"
+        >
+            {{ 'MODAL.IMPORT_GAME.CANCEL' | translate }}
+        </button>
+        <button
+            type="submit"
+            class="btn btn-success"
+            [disabled]="exposeImportGameIsInvalid()"
+            (click)="handleImportGame()"
+        >
+            {{ 'MODAL.IMPORT_GAME.IMPORT' | translate }}
+        </button>
+    </article>
+</section>

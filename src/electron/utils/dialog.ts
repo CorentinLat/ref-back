@@ -1,4 +1,4 @@
-import { dialog } from 'electron';
+import { dialog, FileFilter } from 'electron';
 import path from 'path';
 
 import { Game } from '../../../type/refBack';
@@ -39,4 +39,14 @@ export function askSaveFile(defaultName: string, extension: string = 'mp4'): str
     });
 
     return savePath ? savePath : null;
+}
+
+export function askOpenFile(filters: FileFilter[]): string|null {
+    const openPath = dialog.showOpenDialogSync({
+        filters,
+        defaultPath: downloadPath,
+        properties: ['openFile'],
+    });
+
+    return openPath ? openPath[0] : null;
 }

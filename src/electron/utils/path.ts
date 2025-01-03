@@ -45,6 +45,10 @@ export function throwIfGameFolderExists(gameNumber: string, force?: boolean) {
 
         removeGameFolder(gameFolderPath);
     }
+}
+
+export function createGameFolder(gameNumber: string): void {
+    const gameFolderPath = path.join(workPath, gameNumber);
 
     fs.mkdirSync(gameFolderPath, { recursive: true });
     logger.info(`Game folder created: ${gameFolderPath}`);

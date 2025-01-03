@@ -28,6 +28,25 @@
       "OVERWRITE": "Écraser",
       "LOAD": "Charger"
     },
+    "IMPORT_GAME": {
+      "TITLE": "Importer le Match",
+      "NO_VIDEO_AND_EXISTING": "Ce match ne comporte aucune vidéo incluse et il n'existe aucun autre match déjà créé.",
+      "HAS_VIDEO": "Ce match comporte une vidéo incluse.\nQue souhaitez-vous faire ?",
+      "CREATE_NEW": "Créer un nouveau match",
+      "IMPORT_DECISIONS": "Importer les décisions",
+      "NO_VIDEO": "Ce match ne comporte aucune vidéo incluse.",
+      "CHOOSE_GAME_FOR_DECISIONS_IMPORT": "Choisissez un match auquel ajouter les décisions :",
+      "GAME_NUMBER_ALREADY_EXISTS": "Un match avec ce numéro de rencontre existe déjà.\nQue souhaitez-vous faire ?",
+      "INPUT_NEW_GAME_NUMBER": "Saisissez un nouveau numéro de rencontre",
+      "DECISIONS_CHOICE_OVERRIDE_CONCAT": "Voulez-vous écraser ou ajouter les décisions ?",
+      "OVERRIDES": "Écraser",
+      "CONCAT": "Ajouter",
+      "YES": "Oui",
+      "NO": "Non",
+      "IMPORTING": "Import en cours (Cela peut prendre plusieurs minutes)",
+      "CANCEL": "Annuler",
+      "IMPORT": "Importer"
+    },
     "LOAD_GAMES_EXISTING": {
       "TITLE": "Charger des rencontres existantes",
       "EXPLANATION_1": "Les rencontres suivantes ont été trouvées :",
@@ -109,6 +128,7 @@
       "MULTI_VIDEO_EXPLANATION": "Si votre vidéo est découpée en plusieurs clips, vous pouvez tous les importer.",
       "SEE_EXISTING_GAMES": "Rencontres",
       "EXPLORE_DECISIONS": "Décisions",
+      "IMPORT_GAME": "Importer",
       "MADE_BY": "Créé par",
       "WITH": "avec",
       "DOCUMENTATION": "Documentation",
@@ -398,6 +418,7 @@
       "PROCESS_EXPORT_GAME": "Impossible d'exporter le match...",
       "PROCESS_GAME": "Impossible de charger le match...",
       "PROCESS_GAME_COMMENT": "Impossible de mettre à jour le commentaire...",
+      "PROCESS_IMPORT_GAME": "Impossible d'importer le match...",
       "PROCESS_VIDEO": "Impossible de traiter la vidéo..."
     },
     "INFO": {
@@ -410,6 +431,7 @@
       "PROCESS_ACTION_EDITED": "Action mise à jour !",
       "PROCESS_CUT_VIDEO": "Vidéo éditée !",
       "PROCESS_EXPORT_GAME": "Match exporté !",
+      "PROCESS_IMPORT_GAME": "Match importé !",
       "gameDescription_EDITED": "Description mise à jour !",
       "globalPerformance_EDITED": "Performance mise à jour !"
     }

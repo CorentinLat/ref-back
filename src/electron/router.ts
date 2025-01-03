@@ -6,6 +6,7 @@ import {
     Action,
     Annotation,
     extensionByExportType,
+    ImportGameCommandArgs,
     NewAction,
     NewAnnotation,
     NewGameInformation,
@@ -13,8 +14,8 @@ import {
 } from '../../type/refBack';
 
 import { getDecisionsForGames } from './utils/decision';
-import { askSaveDirectory, askSaveFile, askSaveVideoPath } from './utils/dialog';
-import { exportGame } from './utils/exportImportGame';
+import { askOpenFile, askSaveDirectory, askSaveFile, askSaveVideoPath } from './utils/dialog';
+import { exportGame, verifyGameImport } from './utils/exportImportGame';
 import { extractFileExtension } from './utils/file';
 import {
     addNewAnnotationToGame,
@@ -28,7 +29,7 @@ import {
     updateGameComment,
 } from './utils/game';
 import logger from './utils/logger';
-import { throwIfGameFolderExists, getExistingGameFolders } from './utils/path';
+import { throwIfGameFolderExists, getExistingGameFolders, createGameFolder } from './utils/path';
 import { generateSummary } from './utils/summaryGenerator';
 import {
     cancelCurrentVideoCommands,
@@ -58,6 +59,8 @@ export default function(ipcMain: IpcMain) {
     ipcMain.on('get_decisions', onGetDecisionsListener);
     ipcMain.on('cut_video', onCutVideoListener);
     ipcMain.on('export_game', onExportGameListener);
+    ipcMain.on('import_game_init', onImportGameInitListener);
+    ipcMain.on('import_game', onImportGameListener);
 }
 
 const onInitAppListener = async (event: IpcMainEvent) => {
@@ -77,6 +80,7 @@ const onCreateNewGameListener = async (event: IpcMainEvent, { force, gameInforma
     const { gameNumber } = gameInformation;
     try {
         throwIfGameFolderExists(gameNumber, force);
+        createGameFolder(gameNumber);
 
         const videoPath = await handleVideoImport(gameInformation, event);
         const { video, ...rest } = gameInformation;
@@ -385,4 +389,57 @@ const onExportGameListener = async (event: IpcMainEvent, { gameNumber, withVideo
     } else {
         event.reply('export_game_failed');
     }
+};
+
+let lastGameExportedPathOpened: string|null = null;
+const onImportGameInitListener = async (event: IpcMainEvent)=> {
+    logger.debug('OnImportGameInitListener');
+
+    const gameExportedPath = askOpenFile([{ name: 'RefBack Game Export', extensions: ['ref'] }]);
+    logger.debug(`Game path : ${gameExportedPath}`);
+    if (!gameExportedPath) {
+        logger.debug(`Select game closed`);
+        event.reply('import_game_init_failed', { closed: true });
+        return;
+    }
+
+    const verifiedGameImport = await verifyGameImport(gameExportedPath);
+    if (verifiedGameImport) {
+        let gameNumberAlreadyExists = false;
+        try {
+            throwIfGameFolderExists(verifiedGameImport.gameNumber);
+        } catch (_) {
+            gameNumberAlreadyExists = true;
+        }
+
+        const gameNumbers = await getExistingGameFolders();
+        const hasOtherGames = gameNumbers.length > 0;
+
+        lastGameExportedPathOpened = gameExportedPath;
+        event.reply('import_game_init_succeeded', {
+            gameTitle: verifiedGameImport.gameTitle,
+            hasVideo: verifiedGameImport.hasVideo,
+            gameNumberAlreadyExists,
+            hasOtherGames,
+        });
+    } else {
+        event.reply('import_game_init_failed');
+    }
+};
+
+const onImportGameListener = async (event: IpcMainEvent, { isCreatingNewGame, isOverriding, gameNumberToUse }: ImportGameCommandArgs)=> {
+    logger.debug('OnImportGameListener');
+
+    if (!lastGameExportedPathOpened) {
+        logger.debug('No game to import');
+        event.reply('import_game_failed');
+        return;
+    }
+
+    logger.debug(`Game path : ${lastGameExportedPathOpened}`);
+    logger.debug(`Creating new game : ${isCreatingNewGame}`);
+    logger.debug(`Overriding : ${isOverriding}`);
+    logger.debug(`Game number to use : ${gameNumberToUse}`);
+
+    setTimeout(() => event.reply('import_game_succeeded'), 5000);
 };
