@@ -199,9 +199,14 @@ export class HomeComponent implements OnInit {
         const modal = this.modalService.open(LoadGamesExistingModalComponent, { centered: true, size: 'lg' });
         modal.result
             .then((gameNumber: string) => this.navigateToMatchAnalysisPage(gameNumber))
-            .catch((reason?: { noMoreGame?: boolean }) => {
+            .catch(async (reason?: { noMoreGame?: boolean }) => {
                 if (reason?.noMoreGame) {
+                    this.games = [];
                     this.hasExistingGames = false;
+                } else {
+                    const { games } = await this.electron.initApp();
+                    this.games = games;
+                    this.hasExistingGames = games.length > 0;
                 }
             });
     };
