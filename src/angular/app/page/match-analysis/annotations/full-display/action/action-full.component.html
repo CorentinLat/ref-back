@@ -57,9 +57,7 @@
         {{ 'PAGE.MATCH_ANALYSIS.ACTIONS.ACTION.PRECISE.' + action.precise | translate }}
     </article>
 
-    <ng-template #popContent>
-        <app-annotation-comments-display [annotation]="action"></app-annotation-comments-display>
-    </ng-template>
+    <ng-template #popContent><app-annotation-comments-display [annotation]="action"></app-annotation-comments-display></ng-template>
     <article
         class="box comment"
         [ngbPopover]="popContent"

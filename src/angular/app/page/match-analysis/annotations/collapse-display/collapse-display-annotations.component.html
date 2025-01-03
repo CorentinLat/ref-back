@@ -38,9 +38,7 @@
             </article>
 
             <article class="comment" *ngIf="annotation.comment || annotation.commentFromAdviser">
-                <ng-template #popContent>
-                    <app-annotation-comments-display [annotation]="annotation"></app-annotation-comments-display>
-                </ng-template>
+                <ng-template #popContent><app-annotation-comments-display [annotation]="annotation"></app-annotation-comments-display></ng-template>
                 <i
                     class="bi bi-chat text-primary"
                     [ngbPopover]="popContent"

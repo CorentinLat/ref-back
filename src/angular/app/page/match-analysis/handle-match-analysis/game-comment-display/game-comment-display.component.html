@@ -10,17 +10,7 @@
         </button>
     </h5>
 
-    <p class="comment-text" *ngIf="game[refereeCommentKey] || game[adviserCommentKey]">
-        <span *ngIf="game[refereeCommentKey]">
-            <span class="role">{{ 'PAGE.MATCH_ANALYSIS.ROLE.REFEREE' | translate }} :</span>
-            {{ game[refereeCommentKey] }}
-        </span>
-        <br *ngIf="game[refereeCommentKey] && game[adviserCommentKey]">
-        <span *ngIf="game[adviserCommentKey]">
-            <span class="role">{{ 'PAGE.MATCH_ANALYSIS.ROLE.ADVISER' | translate }} :</span>
-            {{ game[adviserCommentKey] }}
-        </span>
-    </p>
+    <p class="comment-text" *ngIf="game[refereeCommentKey] || game[adviserCommentKey]"><span *ngIf="game[refereeCommentKey]"><span class="role">{{ 'PAGE.MATCH_ANALYSIS.ROLE.REFEREE' | translate }} :</span> {{ game[refereeCommentKey] }}</span><br *ngIf="game[refereeCommentKey] && game[adviserCommentKey]"><span *ngIf="game[adviserCommentKey]"><span class="role">{{ 'PAGE.MATCH_ANALYSIS.ROLE.ADVISER' | translate }} :</span> {{ game[adviserCommentKey] }}</span></p>
 
     <article class="no-comment" *ngIf="!game[refereeCommentKey] && !game[adviserCommentKey]">
         <p>{{ 'PAGE.MATCH_ANALYSIS.FORM.' + keyLabel + '.NO' | translate }}</p>
