@@ -31,8 +31,8 @@ export class FullDisplayActionsComponent implements OnInit, OnDestroy {
 
     @ViewChild('scrollable') scrollable!: ElementRef;
 
-    protected readonly isAction = isAction;
-    protected readonly isAnnotation = isAnnotation;
+    readonly isAction = isAction;
+    readonly isAnnotation = isAnnotation;
 
     private readonly annotationHeightPx = 59;
     private readonly topMarginPx = 10;
