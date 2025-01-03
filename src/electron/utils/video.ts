@@ -252,14 +252,14 @@ export async function cutVideoGame(event: IpcMainEvent, videoPath: string, cuts:
     return newVideoPath;
 }
 
-const generateNewVideoPathInSameDirectory = (videoPath: string): string =>
-    path.join(path.dirname(videoPath), generateVideoName(extractFileExtension(videoPath)));
-
-const generateNewVideoPath = (gameNumber: string, videoName: string): string =>
+export const generateNewVideoPath = (gameNumber: string, videoName: string): string =>
     path.join(workPath, gameNumber, videoName);
 
-const generateVideoName = (extension: string = 'mp4'): string =>
+export const generateVideoName = (extension: string = 'mp4'): string =>
     `${Date.now().toString(10)}.${extension}`;
+
+const generateNewVideoPathInSameDirectory = (videoPath: string): string =>
+    path.join(path.dirname(videoPath), generateVideoName(extractFileExtension(videoPath)));
 
 const promisifyFfmpegCommand = (command: FluentFFMPEG.FfmpegCommand): Promise<void> =>
     new Promise((resolve, reject) => {

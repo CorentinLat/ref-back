@@ -45,8 +45,9 @@
                             [value]="false"
                             [(ngModel)]="isCreatingNewGame"
                             (change)="handleCreateGameChanged()"
+                            *ngIf="importDetails.hasOtherGames"
                         >
-                        <label class="btn btn-outline-primary" for="no">
+                        <label class="btn btn-outline-primary" for="no" *ngIf="importDetails.hasOtherGames">
                             {{ 'MODAL.IMPORT_GAME.IMPORT_DECISIONS' | translate }}
                         </label>
                     </article>

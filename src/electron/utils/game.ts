@@ -2,10 +2,17 @@ import fs from 'fs';
 import path from 'path';
 import { v4 as uuidv4 } from 'uuid';
 
-import { Action, Annotation, Game, GameInformation, NewAction, NewAnnotation } from '../../../type/refBack';
+import {
+    Action,
+    Annotation,
+    Game,
+    GameInformation,
+    NewAction,
+    NewAnnotation,
+} from '../../../type/refBack';
 
 import logger from './logger';
-import { removeGameFolder, workPath } from './path';
+import { createGameFolder, removeGameFolder, workPath } from './path';
 
 export function createNewGameFile(gameInformation: GameInformation): void {
     const gameFile = path.join(workPath, gameInformation.gameNumber, 'game.json');
@@ -16,6 +23,26 @@ export function createNewGameFile(gameInformation: GameInformation): void {
     };
 
     fs.writeFileSync(gameFile, JSON.stringify(game));
+}
+
+export function createGameFromImport(game: Game, isOverriding?: boolean): boolean {
+    const gameNumber = game.information.gameNumber;
+
+    if (isOverriding) {
+        const isRemoved = removeGame(gameNumber);
+        if (!isRemoved) {
+            logger.error('createGameFromImport: error removing existing game');
+            return false;
+        }
+    }
+
+    createGameFolder(gameNumber);
+
+    const gameFile = path.join(workPath, game.information.gameNumber, 'game.json');
+
+    fs.writeFileSync(gameFile, JSON.stringify(game));
+
+    return true;
 }
 
 export function getGame(gameNumber: string): Game|null {
@@ -95,6 +122,22 @@ export function editAnnotationFromGame(gameNumber: string, annotationToEdit: Act
     } catch (error) {
         logger.error(`error editAnnotationFromGame: ${error}`);
         return null;
+    }
+}
+
+export function addNewAnnotationsToGame(gameNumber: string, annotations: (Action|Annotation)[], overrides?: boolean): boolean {
+    const game = getGame(gameNumber);
+    if (!game) return false;
+
+    const gameFile = path.join(workPath, gameNumber, 'game.json');
+    try {
+        game.actions = overrides ? [...annotations] : [...game.actions, ...annotations];
+
+        fs.writeFileSync(gameFile, JSON.stringify(game));
+        return true;
+    } catch (error) {
+        logger.error(`error addNewAnnotationsToGame: ${error}`);
+        return false;
     }
 }
 

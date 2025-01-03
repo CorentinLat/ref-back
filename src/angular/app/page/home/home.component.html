@@ -2,7 +2,7 @@
     <header class="container my-5">
         <img src="assets/cover/cover.svg" alt="Cover">
 
-        <section class="actions-container" *ngIf="hasExistingGames">
+        <section class="actions-container">
             <button
                 class="btn btn-link"
                 (click)="handleOpenImportGame()"
@@ -13,6 +13,7 @@
             <button
                 class="btn btn-outline-primary"
                 (click)="handleDisplayExistingGames()"
+                 *ngIf="hasExistingGames"
             >
                 <i class="bi bi-eye"></i>
                 {{ 'PAGE.HOME.SEE_EXISTING_GAMES' | translate }}
@@ -20,6 +21,7 @@
             <button
                 class="btn btn-outline-primary"
                 (click)="navigateToExploreDecisionsPage()"
+                 *ngIf="hasExistingGames"
             >
                 <i class="bi bi-search"></i>
                 {{ 'PAGE.HOME.EXPLORE_DECISIONS' | translate }}

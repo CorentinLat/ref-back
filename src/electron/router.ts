@@ -15,7 +15,7 @@ import {
 
 import { getDecisionsForGames } from './utils/decision';
 import { askOpenFile, askSaveDirectory, askSaveFile, askSaveVideoPath } from './utils/dialog';
-import { exportGame, verifyGameImport } from './utils/exportImportGame';
+import { exportGame, importGame, verifyGameImport } from './utils/exportImportGame';
 import { extractFileExtension } from './utils/file';
 import {
     addNewAnnotationToGame,
@@ -427,19 +427,19 @@ const onImportGameInitListener = async (event: IpcMainEvent)=> {
     }
 };
 
-const onImportGameListener = async (event: IpcMainEvent, { isCreatingNewGame, isOverriding, gameNumberToUse }: ImportGameCommandArgs)=> {
+const onImportGameListener = async (event: IpcMainEvent, args: ImportGameCommandArgs)=> {
     logger.debug('OnImportGameListener');
 
     if (!lastGameExportedPathOpened) {
-        logger.debug('No game to import');
+        logger.error('No game path to import');
         event.reply('import_game_failed');
         return;
     }
 
-    logger.debug(`Game path : ${lastGameExportedPathOpened}`);
-    logger.debug(`Creating new game : ${isCreatingNewGame}`);
-    logger.debug(`Overriding : ${isOverriding}`);
-    logger.debug(`Game number to use : ${gameNumberToUse}`);
-
-    setTimeout(() => event.reply('import_game_succeeded'), 5000);
+    const isImported = await importGame(lastGameExportedPathOpened, args);
+    if (isImported) {
+        event.reply('import_game_succeeded');
+    } else {
+        event.reply('import_game_failed');
+    }
 };

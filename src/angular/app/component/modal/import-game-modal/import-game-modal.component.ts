@@ -37,6 +37,7 @@ export class ImportGameModalComponent implements OnInit {
             const gameImportDetails = await this.electron.importGameInit();
 
             this.isImportValid = gameImportDetails.hasVideo || gameImportDetails.hasOtherGames;
+            this.isCreatingNewGame = (gameImportDetails.hasVideo && !gameImportDetails.hasOtherGames) || undefined;
             this.importDetails = gameImportDetails;
         } catch (error: any) {
             if (!error?.closed) {

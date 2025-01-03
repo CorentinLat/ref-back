@@ -209,8 +209,15 @@ export class HomeComponent implements OnInit {
     navigateToExploreDecisionsPage = () => this.router.navigate(['/decisions']);
 
     handleOpenImportGame = () => {
-        const modal = this.modalService.open(ImportGameModalComponent, { centered: true });
+        const modal = this.modalService.open(ImportGameModalComponent, { backdrop: 'static', centered: true });
         modal.componentInstance.gameInformations = this.games;
+
+        modal.result.then(() => this.electron.initApp()
+            .then(({ games }) => {
+                this.games = games;
+                this.hasExistingGames = games.length > 0;
+            })
+        );
     };
 
     handleOpenUrlInBrowser = (url: string) => this.electron.openUrlInBrowser(url);
