@@ -23,10 +23,10 @@
       "MESSAGE_2": "a déjà été utilisé.",
       "OVERWRITE_QUESTION": "Voulez-vous écraser cette rencontre existante ?",
       "INFORMATION": "Toute donnée précédemment créée (vidéos, actions, ...) sera perdue.",
-      "LOAD_QUESTION": "Ou voulez-vous charger les données de cette rencontre ?",
+      "SEE_GAME_QUESTION": "Ou voulez-vous accéder à cette rencontre existante ?",
       "CANCEL": "Annuler",
       "OVERWRITE": "Écraser",
-      "LOAD": "Charger"
+      "SEE": "Accéder"
     },
     "IMPORT_GAME": {
       "TITLE": "Importer le Match",

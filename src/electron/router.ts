@@ -88,12 +88,12 @@ const onCreateNewGameListener = async (event: IpcMainEvent, { force, gameInforma
 
         event.reply('create_new_game_succeeded', gameNumber);
     } catch (error: any) {
-        removeGame(gameNumber);
-
         if (error?.type === 'BaseError') {
             logger.error(`error OnCreateNewGameListener: ${error.message}`);
             event.reply('create_new_game_failed', error.body);
         } else {
+            removeGame(gameNumber);
+
             logger.error(`error OnCreateNewGameListener: ${error}`);
             event.reply('create_new_game_failed', error);
         }
