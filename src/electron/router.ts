@@ -4,6 +4,7 @@ import IpcMainEvent = Electron.IpcMainEvent;
 
 import {
     Action,
+    AllEditableGameComment,
     Annotation,
     extensionByExportType,
     ImportGameCommandArgs,
@@ -118,7 +119,7 @@ const onGetGameListener = (event: IpcMainEvent, { gameNumber }: OnGetGameListene
     }
 };
 
-type OnUpdateGameCommentListenerArgs = { gameNumber: string; comment: string; key: 'gameDescription'|'globalPerformance' };
+type OnUpdateGameCommentListenerArgs = { gameNumber: string; comment: string; key: AllEditableGameComment };
 const onUpdateGameCommentListener = (event: IpcMainEvent, { gameNumber, comment, key }: OnUpdateGameCommentListenerArgs) => {
     logger.debug('OnUpdateGameCommentListener');
 

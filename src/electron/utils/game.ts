@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import {
     Action,
+    AllEditableGameComment,
     Annotation,
     Game,
     GameInformation,
@@ -65,13 +66,13 @@ export function getGamesInformation(gameNumbers: string[]): GameInformation[] {
     }, []);
 }
 
-export function updateGameComment(gameNumber: string, comment: string, key: 'gameDescription'|'globalPerformance'): boolean {
+export function updateGameComment(gameNumber: string, comment: string, key: AllEditableGameComment): boolean {
     const game = getGame(gameNumber);
     if (!game) { return false; }
 
     const gameFile = path.join(workPath, gameNumber, 'game.json');
     try {
-        game[key] = comment;
+        game[key] = comment.trim();
         fs.writeFileSync(gameFile, JSON.stringify(game));
 
         return true;
