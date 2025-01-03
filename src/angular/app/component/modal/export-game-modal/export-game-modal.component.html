@@ -18,6 +18,7 @@
                 name="include-video"
                 type="radio"
                 class="btn-check"
+                [disabled]="isExportingGame"
                 [value]="true"
                 [(ngModel)]="exportWithVideo"
             >
@@ -30,12 +31,20 @@
                 name="include-video"
                 type="radio"
                 class="btn-check"
+                [disabled]="isExportingGame"
                 [value]="false"
                 [(ngModel)]="exportWithVideo"
             >
             <label class="btn btn-outline-primary" for="no">
                 {{ 'MODAL.EXPORT_GAME.NO' | translate }}
             </label>
+        </article>
+
+        <article class="exporting" *ngIf="isExportingGame">
+            {{ 'MODAL.EXPORT_GAME.EXPORTING' | translate }}
+            <div class="spinner-border spinner-border-sm text-primary" role="status">
+                <span class="visually-hidden">{{ 'MODAL.EXPORT_GAME.EXPORTING' | translate }}</span>
+            </div>
         </article>
     </section>
 

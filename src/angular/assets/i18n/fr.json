@@ -13,6 +13,7 @@
       "INCLUDE_VIDEO": "Inclure la vidéo dans l'export du match ?",
       "YES": "Oui",
       "NO": "Non",
+      "EXPORTING": "Export en cours (Cela peut prendre plusieurs minutes)",
       "CANCEL": "Annuler",
       "EXPORT": "Exporter"
     },

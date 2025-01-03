@@ -8,6 +8,11 @@
     "node_modules",
     "package.json"
   ],
+  "fileAssociations": [{
+    "ext": "ref",
+    "name": "RefBack Game Export",
+    "role": "Editor"
+  }],
   "afterSign": ".erb/scripts/notarize.js",
   "mac": {
     "target": {
@@ -26,7 +31,8 @@
     "target": "nsis"
   },
   "nsis": {
-    "language": "1036"
+    "language": "1036",
+    "perMachine": true
   },
   "linux": {
     "target": "AppImage",

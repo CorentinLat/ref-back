@@ -4,7 +4,10 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ElectronService } from '../../../service/ElectronService';
 import { ToastService } from '../../../service/ToastService';
 
-@Component({ templateUrl: './export-game-modal.component.html' })
+@Component({
+    templateUrl: './export-game-modal.component.html',
+    styleUrls: ['./export-game-modal.component.scss'],
+})
 export class ExportGameModalComponent {
     @Input() gameNumber!: string;
 
