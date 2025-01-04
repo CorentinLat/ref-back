@@ -13,25 +13,32 @@
         <section class="all-game-information-container">
             <app-game-information [game]="game"></app-game-information>
 
-            <section
-                class="game-comments"
+            <ngb-accordion
+                class="comments-body"
+                [closeOthers]="true"
                 *ngIf="game.gameDescription || game.gameDescriptionFromAdviser || game.globalPerformance || game.globalPerformanceFromAdviser"
             >
-                <app-game-comment-display
-                    class="comment-display-component"
-                    [game]="game"
-                    [keyToDisplay]="'gameDescription'"
-                    [keyLabel]="'GAME_DESCRIPTION'"
-                    *ngIf="game.gameDescription || game.gameDescriptionFromAdviser"
-                ></app-game-comment-display>
-                <app-game-comment-display
-                    class="comment-display-component"
-                    [game]="game"
-                    [keyToDisplay]="'globalPerformance'"
-                    [keyLabel]="'GLOBAL_PERFORMANCE'"
-                    *ngIf="game.globalPerformance || game.globalPerformanceFromAdviser"
-                ></app-game-comment-display>
-            </section>
+                <ngb-panel title="{{ 'PAGE.SUMMARY.PANEL.COMMENTS' | translate }}">
+                    <ng-template ngbPanelContent>
+                        <section class="game-comments">
+                            <app-game-comment-display
+                                class="comment-display-component"
+                                [game]="game"
+                                [keyToDisplay]="'gameDescription'"
+                                [keyLabel]="'GAME_DESCRIPTION'"
+                                *ngIf="game.gameDescription || game.gameDescriptionFromAdviser"
+                            ></app-game-comment-display>
+                            <app-game-comment-display
+                                class="comment-display-component"
+                                [game]="game"
+                                [keyToDisplay]="'globalPerformance'"
+                                [keyLabel]="'GLOBAL_PERFORMANCE'"
+                                *ngIf="game.globalPerformance || game.globalPerformanceFromAdviser"
+                            ></app-game-comment-display>
+                        </section>
+                    </ng-template>
+                </ngb-panel>
+            </ngb-accordion>
         </section>
 
         <section class="summary-buttons">
