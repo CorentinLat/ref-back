@@ -8,12 +8,21 @@ et ce projet suit la [Gestion sémantique de version](https://semver.org/spec/v2
 - Pouvoir se connecter à l'application
 - Pouvoir récupérer automatiquement les données de la rencontre
 
-## [3.2.1] - 2023-03-09
+## [4.0.0] - 2025-01-04
+### Ajouté
+- Ajout de l'import/export d'une rencontre
+- Possibilité d'ajouter un simple commentaire sur une action
+- Ajout des commentaires d'un conseiller
+- Ajout d'une page pour parcourir toutes les décisions
+- Ajout du support de Veo pour télécharger la vidéo
+- Ajout d'un éditeur pour découper les clips ou la vidéo d'une rencontre
+
+## [3.2.1] - 2024-03-09
 ### Correction
 - Ajout du Copier/Coller
 - Affichage du nombre de décisions dans le résumé
 
-## [3.2.0] - 2023-02-02
+## [3.2.0] - 2024-02-02
 ### Mis à jour
 - Ajout de nouvelles décisions
 
