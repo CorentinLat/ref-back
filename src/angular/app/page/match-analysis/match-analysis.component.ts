@@ -1,82 +1,99 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { VgApiService } from '@videogular/ngx-videogular/core';
-import { Subject } from 'rxjs';
+import { Subscription } from 'rxjs';
 
-import { Action, Game } from '../../domain/game';
+import { Game } from '../../../../../type/refBack';
 
 import { ElectronService } from '../../service/ElectronService';
+import { MatchAnalysisService } from '../../service/MatchAnalysisService';
+import { NavigationService } from '../../service/NavigationService';
 import { ToastService } from '../../service/ToastService';
+import { VideoViewerService } from '../../service/VideoViewerService';
+
+import { VideoEditorModalComponent } from '../../component/modal/video-editor-modal/video-editor-modal.component';
 
 @Component({
     selector: 'app-match-analysis',
     templateUrl: './match-analysis.component.html',
     styleUrls: ['./match-analysis.component.scss'],
 })
-export class MatchAnalysisComponent implements OnInit {
+export class MatchAnalysisComponent implements OnInit, OnDestroy {
+    public originPath: string|null = null;
+
     public game!: Game;
     public gameNumber!: string;
-    public videoPath!: SafeResourceUrl;
 
     public videoApiService!: VgApiService;
 
-    public collapse = { actions: true };
+    public isCollapsed: boolean;
 
-    public newActionAdded = new Subject<Action>();
+    private editVideoMediaSubscription$?: Subscription;
+    private isCollapsedUpdatedSubscription$?: Subscription;
 
     constructor(
-        private cdr: ChangeDetectorRef,
-        private electron: ElectronService,
-        private route: ActivatedRoute,
-        private router: Router,
-        private sanitizer: DomSanitizer,
-        private toastService: ToastService,
-    ) {}
+        private readonly cdr: ChangeDetectorRef,
+        private readonly electron: ElectronService,
+        private readonly modalService: NgbModal,
+        private readonly matchAnalysisService: MatchAnalysisService,
+        private readonly navigation: NavigationService,
+        public readonly route: ActivatedRoute,
+        private readonly toastService: ToastService,
+        private readonly videoViewerService: VideoViewerService,
+    ) {
+        this.isCollapsed = this.matchAnalysisService.isCollapsed;
+    }
 
     ngOnInit(): void {
         const gameNumber = this.route.snapshot.queryParamMap.get('gameNumber');
         if (!gameNumber) {
-            this.navigateToHome();
+            this.handleNavigateToOriginOrHome();
             return;
         }
 
         this.gameNumber = gameNumber;
+        this.originPath = this.route.snapshot.queryParamMap.get('originPath');
+
         this.electron
             .getGameByNumber(this.gameNumber)
-            .then(game => {
-                this.game = game;
-                this.videoPath = this.sanitizer.bypassSecurityTrustResourceUrl(`video://${game.information.videoPath}`);
-            })
+            .then(game => this.game = game)
             .catch(() => {
                 this.toastService.showError('TOAST.ERROR.PROCESS_GAME');
-                this.navigateToHome();
+                this.handleNavigateToOriginOrHome();
             });
+
+        this.editVideoMediaSubscription$ = this.videoViewerService.videoMediaEdit.subscribe(() => this.handleOpenGameVideoEditorModal());
+        this.isCollapsedUpdatedSubscription$ = this.matchAnalysisService.isCollapsedUpdated.subscribe(isCollapsed => this.isCollapsed = isCollapsed);
     }
 
-    handleNavigateToSummary(): void {
-        this.router.navigate(
-            ['/summary'],
-            { queryParams: { gameNumber: this.game.information.gameNumber } }
-        );
+    ngOnDestroy() {
+        this.editVideoMediaSubscription$?.unsubscribe();
+        this.isCollapsedUpdatedSubscription$?.unsubscribe();
     }
 
-    public onPlayerReady = (api: VgApiService): void => {
-        this.videoApiService = api;
-        this.videoApiService.volume = 0;
+    public handleNavigateToOriginOrHome = () => this.navigation.navigateTo(this.originPath || '/');
+    public handleNavigateToSummary = () => this.navigation.navigateTo('/summary', { gameNumber: this.game.information.gameNumber });
+
+    public handleVideoReady = ({ vgApiService }: { vgApiService: VgApiService }): void => {
+        this.videoApiService = vgApiService;
 
         this.cdr.detectChanges();
     };
 
-    public putVideoAtSecond = (second: number): void => {
-        this.videoApiService.getDefaultMedia().currentTime = second;
-    };
+    handleOpenGameVideoEditorModal() {
+        this.videoApiService.pause();
 
-    public onActionAdded = (action: Action): void => {
-        setTimeout(() => this.newActionAdded.next(action), 100);
-    };
+        const modalRef = this.modalService.open(VideoEditorModalComponent, { fullscreen: true });
+        modalRef.componentInstance.videoTitle = `${this.game.information.date} - ${this.game.information.teams.local} - ${this.game.information.teams.visitor}`;
+        modalRef.componentInstance.videoPath = this.game.information.videoPath;
 
-    private navigateToHome(): void {
-        this.router.navigate(['/']);
+        modalRef.result.then(
+            (newPath: string) => {
+                this.game.information.videoPath = newPath;
+                this.videoViewerService.refreshVideoMedia(newPath);
+            },
+            () => {}
+        );
     }
 }

@@ -1,0 +1,63 @@
+.collapse-display-annotations-component {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    overflow: auto;
+
+    .decision-card {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+
+        min-height: 100px;
+        width: 100%;
+
+        padding-bottom: 14px;
+
+        &:not(:last-child) {
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        &.no-decision {
+            display: flex;
+            align-items: center;
+            text-align: center;
+        }
+
+        .second {
+            .yes { color: #20c997; }
+            .no { color: #dc3545; }
+            .doubt { color: #ffc107; }
+        }
+
+        .comment {
+            position: relative;
+
+            .count {
+                position: absolute;
+                left: 0;
+                width: 16px;
+                text-align: center;
+                height: 24px;
+                font-size: 11px;
+                top: 4px;
+            }
+        }
+
+        .comments {
+            display: flex;
+            height: 100%;
+            font-size: 1.3rem;
+
+            .referee, .adviser {
+                display: flex;
+                justify-content: center;
+                flex-basis: 0;
+                flex-grow: 1;
+
+                .role { align-self: flex-end }
+                .comment { align-self: flex-start }
+            }
+        }
+    }
+}

@@ -1,0 +1,108 @@
+<section class="collapse-display-annotations-component" #scrollable>
+    <section class="decision-card decision" *ngFor="let annotation of annotations">
+        <section class="d-flex align-items-center justify-content-between" *ngIf="isAction(annotation)">
+            <article class="second">
+                <button
+                    class="btn btn-link p-0"
+                    [ngClass]="{ yes: annotation.precise === 'YES', no: annotation.precise === 'NO', doubt: annotation.precise === 'DOUBT' }"
+                    (click)="handlePutVideoAtSecond(annotation.second)"
+                >
+                    {{ exposeActionMinutes(annotation.second) }}
+                </button>
+            </article>
+
+            <i class="bi bi-film" *ngIf="annotation.clip"></i>
+
+            <article class="against">
+                <i class="bi bi-house" *ngIf="annotation.against === 'LOCAL'"></i>
+                <i class="bi bi-airplane" *ngIf="annotation.against === 'VISITOR'"></i>
+            </article>
+        </section>
+
+        <section class="d-flex align-items-center justify-content-between" *ngIf="isAction(annotation)">
+            <article class="type">
+                <i class="bi-eye" *ngIf="annotation.fromAdviser"></i>
+                <i class="bi-person-raised-hand" *ngIf="!annotation.fromAdviser"></i>
+
+                {{ 'PAGE.MATCH_ANALYSIS.ACTIONS.ACTION.TYPE.' + annotation.type + '_SHORT' | translate }}
+            </article>
+
+            <article class="card-type">
+                <app-card [card]="annotation.card"></app-card>
+            </article>
+        </section>
+
+        <section class="d-flex align-items-center justify-content-between" *ngIf="isAction(annotation)">
+            <article class="sector">
+                {{ 'PAGE.MATCH_ANALYSIS.ACTIONS.ACTION.SECTOR.' + annotation.sector + '_SHORT' | translate }}
+            </article>
+
+            <article class="comment" *ngIf="annotation.comment || annotation.commentFromAdviser">
+                <ng-template #popContent><app-annotation-comments-display [annotation]="annotation"></app-annotation-comments-display></ng-template>
+                <i
+                    class="bi bi-chat text-primary"
+                    [ngbPopover]="popContent"
+                    [openDelay]="400"
+                    container="body"
+                    triggers="mouseenter:mouseleave"
+                    placement="left"
+                >
+                    <span class="count text-primary" *ngIf="!annotation.comment || !annotation.commentFromAdviser">1</span>
+                    <span class="count text-primary" *ngIf="annotation.comment && annotation.commentFromAdviser">2</span>
+                </i>
+            </article>
+        </section>
+
+        <section class="d-flex align-items-center justify-content-between" *ngIf="isAnnotation(annotation)">
+            <article class="second">
+                <button class="btn btn-link p-0" (click)="handlePutVideoAtSecond(annotation.second)">
+                    {{ exposeActionMinutes(annotation.second) }}
+                </button>
+            </article>
+
+            <i class="bi bi-film" *ngIf="annotation.clip"></i>
+
+            <article class="type">
+                <i class="bi-eye" *ngIf="annotation.fromAdviser"></i>
+                <i class="bi-person-raised-hand" *ngIf="!annotation.fromAdviser"></i>
+            </article>
+        </section>
+
+        <section class="comments" *ngIf="isAnnotation(annotation) && (annotation.comment || annotation.commentFromAdviser)">
+            <article class="referee">
+                <i class="role bi-person-raised-hand" *ngIf="annotation.comment"></i>
+                <i
+                    class="comment bi-chat text-primary"
+                    [ngbPopover]="annotation.comment"
+                    [openDelay]="400"
+                    container="body"
+                    triggers="mouseenter:mouseleave"
+                    placement="left"
+                    *ngIf="annotation.comment"
+                ></i>
+            </article>
+            <article class="adviser">
+                <i class="role bi-eye" *ngIf="annotation.commentFromAdviser"></i>
+                <i
+                    class="comment bi-chat text-primary"
+                    [ngbPopover]="annotation.commentFromAdviser"
+                    [openDelay]="400"
+                    container="body"
+                    triggers="mouseenter:mouseleave"
+                    placement="left"
+                    *ngIf="annotation.commentFromAdviser"
+                ></i>
+            </article>
+        </section>
+    </section>
+
+    <p class="decision-card no-decision" *ngIf="!annotations.length">
+        {{ 'PAGE.MATCH_ANALYSIS.ACTIONS.NO_ACTION_SHORT' | translate }}
+
+        <button class="btn btn-primary btn-sm" (click)="handleEditVideoMedia()">
+            <i class="bi bi-film"></i>
+            <i class="bi bi-scissors"></i>
+            <i class="bi bi-film"></i>
+        </button>
+    </p>
+</section>

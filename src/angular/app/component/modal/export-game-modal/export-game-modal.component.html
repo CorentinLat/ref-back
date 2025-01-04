@@ -1,0 +1,69 @@
+<section class="export-game-modal-component">
+    <article class="modal-header">
+        <h5 class="modal-title">{{ 'MODAL.EXPORT_GAME.TITLE' | translate }}</h5>
+        <button
+            type="button"
+            class="btn-close"
+            [disabled]="isExportingGame"
+            (click)="handleCloseModal()"
+        ></button>
+    </article>
+
+    <section class="modal-body text-center">
+        <h6>{{ 'MODAL.EXPORT_GAME.INCLUDE_VIDEO' | translate }}</h6>
+
+        <article class="btn-group btn-group-sm">
+            <input
+                id="yes"
+                name="include-video"
+                type="radio"
+                class="btn-check"
+                [disabled]="isExportingGame"
+                [value]="true"
+                [(ngModel)]="exportWithVideo"
+            >
+            <label class="btn btn-outline-primary" for="yes">
+                {{ 'MODAL.EXPORT_GAME.YES' | translate }}
+            </label>
+
+            <input
+                id="no"
+                name="include-video"
+                type="radio"
+                class="btn-check"
+                [disabled]="isExportingGame"
+                [value]="false"
+                [(ngModel)]="exportWithVideo"
+            >
+            <label class="btn btn-outline-primary" for="no">
+                {{ 'MODAL.EXPORT_GAME.NO' | translate }}
+            </label>
+        </article>
+
+        <article class="exporting" *ngIf="isExportingGame">
+            {{ 'MODAL.EXPORT_GAME.EXPORTING' | translate }}
+            <div class="spinner-border spinner-border-sm text-primary" role="status">
+                <span class="visually-hidden">{{ 'MODAL.EXPORT_GAME.EXPORTING' | translate }}</span>
+            </div>
+        </article>
+    </section>
+
+    <article class="modal-footer">
+        <button
+            type="button"
+            class="btn btn-outline-danger"
+            [disabled]="isExportingGame"
+            (click)="handleCloseModal()"
+        >
+            {{ 'MODAL.EXPORT_GAME.CANCEL' | translate }}
+        </button>
+        <button
+            type="submit"
+            class="btn btn-success"
+            [disabled]="isExportingGame"
+            (click)="handleExportGame()"
+        >
+            {{ 'MODAL.EXPORT_GAME.EXPORT' | translate }}
+        </button>
+    </article>
+</section>

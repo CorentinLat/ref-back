@@ -1,0 +1,13 @@
+.annotation-comments-display-component {
+    margin: 0;
+    overflow: visible;
+    white-space: pre-line;
+
+    &.inline {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .role { font-weight: bold; }
+}

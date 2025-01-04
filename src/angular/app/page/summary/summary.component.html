@@ -10,35 +10,39 @@
     </header>
 
     <section class="summary-game-and-buttons">
-        <section class="game-information-container">
-            <article class="teams-scores">
-                <h4 class="team local">{{ game.information.teams.local }}</h4>
-                <h5 class="scores">
-                    <span>{{ game.information.score.local }}</span>
-                    <span>{{ game.information.score.visitor }}</span>
-                </h5>
-                <h4 class="team visitor">{{ game.information.teams.visitor }}</h4>
-            </article>
+        <section class="all-game-information-container">
+            <app-game-information [game]="game"></app-game-information>
 
-            <article class="date-number">
-                <h5 class="date">{{ game.information.date | date: 'dd/MM/yyyy' }}</h5>
-                <h5 class="number">{{ gameNumber }}</h5>
-            </article>
-
-            <section class="game-comments" *ngIf="game.gameDescription || game.globalPerformance">
-                <article class="game-comment" *ngIf="game.gameDescription">
-                    <h5 class="comment-title">{{ 'PAGE.SUMMARY.COMMENTS.GAME_DESCRIPTION' | translate }}</h5>
-                    <p class="comment-text">{{ game.gameDescription }}</p>
-                </article>
-                <article class="game-comment" *ngIf="game.globalPerformance">
-                    <h5 class="comment-title">{{ 'PAGE.SUMMARY.COMMENTS.GLOBAL_PERFORMANCE' | translate }}</h5>
-                    <p class="comment-text">{{ game.globalPerformance }}</p>
-                </article>
-            </section>
+            <ngb-accordion
+                class="comments-body"
+                [closeOthers]="true"
+                *ngIf="game.gameDescription || game.gameDescriptionFromAdviser || game.globalPerformance || game.globalPerformanceFromAdviser"
+            >
+                <ngb-panel title="{{ 'PAGE.SUMMARY.PANEL.COMMENTS' | translate }}">
+                    <ng-template ngbPanelContent>
+                        <section class="game-comments">
+                            <app-game-comment-display
+                                class="comment-display-component"
+                                [game]="game"
+                                [keyToDisplay]="'gameDescription'"
+                                [keyLabel]="'GAME_DESCRIPTION'"
+                                *ngIf="game.gameDescription || game.gameDescriptionFromAdviser"
+                            ></app-game-comment-display>
+                            <app-game-comment-display
+                                class="comment-display-component"
+                                [game]="game"
+                                [keyToDisplay]="'globalPerformance'"
+                                [keyLabel]="'GLOBAL_PERFORMANCE'"
+                                *ngIf="game.globalPerformance || game.globalPerformanceFromAdviser"
+                            ></app-game-comment-display>
+                        </section>
+                    </ng-template>
+                </ngb-panel>
+            </ngb-accordion>
         </section>
 
-        <article class="summary-buttons">
-            <div ngbDropdown class="d-inline-block" *ngIf="exposeHasClips()">
+        <section class="summary-buttons">
+            <article ngbDropdown class="d-inline-block" *ngIf="exposeHasClips()">
                 <button ngbDropdownToggle class="btn btn-primary" [disabled]="isDownloadingVideo">
                     {{ 'PAGE.SUMMARY.BUTTONS.DOWNLOAD_VIDEO' | translate }}
                     <i class="bi bi-camera-video mx-1" *ngIf="!isDownloadingVideo"></i>
@@ -59,7 +63,8 @@
                         {{ 'PAGE.SUMMARY.BUTTONS.DOWNLOAD_VIDEO_ALL' | translate }}
                     </button>
                 </div>
-            </div>
+            </article>
+
             <button
                 class="btn btn-primary"
                 *ngIf="!exposeHasClips()"
@@ -74,31 +79,46 @@
                     *ngIf="isDownloadingVideo"
                 ></article>
             </button>
-            <button
-                class="btn btn-primary"
-                [disabled]="isDownloadingSummary || !exposeHasDecisions()"
-                (click)="handleExportSummary()"
-            >
-                {{ 'PAGE.SUMMARY.BUTTONS.EXPORT_SUMMARY' | translate }}
-                <i class="bi bi-table mx-1" *ngIf="!isDownloadingSummary"></i>
-                <article
-                    class="spinner-border spinner-border-sm"
-                    role="status"
-                    *ngIf="isDownloadingSummary"
-                ></article>
-            </button>
+
+            <article ngbDropdown class="d-inline-block" *ngIf="exposeHasAnnotations()">
+                <button ngbDropdownToggle class="btn btn-primary" [disabled]="isDownloadingSummary">
+                    {{ 'PAGE.SUMMARY.BUTTONS.EXPORT_SUMMARY.' | translate }}
+                    <i class="bi bi-table mx-1" *ngIf="!isDownloadingSummary"></i>
+                    <article
+                        class="spinner-border spinner-border-sm"
+                        role="status"
+                        *ngIf="isDownloadingSummary"
+                    ></article>
+                </button>
+                <div ngbDropdownMenu>
+<!--                    <button ngbDropdownItem (click)="handleExportSummary('excel')">-->
+<!--                        <i class="bi-file-earmark-excel"></i>-->
+<!--                        {{ 'PAGE.SUMMARY.BUTTONS.EXPORT_SUMMARY.EXCEL' | translate }}-->
+<!--                    </button>-->
+                    <button ngbDropdownItem (click)="handleExportSummary('pdf')">
+                        <i class="bi-file-earmark-pdf"></i>
+                        {{ 'PAGE.SUMMARY.BUTTONS.EXPORT_SUMMARY.PDF' | translate }}
+                    </button>
+                    <hr>
+                    <button ngbDropdownItem (click)="handleOpenExportGameModal()">
+                        <i class="bi-share"></i>
+                        {{ 'PAGE.SUMMARY.BUTTONS.EXPORT_SUMMARY.SHARE' | translate }}
+                    </button>
+                </div>
+            </article>
+
             <button class="btn btn-danger" (click)="handleNavigateToHome()">
                 {{ 'PAGE.SUMMARY.BUTTONS.NAVIGATE_HOME' | translate }}
                 <i class="bi bi-house mx-1"></i>
             </button>
-        </article>
+        </section>
     </section>
 
     <ngb-accordion
         class="summary-body"
         [closeOthers]="true"
         activeIds="statistics"
-        *ngIf="exposeHasDecisions()"
+        *ngIf="exposeHasAnnotations()"
     >
         <ngb-panel
             id="statistics"
@@ -106,37 +126,37 @@
             *ngIf="exposeHasStatistics()"
         >
             <ng-template ngbPanelContent>
-                <app-summary-statistics [actions]="game.actions"></app-summary-statistics>
+                <app-summary-statistics [actions]="actions"></app-summary-statistics>
             </ng-template>
         </ngb-panel>
 
         <ngb-panel id="all_actions" title="{{ 'PAGE.SUMMARY.PANEL.ALL_ACTIONS' | translate }}">
             <ng-template ngbPanelContent>
-                <app-full-display-actions
-                    [actions]="exposeActionsSortedByTime()"
+                <app-full-display-annotations
+                    [annotations]="exposeAnnotationsSortedByTime()"
                     [gameNumber]="gameNumber"
                     [isSummaryDisplay]="true"
-                ></app-full-display-actions>
+                ></app-full-display-annotations>
             </ng-template>
         </ngb-panel>
 
         <ngb-panel
             [id]="sector"
             title="{{ 'PAGE.SUMMARY.PANEL.' + sector | translate }}"
-            *ngFor="let sector of exposeSectorsWithAtLeastOneDecision()"
+            *ngFor="let sector of exposeSectorsWithAtLeastOneAction()"
         >
             <ng-template ngbPanelContent>
-                <app-full-display-actions
-                    [actions]="exposeActionsSortedByTime()"
+                <app-full-display-annotations
+                    [annotations]="exposeAnnotationsSortedByTime()"
                     [gameNumber]="gameNumber"
                     [isSummaryDisplay]="true"
                     [sector]="sector"
-                ></app-full-display-actions>
+                ></app-full-display-annotations>
             </ng-template>
         </ngb-panel>
     </ngb-accordion>
 
-    <article class="no-summary" *ngIf="!exposeHasDecisions()">
+    <article class="no-summary" *ngIf="!exposeHasAnnotations()">
         {{ 'PAGE.SUMMARY.NO_DECISION' | translate }}
     </article>
 </section>

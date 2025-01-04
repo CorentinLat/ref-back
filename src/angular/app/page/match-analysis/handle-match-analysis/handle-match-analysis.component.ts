@@ -1,13 +1,10 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { VgApiService } from '@videogular/ngx-videogular/core';
 import { Subscription } from 'rxjs';
 
-import { Action, Game } from '../../../domain/game';
+import { Action, Annotation, Game, isAction, isAnnotation, Role } from '../../../../../../type/refBack';
 
-import { CommunicationService } from '../../../service/CommunicationService';
-
-import { EditGameCommentModalComponent } from '../../../component/modal/edit-game-comment-modal/edit-game-comment-modal.component';
+import { MatchAnalysisService } from '../../../service/MatchAnalysisService';
 
 @Component({
     selector: 'app-handle-match-analysis',
@@ -15,26 +12,33 @@ import { EditGameCommentModalComponent } from '../../../component/modal/edit-gam
     styleUrls: ['./handle-match-analysis.component.scss']
 })
 export class HandleMatchAnalysisComponent implements OnInit, OnDestroy {
-    @Input() collapse!: { actions: boolean };
     @Input() game!: Game;
     @Input() videoApiService!: VgApiService;
 
-    @Output() actionAdded = new EventEmitter<Action>();
-
     currentAction?: Action;
     displayActionForm = false;
+    currentAnnotation?: Annotation;
+    displayAnnotationForm = false;
+
+    isCollapsed: boolean;
+    role: Role;
 
     private editActionSubscription$?: Subscription;
 
-    constructor(
-        private communicationService: CommunicationService,
-        private modalService: NgbModal,
-    ) {}
+    constructor(private readonly matchAnalysisService: MatchAnalysisService) {
+        this.isCollapsed = this.matchAnalysisService.isCollapsed;
+        this.role = this.matchAnalysisService.role;
+    }
 
     ngOnInit() {
-        this.editActionSubscription$ = this.communicationService.editAction.subscribe(action => {
-            this.currentAction = action;
-            this.handleDisplayActionForm();
+        this.editActionSubscription$ = this.matchAnalysisService.annotationEdited.subscribe(annotation => {
+            if (isAction(annotation)) {
+                this.currentAction = annotation;
+                this.handleDisplayActionForm();
+            } else if (isAnnotation(annotation)) {
+                this.currentAnnotation = annotation;
+                this.handleDisplayAnnotationForm();
+            }
         });
     }
 
@@ -42,41 +46,38 @@ export class HandleMatchAnalysisComponent implements OnInit, OnDestroy {
         this.editActionSubscription$?.unsubscribe();
     }
 
-    handleDisplayActionForm(): void {
-        this.displayActionForm = true;
+    handleDisplayActionForm = () => this.displayActionForm = true;
+    handleDisplayAnnotationForm = () => this.displayAnnotationForm = true;
+    handleToggleRole = () => this.matchAnalysisService.toggleRole();
+
+    handleToggleCollapse() {
+        this.isCollapsed = !this.isCollapsed;
+
+        this.matchAnalysisService.toggleCollapsed();
     }
 
-    handleUpdateGameDescription(): void {
-        const modal = this.modalService.open(EditGameCommentModalComponent, { centered: true, size: 'lg' });
-        modal.componentInstance.game = this.game;
-        modal.componentInstance.keyToEdit = 'gameDescription';
-    }
-
-    handleUpdateGlobalPerformance(): void {
-        const modal = this.modalService.open(EditGameCommentModalComponent, { centered: true, size: 'lg' });
-        modal.componentInstance.game = this.game;
-        modal.componentInstance.keyToEdit = 'globalPerformance';
-    }
-
-    handleActionAdded(action: Action): void {
-        this.game.actions.push(action);
+    handleAnnotationAdded(annotation: Action|Annotation): void {
+        this.game.actions.push(annotation);
         this.game.actions = this.game.actions.sort((a, b) => a.second - b.second);
-        this.actionAdded.emit(action);
-        this.handleHideActionForm();
+        this.matchAnalysisService.addAnnotation(annotation);
+        this.handleHideForms();
     }
 
-    handleActionEdited(action: Action): void {
+    handleAnnotationEdited(annotation: Action|Annotation): void {
         this.currentAction = undefined;
-        this.game.actions = this.game.actions.filter(({ id }) => id !== action.id);
-        this.handleActionAdded(action);
+        this.game.actions = this.game.actions.filter(({ id }) => id !== annotation.id);
+        this.handleAnnotationAdded(annotation);
     }
 
     handleActionCancelled(): void {
-        this.handleHideActionForm();
+        this.handleHideForms();
     }
 
-    private handleHideActionForm(): void {
+    private handleHideForms(): void {
         this.currentAction = undefined;
         this.displayActionForm = false;
+
+        this.currentAnnotation = undefined;
+        this.displayAnnotationForm = false;
     }
 }

@@ -12,61 +12,17 @@ $header-gap: 20px;
         display: flex;
         align-items: center;
         height: $header-height;
+        overflow: hidden;
 
-        .game-information-container {
+        .left-container, .right-container {
             display: flex;
-            flex-direction: column;
-            gap: 5px;
-            width: 100%;
-            overflow: hidden;
+            align-items: center;
+            min-width: 125px;
 
-            .teams-scores {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                gap: 20px;
-
-                .team {
-                    flex-basis: 0;
-                    flex-grow: 1;
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                    white-space: nowrap;
-                    font-weight: bold;
-
-                    &.local { text-align: right; }
-                    &.visitor { text-align: left; }
-                }
-
-                .scores {
-                    display: flex;
-                    gap: 16px;
-                }
-            }
-
-            .date-number {
-                display: flex;
-                align-items: center;
-                gap: 40px;
-
-                .date {
-                    font-weight: bold;
-                    text-align: right;
-                }
-
-                .date, .number {
-                    flex-basis: 0;
-                    flex-grow: 1;
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                    white-space: nowrap;
-                }
-            }
-
-            h4, h5 {
-                margin: 0;
-            }
+            .btn { padding: 0; }
         }
+
+        .right-container { justify-content: flex-end; }
     }
 
     .match-analysis-body {
@@ -76,7 +32,7 @@ $header-gap: 20px;
 
         height: calc(100vh - #{$match-analysis-component-margin} * 2 - #{$header-height} - #{$header-gap});
 
-        .video-and-actions {
+        .video-and-annotations {
             display: flex;
             gap: 20px;
             height: 100%;
@@ -87,14 +43,14 @@ $header-gap: 20px;
                 flex-grow: 2;
             }
 
-            .actions-container {
+            .annotations-container {
                 display: flex;
                 flex-direction: column;
                 flex-basis: 0;
                 flex-grow: 3;
                 overflow: hidden;
 
-                .actions {
+                .annotations {
                     display: flex;
                     flex-direction: column;
                     overflow: hidden;
@@ -102,7 +58,7 @@ $header-gap: 20px;
             }
 
             &.collapsed {
-                .actions-container {
+                .annotations-container {
                     flex-grow: 0;
                     min-width: 100px;
                 }

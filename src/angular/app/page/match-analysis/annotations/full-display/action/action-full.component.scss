@@ -1,0 +1,16 @@
+.action-full-component {
+    border-bottom: 1px solid lightgray;
+    padding: 10px 5px;
+
+    .yes { color: #20c997; }
+    .no { color: #dc3545; }
+    .doubt { color: #ffc107; }
+
+    .box {
+        .clip-minute {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+    }
+}

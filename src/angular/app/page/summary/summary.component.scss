@@ -1,6 +1,5 @@
 $summary-component-margin: 20px;
 $header-height: 30px;
-$header-margin-bottom: 20px;
 
 .summary-component {
     display: flex;
@@ -13,7 +12,6 @@ $header-margin-bottom: 20px;
 
     .summary-header {
         height: $header-height;
-        margin-bottom: $header-margin-bottom;
 
         .title {
             margin: 0;
@@ -25,84 +23,24 @@ $header-margin-bottom: 20px;
         display: flex;
         gap: 20px;
 
-        .game-information-container {
+        .all-game-information-container {
             display: flex;
             flex-direction: column;
-            gap: 5px;
+            gap: 20px;
             width: 100%;
-            overflow: hidden;
 
-            .teams-scores {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                gap: 20px;
+            .comments-body {
+                border: 1px solid rgba(0, 0, 0, 0.125);
+                border-radius: calc(0.25rem - 1px);
 
-                .team {
-                    flex-basis: 0;
-                    flex-grow: 1;
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                    white-space: nowrap;
-                    font-weight: bold;
-
-                    &.local { text-align: right; }
-                    &.visitor { text-align: left; }
-                }
-
-                .scores {
+                .game-comments {
                     display: flex;
-                    gap: 16px;
-                }
-            }
+                    gap: 2rem;
 
-            .date-number {
-                display: flex;
-                align-items: center;
-                gap: 40px;
-
-                .date {
-                    font-weight: bold;
-                    text-align: right;
-                }
-
-                .date, .number {
-                    flex-basis: 0;
-                    flex-grow: 1;
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                    white-space: nowrap;
-                }
-            }
-
-            .game-comments {
-                display: flex;
-                margin: 1rem 1rem 0 1rem;
-                gap: 2rem;
-
-                .game-comment {
-                    display: flex;
-                    flex-direction: column;
-                    flex-basis: 0;
-                    flex-grow: 1;
-                    text-align: justify;
-                    white-space: pre-wrap;
-
-                    .comment-title {
-                        margin-bottom: 0.25rem;
-                        padding-bottom: 0.25rem;
-                        border-bottom: 1px solid #e0e0e0;
-                    }
-
-                    .comment-text {
-                        max-height: 150px;
-                        overflow: auto;
+                    .comment-display-component {
+                        width: 100%;
                     }
                 }
-            }
-
-            h4, h5 {
-                margin: 0;
             }
         }
 

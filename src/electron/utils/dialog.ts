@@ -1,8 +1,10 @@
-import { dialog } from 'electron';
+import { dialog, FileFilter } from 'electron';
 import path from 'path';
 
+import { Game } from '../../../type/refBack';
+
 import { extractFileExtension } from './file';
-import { Game, getDefaultGameVideoFilename } from './game';
+import { getDefaultGameVideoFilename } from './game';
 import { downloadPath } from './path';
 
 export function askSaveVideoPath(game: Game): string|null {
@@ -25,4 +27,26 @@ export function askSaveDirectory(): string|null {
     });
 
     return savePath ? savePath[0] : null;
+}
+
+export function askSaveFile(defaultName: string, extension: string = 'mp4'): string|null {
+    const defaultPath = path.join(downloadPath, `${defaultName}.${extension}`);
+
+    const savePath = dialog.showSaveDialogSync({
+        defaultPath,
+        properties: ['showOverwriteConfirmation'],
+        filters: [{ name: extension, extensions: [`.${extension}`] }],
+    });
+
+    return savePath ? savePath : null;
+}
+
+export function askOpenFile(filters: FileFilter[]): string|null {
+    const openPath = dialog.showOpenDialogSync({
+        filters,
+        defaultPath: downloadPath,
+        properties: ['openFile'],
+    });
+
+    return openPath ? openPath[0] : null;
 }

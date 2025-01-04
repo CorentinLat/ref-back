@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 
-import { Action } from '../../../domain/game';
+import { Action } from '../../../../../../type/refBack';
 
 type PieChartResults = { name: string; value: number }[];
 

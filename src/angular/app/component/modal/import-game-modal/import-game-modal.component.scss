@@ -1,0 +1,20 @@
+.import-game-modal-component {
+    .pre-line { white-space: pre-line }
+
+    .configure-import {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .importing {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+
+        margin-top: 16px;
+
+        font-style: italic;
+    }
+}

@@ -1,0 +1,81 @@
+$base-color: #0d6efd !important;
+
+.multiselect-dropdown {
+    .dropdown-btn {
+        display: flex !important;
+        align-items: center !important;
+        flex-wrap: wrap !important;
+        min-height: 44px !important;
+        gap: 5px !important;
+        padding: 5px !important;
+
+        & > span:last-child {
+            position: absolute !important;
+            right: 0 !important;
+
+            display: flex !important;
+            align-items: center !important;
+            justify-content: flex-end !important;
+            height: 32px !important;
+
+            span:first-child {
+                padding: 0 !important;
+            }
+
+            .dropdown-multiselect__caret {
+                position: relative !important;
+            }
+        }
+
+        .selected-item-container:has(.selected-item[hidden]) {
+            display: none !important;
+        }
+
+        .selected-item {
+            align-items: center !important;
+            gap: 5px !important;
+            height: 32px !important;
+
+            border: none !important;
+            background: $base-color;
+            border-radius: 0.25rem !important;
+            margin: 0 !important;
+
+            &:not([hidden]) {
+                display: flex !important;
+            }
+
+            span {
+                white-space: nowrap !important;
+            }
+
+            a {
+                line-height: 1.5 !important;
+                font-size: 1rem !important;
+                padding: 0 !important;
+            }
+
+            &:hover {
+                box-shadow: none !important;
+            }
+        }
+    }
+}
+
+.multiselect-item-checkbox input[type='checkbox']:focus + div:before,
+.multiselect-item-checkbox input[type='checkbox']:hover + div:before {
+    border-color: $base-color;
+}
+
+.multiselect-item-checkbox input[type='checkbox'] + div:before {
+    color: $base-color;
+    border: 2px solid $base-color;
+}
+
+.multiselect-item-checkbox input[type='checkbox'] + div:after {
+    background-color: $base-color;
+}
+
+.multiselect-item-checkbox input[type='checkbox']:checked + div:before {
+    background: $base-color;
+}

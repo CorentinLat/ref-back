@@ -1,22 +1,10 @@
-export type Action = {
-    id: string;
-    second: number;
-    type: 'PLAY_ON' | 'TOUCH' | 'SCRUM' | 'FREE_KICK' | 'PENALTY' | 'RETURNED_PENALTY' | 'PENALTY_TRY' | 'TRY' | 'NO_TRY' | 'RESTART_KICK';
-    card?: 'WARNING' | 'RED' | 'YELLOW' | 'WHITE';
-    against: 'LOCAL' | 'VISITOR';
-    sector: 'SCRUM' | 'FOUL_PLAY' | 'SPACE' | 'RUCK-TACKLE' | 'LINE_OUT-MAUL' | 'ADVANTAGE';
-    fault: string;
-    precise: 'YES' | 'NO' | 'DOUBT';
-    comment?: string;
-    clip?: { start: number; end: number };
-};
-export type NewAction = Omit<Action, 'id'>;
+export type ActionSector = 'SCRUM' | 'FOUL_PLAY' | 'SPACE' | 'TACKLE-RUCK' | 'LINE_OUT-MAUL' | 'ADVANTAGE';
 
 export const actionTypes = ['PLAY_ON', 'TOUCH', 'SCRUM', 'FREE_KICK', 'PENALTY', 'RETURNED_PENALTY', 'PENALTY_TRY', 'TRY', 'NO_TRY', 'RESTART_KICK'];
 export const actionCardTypes = ['PENALTY', 'RETURNED_PENALTY', 'PENALTY_TRY', 'TRY', 'NO_TRY'];
 export const actionCards = ['WARNING', 'WHITE', 'YELLOW', 'RED'];
 export const actionAgainsts = ['LOCAL', 'VISITOR'];
-export const actionSectors = ['SCRUM', 'FOUL_PLAY', 'SPACE', 'TACKLE-RUCK', 'LINE_OUT-MAUL', 'ADVANTAGE'];
+export const actionSectors: ActionSector[] = ['SCRUM', 'FOUL_PLAY', 'SPACE', 'TACKLE-RUCK', 'LINE_OUT-MAUL', 'ADVANTAGE'];
 export const actionFaults = {
     SCRUM: [
         'INTRODUCTION',
@@ -78,6 +66,7 @@ export const actionFaults = {
         'PICK_AND_GO',
         'SQUEEZE_BALL',
         'FORWARD_PROJECTION',
+        'NOT_PLAYED',
         'OTHER',
     ],
     'LINE_OUT-MAUL': [
@@ -105,19 +94,3 @@ export const actionFaults = {
     ],
 };
 export const actionPrecises = ['YES', 'NO', 'DOUBT'];
-
-export type GameInformation = {
-    gameNumber: string;
-    date: string;
-    teams: { local: string; visitor: string };
-    score: { local: number; visitor: number };
-    videoPath: string;
-};
-export type NewGameInformation = Omit<GameInformation, 'videoPath'>;
-
-export type Game = {
-    actions: Action[];
-    information: GameInformation;
-    gameDescription?: string;
-    globalPerformance?: string;
-};

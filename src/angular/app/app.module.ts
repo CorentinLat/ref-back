@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
@@ -14,24 +15,36 @@ import { VgOverlayPlayModule } from '@videogular/ngx-videogular/overlay-play';
 import { AppRoutingModule } from './app-routing.module';
 
 import { AppComponent } from './app.component';
+import { DecisionsComponent } from './page/decisions/decisions.component';
 import { HomeComponent } from './page/home/home.component';
 import { MatchAnalysisComponent } from './page/match-analysis/match-analysis.component';
-import { ActionsComponent } from './page/match-analysis/actions/actions.component';
-import { CollapseDisplayActionsComponent } from './page/match-analysis/actions/collapse-display/collapse-display-actions.component';
-import { FullDisplayActionsComponent } from './page/match-analysis/actions/full-display/full-display-actions.component';
-import { ActionFullComponent } from './page/match-analysis/actions/full-display/action/action-full.component';
+import { AnnotationsComponent } from './page/match-analysis/annotations/annotations.component';
+import { CollapseDisplayAnnotationsComponent } from './page/match-analysis/annotations/collapse-display/collapse-display-annotations.component';
+import { FullDisplayActionsComponent } from './page/match-analysis/annotations/full-display/full-display-actions.component';
+import { ActionFullComponent } from './page/match-analysis/annotations/full-display/action/action-full.component';
+import { AnnotationFullComponent } from './page/match-analysis/annotations/full-display/annotation/annotation-full.component';
 import { HandleMatchAnalysisComponent } from './page/match-analysis/handle-match-analysis/handle-match-analysis.component';
 import { AddEditActionComponent } from './page/match-analysis/handle-match-analysis/add-edit-action/add-edit-action.component';
+import { AddEditAnnotationComponent } from './page/match-analysis/handle-match-analysis/add-edit-annotation/add-edit-annotation.component';
+import { GameCommentDisplayComponent } from './page/match-analysis/handle-match-analysis/game-comment-display/game-comment-display.component';
 import { SummaryComponent } from './page/summary/summary.component';
 import { StatisticsComponent } from './page/summary/statistics/statistics.component';
 
-import { ToastsComponent } from './component/toasts/toasts.component';
+import { ClipProcessLoaderModalComponent } from './component/modal/process-loader/clip-process-loader-modal.component';
 import { EditGameCommentModalComponent } from './component/modal/edit-game-comment-modal/edit-game-comment-modal.component';
+import { ExportGameModalComponent } from './component/modal/export-game-modal/export-game-modal.component';
 import { GameNumberExistingModalComponent } from './component/modal/game-number-existing-modal/game-number-existing-modal.component';
+import { ImportGameModalComponent } from './component/modal/import-game-modal/import-game-modal.component';
 import { LoadGamesExistingModalComponent } from './component/modal/load-games-existing-modal/load-games-existing-modal.component';
 import { NotEnoughRemainingSpaceModalComponent } from './component/modal/not-enough-remaining-space-modal/not-enough-remaining-space-modal.component';
-import { ClipProcessLoaderModalComponent } from './component/modal/process-loader/clip-process-loader-modal.component';
 import { VideoProcessLoaderModalComponent } from './component/modal/process-loader/video-process-loader-modal.component';
+import { VideoEditorModalComponent } from './component/modal/video-editor-modal/video-editor-modal.component';
+import { AnnotationCommentDisplayComponent } from './component/shared/annotation-comment-display/annotation-comment-display.component';
+import { AnnotationCommentsDisplayComponent } from './component/shared/annotation-comments-display/annotation-comments-display.component';
+import { CardComponent } from './component/shared/card/card.component';
+import { GameInformationComponent } from './component/shared/game-information/game-information.component';
+import { VideoViewerComponent } from './component/shared/video-viewer/video-viewer.component';
+import { ToastsComponent } from './component/toasts/toasts.component';
 import { VgNavigateComponent } from './component/videogular/vg-go-back/vg-navigate.component';
 
 import DirectivesModule from './directive/directives.module';
@@ -41,16 +54,26 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader => new Transla
 @NgModule({
     declarations: [
         ActionFullComponent,
-        ActionsComponent,
         AddEditActionComponent,
+        AddEditAnnotationComponent,
+        AnnotationCommentDisplayComponent,
+        AnnotationCommentsDisplayComponent,
+        AnnotationFullComponent,
+        AnnotationsComponent,
         AppComponent,
+        CardComponent,
         ClipProcessLoaderModalComponent,
-        CollapseDisplayActionsComponent,
+        CollapseDisplayAnnotationsComponent,
+        DecisionsComponent,
         EditGameCommentModalComponent,
+        ExportGameModalComponent,
         FullDisplayActionsComponent,
+        GameCommentDisplayComponent,
+        GameInformationComponent,
         GameNumberExistingModalComponent,
         HandleMatchAnalysisComponent,
         HomeComponent,
+        ImportGameModalComponent,
         LoadGamesExistingModalComponent,
         MatchAnalysisComponent,
         NotEnoughRemainingSpaceModalComponent,
@@ -58,7 +81,9 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader => new Transla
         SummaryComponent,
         ToastsComponent,
         VgNavigateComponent,
+        VideoEditorModalComponent,
         VideoProcessLoaderModalComponent,
+        VideoViewerComponent,
     ],
     imports: [
         AppRoutingModule,
@@ -67,6 +92,7 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader => new Transla
         FormsModule,
         HttpClientModule,
         NgbModule,
+        NgMultiSelectDropDownModule.forRoot(),
         NgxChartsModule,
         ReactiveFormsModule,
         TranslateModule.forRoot({

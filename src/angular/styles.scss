@@ -2,8 +2,13 @@
 @import '~bootstrap-icons/font/bootstrap-icons.css';
 @import '~@videogular/ngx-videogular/fonts/videogular.css';
 
-button.accordion-button:focus,
-button.btn:focus {
+@import 'styles/ng-multiselect-dropdown.scss';
+
+button:focus,
+input:focus,
+select:focus,
+textarea:focus,
+.btn-check:focus + .btn {
     box-shadow: none !important;
 }
 

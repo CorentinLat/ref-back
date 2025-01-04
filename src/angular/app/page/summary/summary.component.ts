@@ -2,9 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { Action, Game } from '../../domain/game';
+import { Action, Annotation, Game, isAction, SummaryExportType } from '../../../../../type/refBack';
 
 import { ClipProcessLoaderModalComponent } from '../../component/modal/process-loader/clip-process-loader-modal.component';
+import { ExportGameModalComponent } from '../../component/modal/export-game-modal/export-game-modal.component';
 
 import { ElectronService } from '../../service/ElectronService';
 import { ToastService } from '../../service/ToastService';
@@ -29,6 +30,10 @@ export class SummaryComponent implements OnInit {
         private toastService: ToastService,
     ) {}
 
+    get actions(): Action[] {
+        return this.game.actions.filter(isAction);
+    }
+
     ngOnInit(): void {
         const gameNumber = this.route.snapshot.queryParamMap.get('gameNumber');
         if (!gameNumber) {
@@ -46,11 +51,12 @@ export class SummaryComponent implements OnInit {
             });
     }
 
-    handleNavigateToMatchAnalysis(): void {
-        this.router.navigate(
-            ['/match-analysis'],
-            { queryParams: { gameNumber: this.gameNumber} }
-        );
+    async handleNavigateToMatchAnalysis(): Promise<void> {
+        try {
+            await this.router.navigate(['/match-analysis'], { queryParams: { gameNumber: this.gameNumber} });
+        } catch (error: any) {
+            this.toastService.showError(error.message);
+        }
     }
 
     async handleDownloadVideoGame(): Promise<void> {
@@ -103,11 +109,11 @@ export class SummaryComponent implements OnInit {
         }
     }
 
-    async handleExportSummary(): Promise<void> {
+    async handleExportSummary(exportType: SummaryExportType): Promise<void> {
         this.isDownloadingSummary = true;
 
         try {
-            await this.electron.downloadPdfSummary(this.gameNumber);
+            await this.electron.downloadSummary(this.gameNumber, exportType);
         } catch (error: any) {
             if (!error?.closed) {
                 this.toastService.showError('TOAST.ERROR.PROCESS_DOWNLOAD_SUMMARY');
@@ -115,6 +121,11 @@ export class SummaryComponent implements OnInit {
         } finally {
             this.isDownloadingSummary = false;
         }
+    }
+
+    async handleOpenExportGameModal(): Promise<void> {
+        const modal = this.modalService.open(ExportGameModalComponent, { backdrop: 'static', centered: true });
+        modal.componentInstance.gameNumber = this.gameNumber;
     }
 
     handleNavigateToHome(): void {
@@ -125,24 +136,24 @@ export class SummaryComponent implements OnInit {
         return this.game.actions.some(action => action.clip);
     }
 
-    exposeHasDecisions(): boolean {
+    exposeHasAnnotations(): boolean {
         return Boolean(this.game?.actions?.length);
     }
 
     exposeHasStatistics(): boolean {
         return this.game.actions.some(action =>
-            action.type === 'PENALTY' || action.type === 'FREE_KICK'
+            isAction(action) && (action.type === 'PENALTY' || action.type === 'FREE_KICK')
         );
     }
 
-    exposeActionsSortedByTime(): Action[] {
+    exposeAnnotationsSortedByTime(): (Action|Annotation)[] {
         return this.game.actions.sort((a, b) => a.second - b.second);
     }
 
-    exposeSectorsWithAtLeastOneDecision(): string[] {
+    exposeSectorsWithAtLeastOneAction(): string[] {
         const uniqueSectors = this.game.actions
             .reduce<Set<string>>((sectors, action) => {
-                sectors.add(action.sector);
+                if(isAction(action)) sectors.add(action.sector);
                 return sectors;
             }, new Set());
 
@@ -151,7 +162,11 @@ export class SummaryComponent implements OnInit {
             .sort((a, b) => a.localeCompare(b));
     }
 
-    private navigateToHome(): void {
-        this.router.navigate(['/']);
+    private async navigateToHome(): Promise<void> {
+        try {
+            await this.router.navigate(['/']);
+        } catch (error: any) {
+            this.toastService.showError(error.message);
+        }
     }
 }

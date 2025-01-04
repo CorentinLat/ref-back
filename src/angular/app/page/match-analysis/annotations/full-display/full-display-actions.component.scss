@@ -1,0 +1,60 @@
+.full-display-actions-component {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+
+    .actions-header {
+        font-size: 18px;
+        font-weight: bold;
+        padding: 0 5px 10px 5px;
+        border-bottom: 2px solid black;
+    }
+
+    .actions-header, .action-full-component, .annotation-full-component {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+
+        .box {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+
+            &.actions { min-width: 90px; }
+            &.against { min-width: 70px; }
+            &.fault { min-width: 150px; max-width: 280px; width: 100% }
+            &.minute { min-width: 70px; text-align: center; }
+            &.precise { min-width: 100px; }
+            &.role { min-width: 16px; }
+            &.sector { min-width: 140px; }
+            &.type { min-width: 160px; }
+            &.comment {
+                min-width: 130px;
+                width: calc(100%);
+            }
+
+            @media (max-width: 1600px) {
+                &.against { min-width: 60px; }
+                &.fault { min-width: 50px; max-width: 280px; width: 100% }
+                &.precise { min-width: 80px; }
+                &.sector { min-width: 80px; }
+                &.type { min-width: 78px; }
+                &.comment {
+                    min-width: 80px;
+                    width: calc(100%);
+                }
+            }
+        }
+    }
+
+    .actions-container {
+        display: flex;
+        flex-direction: column;
+        overflow: auto;
+    }
+
+    .no-action {
+        margin-top: 50px;
+        text-align: center;
+    }
+}

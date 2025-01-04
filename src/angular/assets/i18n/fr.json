@@ -5,9 +5,17 @@
         "gameDescription": "Description du Jeu",
         "globalPerformance": "Performance Globale"
       },
-      "COMMENT": "Comment",
       "CANCEL": "Annuler",
       "SAVE": "Sauvegarder"
+    },
+    "EXPORT_GAME": {
+      "TITLE": "Exporter le Match",
+      "INCLUDE_VIDEO": "Inclure la vidéo dans l'export du match ?",
+      "YES": "Oui",
+      "NO": "Non",
+      "EXPORTING": "Export en cours (Cela peut prendre plusieurs minutes)",
+      "CANCEL": "Annuler",
+      "EXPORT": "Exporter"
     },
     "GAME_NUMBER_EXISTING": {
       "TITLE": "Rencontre existante",
@@ -15,10 +23,29 @@
       "MESSAGE_2": "a déjà été utilisé.",
       "OVERWRITE_QUESTION": "Voulez-vous écraser cette rencontre existante ?",
       "INFORMATION": "Toute donnée précédemment créée (vidéos, actions, ...) sera perdue.",
-      "LOAD_QUESTION": "Ou voulez-vous charger les données de cette rencontre ?",
+      "SEE_GAME_QUESTION": "Ou voulez-vous accéder à cette rencontre existante ?",
       "CANCEL": "Annuler",
       "OVERWRITE": "Écraser",
-      "LOAD": "Charger"
+      "SEE": "Accéder"
+    },
+    "IMPORT_GAME": {
+      "TITLE": "Importer le Match",
+      "NO_VIDEO_AND_EXISTING": "Ce match ne comporte aucune vidéo incluse et il n'existe aucun autre match déjà créé.",
+      "HAS_VIDEO": "Ce match comporte une vidéo incluse.\nQue souhaitez-vous faire ?",
+      "CREATE_NEW": "Créer un nouveau match",
+      "IMPORT_DECISIONS": "Importer les décisions",
+      "NO_VIDEO": "Ce match ne comporte aucune vidéo incluse.",
+      "CHOOSE_GAME_FOR_DECISIONS_IMPORT": "Choisissez un match auquel ajouter les décisions :",
+      "GAME_NUMBER_ALREADY_EXISTS": "Un match avec ce numéro de rencontre existe déjà.\nQue souhaitez-vous faire ?",
+      "INPUT_NEW_GAME_NUMBER": "Saisissez un nouveau numéro de rencontre",
+      "DECISIONS_CHOICE_OVERRIDE_CONCAT": "Voulez-vous écraser ou ajouter les décisions ?",
+      "OVERRIDES": "Écraser",
+      "CONCAT": "Ajouter",
+      "YES": "Oui",
+      "NO": "Non",
+      "IMPORTING": "Import en cours (Cela peut prendre plusieurs minutes)",
+      "CANCEL": "Annuler",
+      "IMPORT": "Importer"
     },
     "LOAD_GAMES_EXISTING": {
       "TITLE": "Charger des rencontres existantes",
@@ -34,14 +61,74 @@
       "TITLE": "Traitement en cours",
       "REMAINING_TIME": "Temps restant estimé :",
       "CANCEL": "Annuler"
+    },
+    "VIDEO_EDITOR": {
+      "EDITION": {
+        "CLIP": {
+          "BEGIN": "Début du clip",
+          "END": "Fin du clip"
+        },
+        "GAME": {
+          "FIRST": {
+            "BEGIN": "Début 1MT",
+            "END": "Fin 1MT"
+          },
+          "SECOND": {
+            "BEGIN": "Début 2MT",
+            "END": "Fin 2MT"
+          }
+        }
+      },
+      "BUTTON": {
+        "CANCEL": "Annuler",
+        "CREATE_CLIP": "Créer un clip",
+        "CUT_VIDEO": "Couper la vidéo",
+        "SAVE": "Sauvegarder"
+      }
     }
   },
   "PAGE": {
+    "DECISIONS": {
+      "TITLE": "Parcourir vos Décisions",
+      "BACK_TO_HOME": "Retour à l'Accueil",
+      "EXPLANATION": "Recherchez des décisions, découpez-les puis téléchargez-les.",
+      "NO_DECISION": "Aucune décision ne correspond.",
+      "ACTION": {
+        "SEE_DECISION": "Décision",
+        "SEE_GAME": "Rencontre"
+      },
+      "ACTIONS": {
+        "SECTOR": "Secteur",
+        "FAULT": "Faute",
+        "PRECISE": "Précis",
+        "TYPE": "Décision",
+        "COMMENT_REFEREE": "Commentaire Arbitre",
+        "COMMENT_ADVISER": "Commentaire Conseiller"
+      },
+      "FORM": {
+        "LABEL": {
+          "FAULT": "Faute(s)",
+          "PRECISE": "Précis",
+          "SECTOR": "Secteur(s)"
+        },
+        "MULTI_SELECT": {
+          "ALL": "Tout sélectionner",
+          "NONE": "Tout désélectionner",
+          "NO_DATA_FAULT": "Sélectionnez un secteur",
+          "PLACEHOLDER_FAULT": "Filtrer par faute",
+          "PLACEHOLDER_PRECISE": "Filtrer par précision",
+          "PLACEHOLDER_SECTOR": "Filtrer par secteur",
+          "SEARCH": "Rechercher"
+        }
+      }
+    },
     "HOME": {
       "IMPORT": "Importez votre vidéo",
       "IMPORT_BUTTON": "Démarrer",
       "MULTI_VIDEO_EXPLANATION": "Si votre vidéo est découpée en plusieurs clips, vous pouvez tous les importer.",
       "SEE_EXISTING_GAMES": "Rencontres",
+      "EXPLORE_DECISIONS": "Décisions",
+      "IMPORT_GAME": "Importer",
       "MADE_BY": "Créé par",
       "WITH": "avec",
       "DOCUMENTATION": "Documentation",
@@ -51,7 +138,11 @@
           "DATE": "Date",
           "LOCAL_TEAM": "Équipe Locale",
           "VISITOR_TEAM": "Équipe Visiteuse",
-          "SCORE": "Résultat"
+          "SCORE": "Résultat",
+          "VIDEO_OPTION": {
+            "FILE": "Fichier",
+            "VEO": "Lien Veo"
+          }
         }
       },
       "ERROR" : {
@@ -69,28 +160,40 @@
         "SCORES": {
           "REQUIRED": "Le score de la rencontre doit être saisi."
         },
-        "VIDEO": {
+        "VIDEO_FILE": {
           "IMPORT_INVALID": "Les fichiers suivants ne sont pas supportés :",
           "MULTIPLE_FORMAT": "Les vidéos doivent être au même format.",
           "NOT_ENOUGH_SPACE": "Stockage disponible insuffisant.",
           "PROCESS_FAILED": "Une erreur est survenue lors du traitement.",
           "REQUIRED": "Vous devez sélectionner au moins une vidéo."
+        },
+        "VIDEO_VEO": {
+          "IMPORT_INVALID": "Le lien Veo n'est pas valide.",
+          "NOT_ENOUGH_SPACE": "Stockage disponible insuffisant.",
+          "PROCESS_FAILED": "Une erreur est survenue lors du traitement.",
+          "REQUIRED": "Vous devez saisir un lien Veo."
         }
       }
     },
     "MATCH_ANALYSIS": {
       "BACK_HOME": "Accueil",
+      "BACK": "Retour",
+      "ROLE": {
+        "ADVISER": "Conseiller",
+        "REFEREE": "Arbitre"
+      },
       "ACTIONS": {
         "TITLE": "Décisions",
         "NO_ACTION": "Aucune décision n'a été ajoutée pour le moment.",
         "NO_ACTION_SHORT": "Aucune décision",
-        "MINUTE": "Minutage",
+        "EDIT_VIDEO_GAME": "Couper la vidéo",
+        "MINUTE": "Timing",
         "TYPE": "Décision",
         "AGAINST": "Contre",
         "SECTOR": "Secteur",
         "FAULT": "Faute",
         "PRECISE": "Précis",
-        "COMMENT": "Commentaire",
+        "COMMENT": "Commentaire(s)",
         "ACTION": {
           "TYPE": {
             "PLAY_ON": "Jeu",
@@ -206,6 +309,7 @@
             "NO_RETURN": "Pas de retour",
             "BAD_RETURN": "Retour erroné",
             "DEAD_BALL": "Ballon mort",
+            "NOT_PLAYED": "Ballon non joué",
             "OTHER": "Autre faute"
           },
           "PRECISE": {
@@ -216,6 +320,7 @@
         }
       },
       "BUTTONS": {
+        "ADD_COMMENT": "Ajouter un commentaire",
         "ADD_DECISION": "Ajouter une décision",
         "NAVIGATE_TO_SUMMARY": "Récapitulatif",
         "ENLARGE": "Agrandir",
@@ -226,7 +331,7 @@
         "CANCEL": "Annuler",
         "UPDATE": "Mettre à jour",
         "LABEL": {
-          "SECOND": "Minutage",
+          "SECOND": "Timing",
           "TYPE": "Décision",
           "CARD": "Carton",
           "AGAINST": "Contre",
@@ -261,10 +366,16 @@
         "DOWNLOAD_VIDEO_GAME": "Match",
         "DOWNLOAD_VIDEO_CLIPS": "Clips",
         "DOWNLOAD_VIDEO_ALL": "Tout",
-        "EXPORT_SUMMARY": "Exporter",
+        "EXPORT_SUMMARY": {
+          "": "Exporter",
+          "EXCEL": "Excel",
+          "PDF": "Pdf",
+          "SHARE": "Partager"
+        },
         "NAVIGATE_HOME": "Terminer"
       },
       "PANEL": {
+        "COMMENTS": "Commentaires",
         "ALL_ACTIONS": "Toutes les décisions",
         "SCRUM": "Décisions concernant la Mêlée",
         "FOUL_PLAY": "Décisions concernant le Jeu Déloyal",
@@ -299,21 +410,29 @@
       "PROCESS_ACTION_ADDED": "Impossible d'ajouter cette action...",
       "PROCESS_ACTION_EDITED": "Impossible d'éditer cette action...",
       "PROCESS_ACTION_REMOVED": "Impossible de supprimer cette action...",
+      "PROCESS_CUT_VIDEO": "Impossible d'éditer la vidéo...",
+      "PROCESS_DECISIONS": "Impossible de récupérer les décisions...",
       "PROCESS_DOWNLOAD_GAME": "Impossible de télécharger la vidéo...",
       "PROCESS_DOWNLOAD_CLIPS": "Impossible de télécharger les clips...",
       "PROCESS_DOWNLOAD_VIDEOS": "Impossible de télécharger les vidéos...",
       "PROCESS_DOWNLOAD_SUMMARY": "Impossible d'exporter le résumé...",
+      "PROCESS_EXPORT_GAME": "Impossible d'exporter le match...",
       "PROCESS_GAME": "Impossible de charger le match...",
       "PROCESS_GAME_COMMENT": "Impossible de mettre à jour le commentaire...",
-      "PROCESS_VIDEO": "Impossible de traiter les vidéos..."
+      "PROCESS_IMPORT_GAME": "Impossible d'importer le match...",
+      "PROCESS_VIDEO": "Impossible de traiter la vidéo..."
     },
     "INFO": {
+      "CUT_VIDEO_CANCELLED": "Édition de la vidéo annulée !",
       "DOWNLOAD_VIDEO_CANCELLED": "Téléchargement annulé !",
       "PROCESS_VIDEO_CANCELLED": "Import annulé !"
     },
     "SUCCESS": {
       "PROCESS_ACTION_ADDED": "Action ajoutée !",
       "PROCESS_ACTION_EDITED": "Action mise à jour !",
+      "PROCESS_CUT_VIDEO": "Vidéo éditée !",
+      "PROCESS_EXPORT_GAME": "Match exporté !",
+      "PROCESS_IMPORT_GAME": "Match importé !",
       "gameDescription_EDITED": "Description mise à jour !",
       "globalPerformance_EDITED": "Performance mise à jour !"
     }

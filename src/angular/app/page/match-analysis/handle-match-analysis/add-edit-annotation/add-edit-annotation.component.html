@@ -1,0 +1,65 @@
+<form
+    class="add-edit-annotation-component d-flex flex-column gap-3"
+    [formGroup]="annotationForm"
+    (ngSubmit)="handleAnnotationSubmitted()"
+    novalidate
+>
+    <section class="d-flex gap-3">
+        <section class="input comment">
+            <label for="comment" class="form-label">
+                {{ 'PAGE.MATCH_ANALYSIS.FORM.LABEL.COMMENT' | translate }} :
+            </label>
+            <textarea
+                class="form-control"
+                id="comment"
+                formControlName="comment"
+                rows="1"
+            ></textarea>
+        </section>
+    </section>
+
+    <section class="d-flex align-items-center justify-content-end gap-3">
+        <article class="form-check form-switch">
+            <input
+                id="createClip"
+                class="form-check-input"
+                type="checkbox"
+                role="switch"
+                [(ngModel)]="createClip"
+                [ngModelOptions]="{ standalone: true }"
+            >
+            <label class="form-check-label" for="createClip">
+                {{ 'PAGE.MATCH_ANALYSIS.FORM.LABEL.CREATE_CLIP' | translate }}
+            </label>
+        </article>
+
+        <article *ngIf="!createClip">
+            <span class="minutes-label">{{ 'PAGE.MATCH_ANALYSIS.FORM.LABEL.SECOND' | translate }} :</span>
+            <span class="minutes-value">{{ exposeAnnotationMinutes() }}</span>
+        </article>
+        <article *ngIf="createClip">
+            <span class="minutes-label">{{ 'PAGE.MATCH_ANALYSIS.FORM.LABEL.START_CLIP' | translate }} :</span>
+            <span class="minutes-value">{{ exposeStartClipMinutes() }}</span>
+
+            <span class="minutes-label">{{ 'PAGE.MATCH_ANALYSIS.FORM.LABEL.END_CLIP' | translate }} :</span>
+            <span class="minutes-value">{{ exposeEndClipMinutes() }}</span>
+        </article>
+
+        <button
+            class="btn btn-danger"
+            type="button"
+            [disabled]="isSubmittingAnnotation"
+            (click)="annotationCancelled.emit()"
+        >
+            {{ 'PAGE.MATCH_ANALYSIS.FORM.CANCEL' | translate }}
+        </button>
+        <button
+            class="btn btn-success"
+            type="submit"
+            [disabled]="annotationForm.invalid || isSubmittingAnnotation"
+        >
+            <span *ngIf="!annotation">{{ 'PAGE.MATCH_ANALYSIS.FORM.ADD' | translate }}</span>
+            <span *ngIf="annotation">{{ 'PAGE.MATCH_ANALYSIS.FORM.UPDATE' | translate }}</span>
+        </button>
+    </section>
+</form>

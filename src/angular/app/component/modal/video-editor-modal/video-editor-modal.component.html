@@ -1,0 +1,123 @@
+<section class="video-editor-modal-component">
+    <header class="modal-header">
+        <h5 class="modal-title">{{ videoTitle }}</h5>
+        <button
+            type="button"
+            class="btn-close"
+            [disabled]="isProcessingVideo"
+            (click)="modal.dismiss()"
+        ></button>
+    </header>
+
+    <main class="modal-body">
+        <app-video-viewer
+            [videoPath]="videoPath"
+            [timing]="timing"
+            (videoReady)="handleVideoReady($event)"
+            (videoPaused)="handleVideoPaused()"
+            (videoTimeUpdated)="handleVideoTimeUpdated($event)"
+        ></app-video-viewer>
+    </main>
+
+    <footer class="modal-footer">
+        <button
+            type="button"
+            class="btn btn-primary"
+            (click)="handleEditVideo()"
+            *ngIf="!isEditing"
+        >
+            <span *ngIf="isClipEdition">
+                <i class="bi bi-plus"></i>
+                {{ 'MODAL.VIDEO_EDITOR.BUTTON.CREATE_CLIP' | translate }}
+            </span>
+            <span *ngIf="!isClipEdition">
+                <i class="bi bi-scissors"></i>
+                {{ 'MODAL.VIDEO_EDITOR.BUTTON.CUT_VIDEO' | translate }}
+            </span>
+        </button>
+
+        <section class="editing-container" *ngIf="isEditing && !isProcessingVideo">
+            <article class="clip-editing" *ngIf="isClipEdition">
+                <span class="timing">
+                    <button class="btn btn-light btn-sm" (click)="handleUpdateClipBeginToCurrent()">
+                        <i class="bi bi-arrow-clockwise"></i>
+                    </button>
+                    <span class="timing-label">{{ 'MODAL.VIDEO_EDITOR.EDITION.CLIP.BEGIN' | translate }} :</span>
+                    <span class="timing-value">{{ exposeSecondToMMSS(clip.begin) }}</span>
+                </span>
+                <span class="timing">
+                    <span class="timing-label">{{ 'MODAL.VIDEO_EDITOR.EDITION.CLIP.END' | translate }} :</span>
+                    <span class="timing-value">{{ exposeSecondToMMSS(clip.end) }}</span>
+                </span>
+            </article>
+
+            <article class="game-editing" *ngIf="!isClipEdition">
+                <span class="timing">
+                    <button class="btn btn-light btn-sm" (click)="handleUpdateFirstHalfBeginToCurrent()">
+                        <i class="bi bi-hourglass-top"></i>
+                    </button>
+                    <span class="timing-label">{{ 'MODAL.VIDEO_EDITOR.EDITION.GAME.FIRST.BEGIN' | translate }} :</span>
+                    <span class="timing-value">{{ exposeSecondToMMSS(game.firstHalf.begin) }}</span>
+                </span>
+                <span class="timing">
+                    <button class="btn btn-light btn-sm" (click)="handleUpdateFirstHalfEndToCurrent()">
+                        <i class="bi bi-hourglass-split"></i>
+                    </button>
+                    <span class="timing-label">{{ 'MODAL.VIDEO_EDITOR.EDITION.GAME.FIRST.END' | translate }} :</span>
+                    <span class="timing-value">{{ exposeSecondToMMSS(game.firstHalf.end) }}</span>
+                </span>
+                <span class="timing">
+                    <button class="btn btn-light btn-sm" (click)="handleUpdateSecondHalfBeginToCurrent()">
+                        <i class="bi bi-hourglass-bottom"></i>
+                    </button>
+                    <span class="timing-label">{{ 'MODAL.VIDEO_EDITOR.EDITION.GAME.SECOND.BEGIN' | translate }} :</span>
+                    <span class="timing-value">{{ exposeSecondToMMSS(game.secondHalf.begin) }}</span>
+                </span>
+                <span class="timing">
+                    <button class="btn btn-light btn-sm" (click)="handleUpdateSecondHalfEndToCurrent()">
+                        <i class="bi bi-hourglass"></i>
+                    </button>
+                    <span class="timing-label">{{ 'MODAL.VIDEO_EDITOR.EDITION.GAME.SECOND.END' | translate }} :</span>
+                    <span class="timing-value">{{ exposeSecondToMMSS(game.secondHalf.end) }}</span>
+                </span>
+            </article>
+
+            <article class="editing-buttons">
+                <button
+                    type="button"
+                    class="btn btn-danger"
+                    (click)="handleCancelEdit()"
+                >
+                    {{ 'MODAL.VIDEO_EDITOR.BUTTON.CANCEL' | translate }}
+                </button>
+                <button
+                    type="button"
+                    class="btn btn-success"
+                    [disabled]="!isEditionValid"
+                    (click)="handleSubmitVideoProcessing()"
+                >
+                    <i class="bi bi-save"></i>
+                    {{ 'MODAL.VIDEO_EDITOR.BUTTON.SAVE' | translate }}
+                </button>
+            </article>
+        </section>
+
+        <section class="video-processing-loader" *ngIf="isEditing && isProcessingVideo">
+            <ngb-progressbar
+                class="w-100"
+                type="success"
+                height="20px"
+                [value]="progress"
+                [animated]="true"
+            ></ngb-progressbar>
+
+            <p class="remaining-time-label">{{ 'MODAL.PROCESS_LOADER.REMAINING_TIME' | translate }}</p>
+
+            <p class="remaining-time-value">{{ exposeRemainingTime() }}</p>
+
+            <button class="btn btn-outline-danger btn-sm" type="button" (click)="handleCancelVideoProcessing()">
+                {{ 'MODAL.PROCESS_LOADER.CANCEL' | translate }} <i class="bi bi-x-lg"></i>
+            </button>
+        </section>
+    </footer>
+</section>

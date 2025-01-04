@@ -1,0 +1,154 @@
+<section class="decisions-component">
+    <header class="decisions-header row">
+        <article class="col-3">
+            <button class="btn btn-link" (click)="navigateToHomePage()">
+                <i class="bi bi-arrow-left"></i> {{ 'PAGE.DECISIONS.BACK_TO_HOME' | translate }}
+            </button>
+        </article>
+
+        <h4 class="title col-6">{{ 'PAGE.DECISIONS.TITLE' | translate }}</h4>
+    </header>
+
+    <form
+        class="decisions-filters container"
+        [formGroup]="searchForm"
+        novalidate
+    >
+        <article class="mb-4 text-center">
+            <p>{{ 'PAGE.DECISIONS.EXPLANATION' | translate }}</p>
+        </article>
+
+        <section class="row">
+            <article class="col-4">
+                <label for="sectors" class="form-label">
+                    {{ 'PAGE.DECISIONS.FORM.LABEL.SECTOR' | translate }}
+                </label>
+                <div class="input-group">
+                    <ng-multiselect-dropdown
+                        id="sectors"
+                        [settings]="multiSelectDropdownDefaultSettings"
+                        [placeholder]="'PAGE.DECISIONS.FORM.MULTI_SELECT.PLACEHOLDER_SECTOR' | translate"
+                        [formControl]="sectorsControl"
+                        [data]="actionSectors"
+                        (onSelect)="filterDecisions()"
+                        (onDeSelect)="filterDecisions()"
+                    >
+                    </ng-multiselect-dropdown>
+                </div>
+            </article>
+
+            <article class="col-4">
+                <label for="faults" class="form-label">
+                    {{ 'PAGE.DECISIONS.FORM.LABEL.FAULT' | translate }}
+                </label>
+                <div class="input-group">
+                    <ng-multiselect-dropdown
+                        id="faults"
+                        [settings]="multiSelectDropdownFaultsSettings"
+                        [placeholder]="'PAGE.DECISIONS.FORM.MULTI_SELECT.PLACEHOLDER_FAULT' | translate"
+                        [formControl]="faultsControl"
+                        [data]="actionFaults"
+                        (onSelect)="filterDecisions()"
+                        (onDeSelect)="filterDecisions()"
+                    >
+                    </ng-multiselect-dropdown>
+                </div>
+            </article>
+
+            <article class="col-4">
+                <label for="precises" class="form-label">
+                    {{ 'PAGE.DECISIONS.FORM.LABEL.PRECISE' | translate }}
+                </label>
+                <div class="input-group">
+                    <ng-multiselect-dropdown
+                        id="precises"
+                        [settings]="multiSelectDropdownPrecisesSettings"
+                        [placeholder]="'PAGE.DECISIONS.FORM.MULTI_SELECT.PLACEHOLDER_PRECISE' | translate"
+                        [formControl]="precisesControl"
+                        [data]="actionPrecises"
+                        (onSelect)="filterDecisions()"
+                        (onDeSelect)="filterDecisions()"
+                    >
+                    </ng-multiselect-dropdown>
+                </div>
+            </article>
+        </section>
+    </form>
+
+    <main class="decisions-main" *ngIf="!isLoadingDecisions">
+        <section class="decisions-table" *ngIf="filteredDecisions.length">
+            <section class="decisions-table-header">
+                <article class="column sector">
+                    {{ 'PAGE.DECISIONS.ACTIONS.SECTOR' | translate }}
+                </article>
+                <article class="column fault">
+                    {{ 'PAGE.DECISIONS.ACTIONS.FAULT' | translate }}
+                </article>
+                <article class="column precise">
+                    {{ 'PAGE.DECISIONS.ACTIONS.PRECISE' | translate }}
+                </article>
+                <article class="column type">
+                    {{ 'PAGE.DECISIONS.ACTIONS.TYPE' | translate }}
+                </article>
+                <article class="column comment">
+                    {{ 'PAGE.DECISIONS.ACTIONS.COMMENT_REFEREE' | translate }}
+                </article>
+                <article class="column comment">
+                    {{ 'PAGE.DECISIONS.ACTIONS.COMMENT_ADVISER' | translate }}
+                </article>
+                <article class="column actions"></article>
+            </section>
+            <section class="decisions-table-body">
+                <section class="decision" *ngFor="let decision of filteredDecisions">
+                    <article class="column sector">
+                        {{ decision.sectorLabel }}
+                    </article>
+                    <article class="column fault">
+                        {{ decision.faultLabel }}
+                    </article>
+                    <article class="column precise">
+                        {{ decision.preciseLabel }}
+                    </article>
+                    <article class="column type">
+                        {{ decision.typeLabel }}
+                        <app-card [card]="decision.card"></app-card>
+                    </article>
+                    <article class="column comment">
+                        {{ decision.comment }}
+                    </article>
+                    <article class="column comment">
+                        {{ decision.commentFromAdviser }}
+                    </article>
+                    <article class="column actions">
+                        <div class="actions-container">
+                            <button
+                                class="btn btn-outline-primary btn-sm"
+                                (click)="displayDecisionVideo(decision)"
+                            >
+                                <i class="bi bi-play-circle"></i>
+                                {{ 'PAGE.DECISIONS.ACTION.SEE_DECISION' | translate }}
+                            </button>
+                            <button
+                                class="btn btn-outline-secondary btn-sm"
+                                (click)="navigateToMatchAnalysisPage(decision)"
+                            >
+                                <i class="bi bi-eye"></i>
+                                {{ 'PAGE.DECISIONS.ACTION.SEE_GAME' | translate }}
+                            </button>
+                        </div>
+                    </article>
+                </section>
+            </section>
+        </section>
+
+        <h3 class="no-decision" *ngIf="!filteredDecisions.length">
+            {{ 'PAGE.DECISIONS.NO_DECISION' | translate }}
+        </h3>
+    </main>
+
+    <article class="loader-decision" *ngIf="isLoadingDecisions">
+        <div class="spinner-border" style="width: 3rem; height: 3rem;" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </article>
+</section>

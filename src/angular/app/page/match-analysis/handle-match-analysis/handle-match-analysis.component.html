@@ -1,61 +1,67 @@
 <section class="handle-match-analysis-component">
-    <section class="w-100 d-flex gap-5" *ngIf="!displayActionForm">
+    <section class="w-100 d-flex gap-5" *ngIf="!displayActionForm && !displayAnnotationForm">
         <section class="comments-container">
-            <section class="match-analysis-comment">
-                <h5 class="comment-title">
-                    {{ 'PAGE.MATCH_ANALYSIS.FORM.GAME_DESCRIPTION.TITLE' | translate }}
-                    <button
-                        class="btn text-warning"
-                        *ngIf="game.gameDescription"
-                        (click)="handleUpdateGameDescription()"
-                    >
-                        <i class="bi bi-pen"></i>
-                    </button>
-                </h5>
-
-                <p class="comment-text" *ngIf="game.gameDescription">{{ game.gameDescription }}</p>
-
-                <article class="no-comment" *ngIf="!game.gameDescription">
-                    <p>{{ 'PAGE.MATCH_ANALYSIS.FORM.GAME_DESCRIPTION.NO' | translate }}</p>
-                    <button class="btn btn-link" (click)="handleUpdateGameDescription()">
-                        {{ 'PAGE.MATCH_ANALYSIS.FORM.ADD' | translate }}
-                    </button>
-                </article>
-            </section>
-            <section class="match-analysis-comment">
-                <h5 class="comment-title">
-                    {{ 'PAGE.MATCH_ANALYSIS.FORM.GLOBAL_PERFORMANCE.TITLE' | translate }}
-                    <button
-                        class="btn text-warning"
-                        *ngIf="game.globalPerformance"
-                        (click)="handleUpdateGlobalPerformance()"
-                    >
-                        <i class="bi bi-pen"></i>
-                    </button>
-                </h5>
-
-                <p class="comment-text" *ngIf="game.globalPerformance">{{ game.globalPerformance }}</p>
-
-                <article class="no-comment" *ngIf="!game.globalPerformance">
-                    <p>{{ 'PAGE.MATCH_ANALYSIS.FORM.GLOBAL_PERFORMANCE.NO' | translate }}</p>
-                    <button class="btn btn-link" (click)="handleUpdateGlobalPerformance()">
-                        {{ 'PAGE.MATCH_ANALYSIS.FORM.ADD' | translate }}
-                    </button>
-                </article>
-            </section>
+            <app-game-comment-display
+                class="comment-display-component"
+                [game]="game"
+                [isEditable]="true"
+                [keyToDisplay]="'gameDescription'"
+                [keyLabel]="'GAME_DESCRIPTION'"
+            ></app-game-comment-display>
+            <app-game-comment-display
+                class="comment-display-component"
+                [game]="game"
+                [isEditable]="true"
+                [keyToDisplay]="'globalPerformance'"
+                [keyLabel]="'GLOBAL_PERFORMANCE'"
+            ></app-game-comment-display>
         </section>
 
         <article class="buttons-container">
-            <button class="add-decision-btn btn btn-success" (click)="handleDisplayActionForm()">
+            <article class="role-options-toggle btn-group btn-group-sm">
+                <input
+                    id="referee-role"
+                    name="role-option"
+                    type="radio"
+                    class="btn-check"
+                    value="referee"
+                    [(ngModel)]="role"
+                    (change)="handleToggleRole()"
+                >
+                <label class="btn btn-outline-primary" for="referee-role">
+                    <i class="bi-person-raised-hand"></i>
+                    {{ 'PAGE.MATCH_ANALYSIS.ROLE.REFEREE' | translate }}
+                </label>
+
+                <input
+                    id="adviser-role"
+                    name="role-option"
+                    type="radio"
+                    class="btn-check"
+                    value="adviser"
+                    [(ngModel)]="role"
+                    (change)="handleToggleRole()"
+                >
+                <label class="btn btn-outline-primary" for="adviser-role">
+                    <i class="bi-eye-fill"></i>
+                    {{ 'PAGE.MATCH_ANALYSIS.ROLE.ADVISER' | translate }}
+                </label>
+            </article>
+
+            <button class="add-decision-btn btn btn-success btn-sm" (click)="handleDisplayActionForm()">
                 <i class="bi bi-plus"></i> {{ 'PAGE.MATCH_ANALYSIS.BUTTONS.ADD_DECISION' | translate }}
             </button>
 
-            <button class="collapse-btn btn btn-outline-dark" (click)="collapse.actions = !collapse.actions">
-                <span *ngIf="!collapse.actions">
+            <button class="add-decision-btn btn btn-secondary btn-sm" (click)="handleDisplayAnnotationForm()">
+                <i class="bi bi-plus"></i> {{ 'PAGE.MATCH_ANALYSIS.BUTTONS.ADD_COMMENT' | translate }}
+            </button>
+
+            <button class="collapse-btn btn btn-outline-dark btn-sm" (click)="handleToggleCollapse()">
+                <span *ngIf="!isCollapsed">
                     {{ 'PAGE.MATCH_ANALYSIS.BUTTONS.REDUCE' | translate }}
                     <i class="bi bi-chevron-right"></i>
                 </span>
-                <span *ngIf="collapse.actions">
+                <span *ngIf="isCollapsed">
                     <i class="bi bi-chevron-left"></i>
                     {{ 'PAGE.MATCH_ANALYSIS.BUTTONS.ENLARGE' | translate }}
                 </span>
@@ -68,9 +74,20 @@
         [action]="currentAction"
         [gameNumber]="game.information.gameNumber"
         [videoApiService]="videoApiService"
-        (actionAdded)="handleActionAdded($event)"
-        (actionEdited)="handleActionEdited($event)"
+        (actionAdded)="handleAnnotationAdded($event)"
+        (actionEdited)="handleAnnotationEdited($event)"
         (actionCancelled)="handleActionCancelled()"
         *ngIf="displayActionForm"
     ></app-add-edit-action>
+
+    <app-add-edit-annotation
+        class="w-100 d-flex align-items-center justify-content-center"
+        [annotation]="currentAnnotation"
+        [gameNumber]="game.information.gameNumber"
+        [videoApiService]="videoApiService"
+        (annotationAdded)="handleAnnotationAdded($event)"
+        (annotationEdited)="handleAnnotationEdited($event)"
+        (annotationCancelled)="handleActionCancelled()"
+        *ngIf="displayAnnotationForm"
+    ></app-add-edit-annotation>
 </section>

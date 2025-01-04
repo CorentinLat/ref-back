@@ -1,84 +1,47 @@
 <section class="match-analysis-component">
     <header class="match-analysis-header" *ngIf="game">
-        <button class="btn btn-link" [routerLink]="['/']">
-            <i class="bi bi-house"></i> {{ 'PAGE.MATCH_ANALYSIS.BACK_HOME' | translate }}
-        </button>
-
-        <section class="game-information-container" *ngIf="game">
-            <article class="teams-scores">
-                <h4 class="team local">{{ game.information.teams.local }}</h4>
-                <h5 class="scores">
-                    <span>{{ game.information.score.local }}</span>
-                    <span>{{ game.information.score.visitor }}</span>
-                </h5>
-                <h4 class="team visitor">{{ game.information.teams.visitor }}</h4>
-            </article>
-
-            <article class="date-number">
-                <h5 class="date">{{ game.information.date | date: 'dd/MM/yyyy' }}</h5>
-                <h5 class="number">{{ gameNumber }}</h5>
-            </article>
+        <section class="left-container">
+            <button class="btn btn-link" [routerLink]="[originPath || '/']">
+                <span *ngIf="originPath">
+                    <i class="bi bi-arrow-left"></i> {{ 'PAGE.MATCH_ANALYSIS.BACK' | translate }}
+                </span>
+                <span *ngIf="!originPath">
+                    <i class="bi bi-house"></i> {{ 'PAGE.MATCH_ANALYSIS.BACK_HOME' | translate }}
+                </span>
+            </button>
         </section>
 
-        <button class="btn btn-link" (click)="handleNavigateToSummary()">
-            {{ 'PAGE.MATCH_ANALYSIS.BUTTONS.NAVIGATE_TO_SUMMARY' | translate }} <i class="bi bi-pie-chart"></i>
-        </button>
+        <app-game-information class="w-100 overflow-hidden" [game]="game"></app-game-information>
+
+        <section class="right-container">
+            <button class="btn btn-link" (click)="handleNavigateToSummary()">
+                {{ 'PAGE.MATCH_ANALYSIS.BUTTONS.NAVIGATE_TO_SUMMARY' | translate }} <i class="bi bi-pie-chart"></i>
+            </button>
+        </section>
     </header>
 
     <section class="match-analysis-body" *ngIf="game">
         <app-handle-match-analysis
             class="controls"
-            [collapse]="collapse"
             [game]="game"
             [videoApiService]="videoApiService"
-            (actionAdded)="onActionAdded($event)"
             *ngIf="videoApiService"
         ></app-handle-match-analysis>
 
-        <section class="video-and-actions" [ngClass]="{ collapsed: collapse.actions }">
-            <vg-player class="video" (onPlayerReady)="onPlayerReady($event)">
-                <vg-buffering></vg-buffering>
+        <section class="video-and-annotations" [ngClass]="{ collapsed: isCollapsed }">
+            <app-video-viewer
+                class="video"
+                [videoPath]="game.information.videoPath"
+                [timing]="route.snapshot.queryParams.second"
+                (videoReady)="handleVideoReady($event)"
+            ></app-video-viewer>
 
-                <vg-overlay-play></vg-overlay-play>
-
-                <vg-scrub-bar>
-                    <vg-scrub-bar-current-time></vg-scrub-bar-current-time>
-                </vg-scrub-bar>
-
-                <vg-controls>
-                    <vg-play-pause></vg-play-pause>
-                    <app-vg-navigate [time]="-30" [vgApi]="videoApiService"></app-vg-navigate>
-                    <app-vg-navigate [time]="-10" [vgApi]="videoApiService"></app-vg-navigate>
-                    <app-vg-navigate [time]="10" [vgApi]="videoApiService"></app-vg-navigate>
-                    <app-vg-navigate [time]="30" [vgApi]="videoApiService"></app-vg-navigate>
-                    <vg-playback-button></vg-playback-button>
-
-                    <vg-time-display vgProperty="current" vgFormat="hh:mm:ss"></vg-time-display>
-
-                    <vg-scrub-bar style="pointer-events: none;"></vg-scrub-bar>
-
-                    <vg-time-display vgProperty="total" vgFormat="hh:mm:ss"></vg-time-display>
-
-                    <vg-mute></vg-mute>
-                    <vg-volume></vg-volume>
-
-                    <vg-fullscreen></vg-fullscreen>
-                </vg-controls>
-
-                <video [vgMedia]="$any(media)" #media preload="auto" crossorigin>
-                    <source [src]="videoPath">
-                </video>
-            </vg-player>
-
-            <section class="actions-container">
-                <app-actions
-                    class="actions"
-                    [actions]="game.actions"
-                    [collapsed]="collapse.actions"
+            <section class="annotations-container">
+                <app-annotations
+                    class="annotations"
+                    [annotations]="game.actions"
                     [gameNumber]="gameNumber"
-                    [newActionAdded]="newActionAdded.asObservable()"
-                    [putVideoAtSecond]="putVideoAtSecond"
-                ></app-actions>
+                ></app-annotations>
             </section>
         </section>
     </section>

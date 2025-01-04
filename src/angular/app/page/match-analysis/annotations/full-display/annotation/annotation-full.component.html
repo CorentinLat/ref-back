@@ -1,0 +1,57 @@
+<section class="annotation-full-component">
+    <article class="box role">
+        <i class="bi-person-raised-hand" *ngIf="!annotation.fromAdviser"></i>
+        <i class="bi-eye-fill" *ngIf="annotation.fromAdviser"></i>
+    </article>
+    <section class="box minute">
+        <button
+            class="btn btn-link p-0"
+            (click)="handlePutVideoAtSecond(annotation.second)"
+            *ngIf="!isSummaryDisplay && !annotation.clip"
+        >
+            {{ exposeAnnotationMinutes() }}
+        </button>
+
+        <article class="clip-minute" *ngIf="!isSummaryDisplay && annotation.clip">
+            <button class="btn btn-link p-0" (click)="handlePutVideoAtSecond(annotation.clip.start)">
+                {{ exposeClipStartMinutes() }}
+            </button>
+            <button class="btn btn-link p-0" (click)="handlePutVideoAtSecond(annotation.clip.end)">
+                {{ exposeClipEndMinutes() }}
+            </button>
+        </article>
+
+        <span *ngIf="isSummaryDisplay && !annotation.clip">{{ exposeAnnotationMinutes() }}</span>
+        <span *ngIf="isSummaryDisplay && annotation.clip">
+            {{ exposeClipStartMinutes() }}<br>
+            {{ exposeClipEndMinutes() }}
+        </span>
+    </section>
+    <section class="box comments">
+        <app-annotation-comment-display
+            class="referee"
+            [comment]="annotation.comment"
+            [role]="'referee'"
+            [isInline]="!isSummaryDisplay"
+            *ngIf="annotation.comment"
+        ></app-annotation-comment-display>
+        <app-annotation-comment-display
+            class="adviser"
+            [comment]="annotation.commentFromAdviser"
+            [role]="'adviser'"
+            [isInline]="!isSummaryDisplay"
+            *ngIf="annotation.commentFromAdviser"
+        ></app-annotation-comment-display>
+    </section>
+
+    <section class="box actions text-end" role="group" *ngIf="!isSummaryDisplay">
+        <section class="btn-group">
+            <button class="btn btn-outline-warning" (click)="handleEditAnnotation()">
+                <i class="bi bi-pen"></i>
+            </button>
+            <button class="btn btn-outline-danger" (click)="handleRemoveAnnotation()">
+                <i class="bi bi-trash"></i>
+            </button>
+        </section>
+    </section>
+</section>

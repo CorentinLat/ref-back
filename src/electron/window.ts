@@ -32,13 +32,15 @@ export default function createWindow() {
 
     if (isDebug) {
         require('electron-debug')();
+    }
 
+    if (app.isPackaged) {
+        window.loadURL(`file://${ path.resolve(__dirname, '../angular/', htmlFileName) }`);
+    } else {
         const port = process.env.PORT || 4200;
         const url = new URL(`http://localhost:${ port }`);
         url.pathname = htmlFileName;
         window.loadURL(url.href);
-    } else {
-        window.loadURL(`file://${ path.resolve(__dirname, '../angular/', htmlFileName) }`);
     }
 
     window.on('ready-to-show', () => {
@@ -46,7 +48,7 @@ export default function createWindow() {
             throw new Error('"mainWindow" is not defined');
         }
 
-        process.env.START_MINIMIZED ? window.minimize() : window.show();
+        process.env.START_MINIMIZED === 'true' ? window.minimize() : window.show();
     });
 
     window.on('closed', () => {

@@ -1,0 +1,11 @@
+<app-full-display-annotations
+    class="display-annotations"
+    [annotations]="exposeAnnotationsSortedByTime()"
+    [gameNumber]="gameNumber"
+    *ngIf="!isCollapsed"
+></app-full-display-annotations>
+<app-collapse-display-annotations
+    class="display-annotations"
+    [annotations]="exposeAnnotationsSortedByTime()"
+    *ngIf="isCollapsed"
+></app-collapse-display-annotations>

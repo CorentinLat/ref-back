@@ -17,13 +17,10 @@ env:
   APPLE_ID_PASS: ${{ secrets.APPLE_ID_PASS }}
   APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  SSL_USERNAME: ${{ secrets.SSL_USERNAME }}
-  SSL_PASSWORD: ${{ secrets.SSL_PASSWORD }}
-  SSL_TOTP_SECRET: ${{ secrets.SSL_TOTP_SECRET }}
 
 jobs:
   build-application:
-    runs-on: macos-12
+    runs-on: macos-15
 
     steps:
       - uses: actions/checkout@v3
@@ -67,10 +64,10 @@ jobs:
             ${{ runner.os }}-build-${{ env.cache-name }}-
             ${{ runner.os }}-build-
             ${{ runner.os }}-
-      - name: Use Node.js 16
+      - name: Use Node.js 20
         uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 20
 
       - name: Install Dependencies
         run: npm i && npm i -D cli-truncate iconv-corefoundation

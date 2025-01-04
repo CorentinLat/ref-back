@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { GameInformation } from '../../../domain/game';
+import { GameInformation } from '../../../../../../type/refBack';
 
 import { ElectronService } from '../../../service/ElectronService';
 

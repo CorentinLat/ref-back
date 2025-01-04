@@ -1,0 +1,85 @@
+<section class="action-full-component">
+    <article class="box role">
+        <i class="bi-person-raised-hand" *ngIf="!action.fromAdviser"></i>
+        <i class="bi-eye-fill" *ngIf="action.fromAdviser"></i>
+    </article>
+    <section class="box minute">
+        <button
+            class="btn btn-link p-0"
+            [ngClass]="{ yes: action.precise === 'YES', no: action.precise === 'NO', doubt: action.precise === 'DOUBT' }"
+            (click)="handlePutVideoAtSecond(action.second)"
+            *ngIf="!isSummaryDisplay && !action.clip"
+        >
+            {{ exposeActionMinutes() }}
+        </button>
+
+        <article class="clip-minute" *ngIf="!isSummaryDisplay && action.clip">
+            <button
+                class="btn btn-link p-0"
+                [ngClass]="{ yes: action.precise === 'YES', no: action.precise === 'NO', doubt: action.precise === 'DOUBT' }"
+                (click)="handlePutVideoAtSecond(action.clip.start)"
+            >
+                {{ exposeClipStartMinutes() }}
+            </button>
+            <button
+                class="btn btn-link p-0"
+                [ngClass]="{ yes: action.precise === 'YES', no: action.precise === 'NO', doubt: action.precise === 'DOUBT' }"
+                (click)="handlePutVideoAtSecond(action.clip.end)"
+            >
+                {{ exposeClipEndMinutes() }}
+            </button>
+        </article>
+
+        <span *ngIf="isSummaryDisplay && !action.clip">{{ exposeActionMinutes() }}</span>
+        <span *ngIf="isSummaryDisplay && action.clip">
+            {{ exposeClipStartMinutes() }}<br>
+            {{ exposeClipEndMinutes() }}
+        </span>
+    </section>
+    <article class="box type">
+        {{ 'PAGE.MATCH_ANALYSIS.ACTIONS.ACTION.TYPE.' + action.type | translate }}
+        <app-card [card]="action.card"></app-card>
+    </article>
+    <article class="box against">
+        {{ 'PAGE.MATCH_ANALYSIS.ACTIONS.ACTION.AGAINST.' + action.against | translate }}
+    </article>
+    <article class="box sector" *ngIf="!isBySectorDisplay">
+        {{ 'PAGE.MATCH_ANALYSIS.ACTIONS.ACTION.SECTOR.' + action.sector | translate }}
+    </article>
+    <article class="box fault">
+        {{ 'PAGE.MATCH_ANALYSIS.ACTIONS.ACTION.FAULT.' + action.fault | translate }}
+    </article>
+    <article
+        class="box precise"
+        [ngClass]="{ yes: action.precise === 'YES', no: action.precise === 'NO', doubt: action.precise === 'DOUBT' }"
+        *ngIf="isSummaryDisplay"
+    >
+        {{ 'PAGE.MATCH_ANALYSIS.ACTIONS.ACTION.PRECISE.' + action.precise | translate }}
+    </article>
+
+    <ng-template #popContent><app-annotation-comments-display [annotation]="action"></app-annotation-comments-display></ng-template>
+    <article
+        class="box comment"
+        [ngbPopover]="popContent"
+        [openDelay]="800"
+        triggers="mouseenter:mouseleave"
+        placement="left"
+        *ngIf="!isSummaryDisplay"
+    >
+        <app-annotation-comments-display [annotation]="action" [inline]="true"></app-annotation-comments-display>
+    </article>
+    <article class="box comment" *ngIf="isSummaryDisplay">
+        <app-annotation-comments-display [annotation]="action"></app-annotation-comments-display>
+    </article>
+
+    <section class="box actions text-end" role="group" *ngIf="!isSummaryDisplay">
+        <section class="btn-group">
+            <button class="btn btn-outline-warning" (click)="handleEditAction()">
+                <i class="bi bi-pen"></i>
+            </button>
+            <button class="btn btn-outline-danger" (click)="handleRemoveAction()">
+                <i class="bi bi-trash"></i>
+            </button>
+        </section>
+    </section>
+</section>

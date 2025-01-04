@@ -1,0 +1,89 @@
+$decisions-component-margin: 20px;
+$header-height: 30px;
+
+.decisions-component {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+    height: calc(100vh - #{$decisions-component-margin * 2});
+    margin: $decisions-component-margin;
+    overflow: hidden;
+
+    .decisions-header {
+        height: $header-height;
+
+        .title {
+            margin: 0;
+            text-align: center;
+        }
+    }
+
+    .decisions-filters {
+        ng-multiselect-dropdown {
+            width: 100%;
+        }
+    }
+
+    .decisions-main {
+        height: 100%;
+        overflow: hidden;
+
+        .decisions-table {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            overflow: hidden;
+
+            .decisions-table-header {
+                font-size: 18px;
+                font-weight: bold;
+                padding: 0 12px 10px 5px;
+                border-bottom: 2px solid black;
+            }
+
+            .decisions-table-body {
+                overflow: scroll;
+
+                .decision {
+                    border-bottom: 1px solid lightgray;
+                    padding: 10px 12px 10px 5px;
+                }
+            }
+
+            .decisions-table-header,
+            .decision {
+                display: flex;
+                align-items: center;
+                gap: 5px;
+
+                .column {
+                    &.actions { min-width: 150px; }
+                    &.fault { min-width: 280px; }
+                    &.precise { min-width: 100px; }
+                    &.sector { min-width: 140px; }
+                    &.type { min-width: 200px; }
+                    &.comment {
+                        min-width: 130px;
+                        width: calc(100%);
+                        white-space: pre-line;
+                    }
+                }
+            }
+        }
+
+        .actions-container {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+    }
+
+    .no-decision,
+    .loader-decision {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+    }
+}

@@ -1,6 +1,7 @@
 import { Component, NgZone } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
+import { DateTimeService } from '../../../service/DateTimeService';
 import { ElectronService } from '../../../service/ElectronService';
 
 import { VideoProcessLoaderModalComponent } from './video-process-loader-modal.component';
@@ -9,8 +10,13 @@ import { VideoProcessLoaderModalComponent } from './video-process-loader-modal.c
 export class ClipProcessLoaderModalComponent extends VideoProcessLoaderModalComponent {
     private clips: { [clip: string]: { percentage: number; remaining: number } } = {};
 
-    constructor(electronService: ElectronService, modal: NgbActiveModal, zone: NgZone) {
-        super(electronService, modal, zone);
+    constructor(
+        dateTimeService: DateTimeService,
+        electronService: ElectronService,
+        modal: NgbActiveModal,
+        zone: NgZone
+    ) {
+        super(dateTimeService, electronService, modal, zone);
     }
 
     protected setCurrentSubscription(): void {
