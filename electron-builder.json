@@ -13,7 +13,6 @@
     "name": "RefBack Game Export",
     "role": "Editor"
   }],
-  "afterSign": ".erb/scripts/notarize.js",
   "mac": {
     "target": {
       "target": "zip",

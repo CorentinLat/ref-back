@@ -15,6 +15,8 @@ env:
   CI: true
   APPLE_ID: ${{ secrets.APPLE_ID }}
   APPLE_ID_PASS: ${{ secrets.APPLE_ID_PASS }}
+  APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_ID_PASS }}
+  APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
