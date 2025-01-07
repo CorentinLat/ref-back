@@ -1,4 +1,4 @@
-import { app, BrowserWindow, Menu, MenuItemConstructorOptions, shell } from 'electron';
+import { app, dialog, BrowserWindow, Menu, MenuItemConstructorOptions, shell } from 'electron';
 
 import { logsPath } from './utils/path';
 import { checkUpdates } from './utils/update';
@@ -51,7 +51,7 @@ export default class MenuBuilder {
             submenu: [
                 {
                     label: 'À propos de Ref\'Back',
-                    selector: 'orderFrontStandardAboutPanel:',
+                    click: () => this.displayAboutDialog(),
                 },
                 { type: 'separator' },
                 {
@@ -306,6 +306,10 @@ export default class MenuBuilder {
                 label: 'Aide',
                 submenu: [
                     {
+                        label: 'À Propos',
+                        click: () => this.displayAboutDialog(),
+                    },
+                    {
                         label: 'Documentation',
                         click() {
                             shell.openExternal('https://corentin-1.gitbook.io/ref-back');
@@ -338,5 +342,26 @@ export default class MenuBuilder {
                 ],
             },
         ];
+    }
+
+    private displayAboutDialog() {
+        dialog.showMessageBox(this.mainWindow, {
+            message: 'Ref\'Back a pour but de vous aider à réaliser vos feedbacks de match.\n' +
+                'Copyright (C) 2025 Corentin Latappy\n' +
+                '\n' +
+                'This program is free software: you can redistribute it and/or modify' +
+                ' it under the terms of the GNU General Public License as published by' +
+                ' the Free Software Foundation, in version 3 of the License.\n' +
+                '\n' +
+                'This program is distributed in the hope that it will be useful,' +
+                ' but WITHOUT ANY WARRANTY; without even the implied warranty of' +
+                ' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the' +
+                ' GNU General Public License for more details.\n' +
+                '\n' +
+                'You should have received a copy of the GNU General Public License' +
+                ' along with this program. If not, see https://www.gnu.org/licenses/',
+            title: 'À Propos',
+            type: 'none',
+        });
     }
 }
