@@ -8,6 +8,7 @@
     "name": "Corentin LATAPPY",
     "email": "corentin.lat@gmail.com"
   },
+  "license": "GPL-3.0-only",
   "main": "src/electron/main.ts",
   "private": true,
   "scripts": {
