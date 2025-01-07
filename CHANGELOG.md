@@ -8,6 +8,10 @@ et ce projet suit la [Gestion sémantique de version](https://semver.org/spec/v2
 - Pouvoir se connecter à l'application
 - Pouvoir récupérer automatiquement les données de la rencontre
 
+## [4.0.1] - 2025-01-07
+### Correction
+- Installation sur Windows impossible
+
 ## [4.0.0] - 2025-01-04
 ### Ajouté
 - Ajout de l'import/export d'une rencontre
