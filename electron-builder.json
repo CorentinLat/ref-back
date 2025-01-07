@@ -45,11 +45,9 @@
     "buildResources": "assets",
     "output": "release/build"
   },
-  "extraFiles": [
-    "COPYING.md"
-  ],
   "extraResources": [
-    "./assets/**"
+    "./assets/**",
+    "COPYING.md"
   ],
   "publish": {
     "provider": "github",
