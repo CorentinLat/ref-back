@@ -27,7 +27,10 @@
   },
   "win": {
     "artifactName": "${productName}-Setup-${version}.${ext}",
-    "target": "nsis"
+    "target": {
+      "target": "nsis",
+      "arch": ["x64"]
+    }
   },
   "nsis": {
     "language": "1036",
