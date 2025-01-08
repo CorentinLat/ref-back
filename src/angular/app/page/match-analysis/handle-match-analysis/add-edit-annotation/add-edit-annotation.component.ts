@@ -3,7 +3,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { VgApiService } from '@videogular/ngx-videogular/core';
 import { Subscription } from 'rxjs';
 
-import { AnnotationForm, Annotation, NewAnnotation } from '../../../../../../../type/refBack';
+import { AnnotationForm, Annotation, NewAnnotation, isAnnotation } from '../../../../../../../type/refBack';
 
 import { DateTimeService } from '../../../../service/DateTimeService';
 import { ElectronService } from '../../../../service/ElectronService';
@@ -71,8 +71,10 @@ export class AddEditAnnotationComponent implements OnInit, OnDestroy {
                 }
             });
         this.editAnnotationSubscription$ = this.matchAnalysisService.annotationEdited.subscribe(annotation => {
-            this.annotation = annotation;
-            this.fillAnnotationForm();
+            if (isAnnotation(annotation)) {
+                this.annotation = annotation;
+                this.fillAnnotationForm();
+            }
         });
         this.roleUpdatedSubscription$ = this.matchAnalysisService.roleUpdated.subscribe(role => {
             if (this.annotation) {
@@ -92,6 +94,15 @@ export class AddEditAnnotationComponent implements OnInit, OnDestroy {
     exposeAnnotationMinutes = (): string => this.dateTimeService.convertSecondsToMMSS(this.secondControl.value);
     exposeEndClipMinutes = (): string => this.dateTimeService.convertSecondsToMMSS(this.endClipControl.value);
     exposeStartClipMinutes = (): string => this.dateTimeService.convertSecondsToMMSS(this.startClipControl.value);
+
+    isNotCreatorRole(): boolean {
+        if (!this.annotation) return false;
+
+        if (this.annotation.fromAdviser && this.matchAnalysisService.role === 'adviser') return false;
+        if (!this.annotation.fromAdviser && this.matchAnalysisService.role === 'referee') return false;
+
+        return true;
+    }
 
     async handleAnnotationSubmitted(): Promise<void> {
         if (this.annotationForm.invalid) {return;}

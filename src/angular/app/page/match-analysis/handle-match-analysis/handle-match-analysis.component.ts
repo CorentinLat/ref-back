@@ -32,6 +32,8 @@ export class HandleMatchAnalysisComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.editActionSubscription$ = this.matchAnalysisService.annotationEdited.subscribe(annotation => {
+            this.handleHideForms();
+
             if (isAction(annotation)) {
                 this.currentAction = annotation;
                 this.handleDisplayActionForm();

@@ -31,10 +31,19 @@ export class ActionFullComponent {
     }
 
     handleRemoveAction(): void {
+        if (!this.isCreatorRole()) return;
+
         this.removeActionEvent.emit(this.action.id);
     }
 
     handlePutVideoAtSecond = (second: number) => this.videoViewerService.updateVideoTime(second);
+
+    isCreatorRole(): boolean {
+        if (this.action.fromAdviser && this.matchAnalysisService.role === 'adviser') return true;
+        if (!this.action.fromAdviser && this.matchAnalysisService.role === 'referee') return true;
+
+        return false;
+    }
 
     exposeActionMinutes(): string {
         return this.dateTimeService.convertSecondsToMMSS(this.action.second);
