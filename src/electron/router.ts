@@ -1,6 +1,4 @@
-import { app, shell } from 'electron';
-import IpcMain = Electron.IpcMain;
-import IpcMainEvent = Electron.IpcMainEvent;
+import { app, shell, IpcMain, IpcMainEvent } from 'electron';
 
 import {
     Action,

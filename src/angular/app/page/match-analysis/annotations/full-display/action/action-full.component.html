@@ -73,7 +73,7 @@
     </article>
 
     <section class="box actions text-end" role="group" *ngIf="!isSummaryDisplay">
-        <section class="btn-group">
+        <section class="btn-group" *ngIf="isCreatorRole()">
             <button class="btn btn-outline-warning" (click)="handleEditAction()">
                 <i class="bi bi-pen"></i>
             </button>
@@ -81,5 +81,13 @@
                 <i class="bi bi-trash"></i>
             </button>
         </section>
+
+        <button
+            class="btn btn-outline-primary"
+            (click)="handleEditAction()"
+            *ngIf="!isCreatorRole()"
+        >
+            <i class="bi bi-chat"></i>
+        </button>
     </section>
 </section>

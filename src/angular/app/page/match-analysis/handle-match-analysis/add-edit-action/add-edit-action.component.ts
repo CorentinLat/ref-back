@@ -127,6 +127,15 @@ export class AddEditActionComponent implements OnInit, OnDestroy {
     exposeEndClipMinutes = (): string => this.dateTimeService.convertSecondsToMMSS(this.endClipControl.value);
     exposeStartClipMinutes = (): string => this.dateTimeService.convertSecondsToMMSS(this.startClipControl.value);
 
+    isNotCreatorRole(): boolean {
+        if (!this.action) return false;
+
+        if (this.action.fromAdviser && this.matchAnalysisService.role === 'adviser') return false;
+        if (!this.action.fromAdviser && this.matchAnalysisService.role === 'referee') return false;
+
+        return true;
+    }
+
     handleSectorChange = (): void => this.faultControl.setValue(this.actionFaults[this.sectorControl.value][0]);
 
     async handleActionSubmitted(): Promise<void> {
@@ -151,6 +160,15 @@ export class AddEditActionComponent implements OnInit, OnDestroy {
         this.commentControl.setValue(this.action ? (this.role === 'referee' ? this.action.comment : this.action.commentFromAdviser) : '');
         this.startClipControl.setValue(this.action?.clip?.start ? this.action.clip.start : this.getCurrentVideoTime());
         this.endClipControl.setValue(this.action?.clip?.end ? this.action.clip.end : this.getCurrentVideoTime() + 5);
+
+        if (this.isNotCreatorRole()) {
+            this.typeControl.disable();
+            this.cardControl.disable();
+            this.againstControl.disable();
+            this.sectorControl.disable();
+            this.faultControl.disable();
+            this.preciseControl.disable();
+        }
 
         this.createClip = this.action?.clip !== undefined;
     }
@@ -179,11 +197,10 @@ export class AddEditActionComponent implements OnInit, OnDestroy {
         if (!this.action) return;
 
         const actionToEdit: Action = {
-            id: this.action.id,
+            ...this.action,
             ...actionForm,
             comment: this.role === 'referee' ? actionForm.comment : this.action.comment,
             commentFromAdviser: this.role === 'adviser' ? actionForm.comment : this.action.commentFromAdviser,
-            fromAdviser: this.action.fromAdviser,
         };
 
         try {

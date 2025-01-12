@@ -29,10 +29,19 @@ export class AnnotationFullComponent {
     }
 
     handleRemoveAnnotation(): void {
+        if (!this.isCreatorRole()) return;
+
         this.removeAnnotationEvent.emit(this.annotation.id);
     }
 
     handlePutVideoAtSecond = (second: number) => this.videoViewerService.updateVideoTime(second);
+
+    isCreatorRole(): boolean {
+        if (this.annotation.fromAdviser && this.matchAnalysisService.role === 'adviser') return true;
+        if (!this.annotation.fromAdviser && this.matchAnalysisService.role === 'referee') return true;
+
+        return false;
+    }
 
     exposeAnnotationMinutes(): string {
         return this.dateTimeService.convertSecondsToMMSS(this.annotation.second);

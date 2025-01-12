@@ -99,6 +99,7 @@
                 role="switch"
                 [(ngModel)]="createClip"
                 [ngModelOptions]="{ standalone: true }"
+                [disabled]="isNotCreatorRole()"
             >
             <label class="form-check-label" for="createClip">
                 {{ 'PAGE.MATCH_ANALYSIS.FORM.LABEL.CREATE_CLIP' | translate }}
