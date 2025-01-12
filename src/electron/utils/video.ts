@@ -1,7 +1,7 @@
+import { IpcMainEvent } from 'electron';
 import FluentFFMPEG from 'fluent-ffmpeg';
+import fs from 'fs';
 import path from 'path';
-
-import IpcMainEvent = Electron.IpcMainEvent;
 
 import { Game, isAction, NewGameInformation } from '../../../type/refBack';
 
@@ -63,23 +63,17 @@ export async function concatVideos(gameNumber: string, videoPaths: string[], eve
     const totalDuration = await computeTotalDurationOfVideos(videoPaths);
     const startTime = Date.now();
 
-    const command = FluentFFMPEG().videoBitrate('4600k');
-    currentFfmpegExecutions.push({ command, outputPath: outputFileName });
-    videoPaths.forEach(videoPath => command.input(videoPath));
-    command
-        .on('progress', (progress: any) => {
-            const currentSeconds = extractNumberOfSecondsFromTimeMark(progress.timemark);
-            const percentageDone = Math.round(currentSeconds / totalDuration * 100);
+    await concatVideoPathsToNewPath(videoPaths, outputFileName, (progress: any) => {
+        const currentSeconds = extractNumberOfSecondsFromTimeMark(progress.timemark);
+        const percentageDone = Math.round(currentSeconds / totalDuration * 100);
 
-            const elapsedTime = Date.now() - startTime;
-            const remainingTime = Math.round(elapsedTime / percentageDone * (100 - percentageDone) / 1000);
+        const elapsedTime = Date.now() - startTime;
+        const remainingTime = Math.round(elapsedTime / percentageDone * (100 - percentageDone) / 1000);
 
-            event.reply('videos_progress', { percentage: percentageDone, remaining: remainingTime });
-        })
-        .mergeToFile(outputFileName, tempPath);
-    await promisifyFfmpegCommand(command);
+        event.reply('videos_progress', { percentage: percentageDone, remaining: remainingTime });
+    });
+
     currentFfmpegExecutions = [];
-
     return outputFileName;
 }
 
@@ -152,23 +146,15 @@ export async function generateGameClips(game: Game, destClipsDirectory: string, 
         const clipDuration = clip.end - clip.start;
         const startTime = Date.now();
 
-        const command = FluentFFMPEG(videoPath)
-            .setStartTime(clip.start)
-            .setDuration(clipDuration)
-            .on('progress', (progress: any) => {
-                const currentSeconds = extractNumberOfSecondsFromTimeMark(progress.timemark);
-                const percentageDone = Math.round(currentSeconds / clipDuration * 100);
+        return cutVideoPathToNewPath(videoPath, clipPath, clip.start, clip.end, (progress: any) => {
+            const currentSeconds = extractNumberOfSecondsFromTimeMark(progress.timemark);
+            const percentageDone = Math.round(currentSeconds / clipDuration * 100);
 
-                const elapsedTime = Date.now() - startTime;
-                const remainingTime = Math.round(elapsedTime / percentageDone * (100 - percentageDone) / 1000);
+            const elapsedTime = Date.now() - startTime;
+            const remainingTime = Math.round(elapsedTime / percentageDone * (100 - percentageDone) / 1000);
 
-                event.reply('clip_progress', { clip: index, percentage: percentageDone, remaining: remainingTime });
-            })
-            .save(clipPath);
-
-        currentFfmpegExecutions.push({ command, outputPath: clipPath });
-
-        return promisifyFfmpegCommand(command);
+            event.reply('clip_progress', { clip: index, percentage: percentageDone, remaining: remainingTime });
+        });
     }));
 
     currentFfmpegExecutions = [];
@@ -178,22 +164,16 @@ export async function createClipFromVideoGame(event: IpcMainEvent, videoPath: st
     const clipDuration = end - begin;
     const startTime = Date.now();
 
-    const command = FluentFFMPEG(videoPath)
-        .setStartTime(begin)
-        .setDuration(clipDuration)
-        .on('progress', (progress: any) => {
-            const currentSeconds = extractNumberOfSecondsFromTimeMark(progress.timemark);
-            const percentageDone = Math.round(currentSeconds / clipDuration * 100);
+    await cutVideoPathToNewPath(videoPath, outputPath, begin, end, (progress: any) => {
+        const currentSeconds = extractNumberOfSecondsFromTimeMark(progress.timemark);
+        const percentageDone = Math.round(currentSeconds / clipDuration * 100);
 
-            const elapsedTime = Date.now() - startTime;
-            const remainingTime = Math.round(elapsedTime / percentageDone * (100 - percentageDone) / 1000);
+        const elapsedTime = Date.now() - startTime;
+        const remainingTime = Math.round(elapsedTime / percentageDone * (100 - percentageDone) / 1000);
 
-            event.reply('videos_progress', { percentage: percentageDone, remaining: remainingTime });
-        })
-        .save(outputPath);
+        event.reply('videos_progress', { percentage: percentageDone, remaining: remainingTime });
+    });
 
-    currentFfmpegExecutions.push({ command, outputPath });
-    await promisifyFfmpegCommand(command);
     currentFfmpegExecutions = [];
 }
 
@@ -205,35 +185,10 @@ export async function cutVideoGame(event: IpcMainEvent, videoPath: string, cuts:
     const secondsByCommand = Array(cuts.length + 1).fill(0);
 
     const clipsPath = await Promise.all(cuts.map(async ([begin, end], index) => {
-        const clipDuration = end - begin;
         const clipPath = path.join(tempPath, `${path.basename(videoPath)}-${index}.mp4`);
 
-        const command = FluentFFMPEG(videoPath)
-            .setStartTime(begin)
-            .setDuration(clipDuration)
-            .on('progress', (progress: any) => {
-                secondsByCommand[index] = extractNumberOfSecondsFromTimeMark(progress.timemark);
-                const totalSeconds = secondsByCommand.reduce((acc, val) => acc + val, 0);
-                const percentageDone = Math.round(totalSeconds / totalDuration * 100);
-
-                const elapsedTime = Date.now() - startTime;
-                const remainingTime = Math.round(elapsedTime / percentageDone * (100 - percentageDone) / 1000);
-
-                event.reply('videos_progress', { percentage: percentageDone, remaining: remainingTime });
-            })
-            .save(clipPath);
-        currentFfmpegExecutions.push({ command, outputPath: clipPath });
-        await promisifyFfmpegCommand(command);
-
-        return clipPath;
-    }));
-
-    const mergeCommand = FluentFFMPEG();
-    currentFfmpegExecutions.push({ command: mergeCommand, outputPath: newVideoPath });
-    clipsPath.forEach(clipPath => mergeCommand.mergeAdd(clipPath));
-    mergeCommand
-        .on('progress', (progress: any) => {
-            secondsByCommand[cuts.length] = extractNumberOfSecondsFromTimeMark(progress.timemark);
+        await cutVideoPathToNewPath(videoPath, clipPath, begin, end, (progress: any) => {
+            secondsByCommand[index] = extractNumberOfSecondsFromTimeMark(progress.timemark);
             const totalSeconds = secondsByCommand.reduce((acc, val) => acc + val, 0);
             const percentageDone = Math.round(totalSeconds / totalDuration * 100);
 
@@ -241,9 +196,21 @@ export async function cutVideoGame(event: IpcMainEvent, videoPath: string, cuts:
             const remainingTime = Math.round(elapsedTime / percentageDone * (100 - percentageDone) / 1000);
 
             event.reply('videos_progress', { percentage: percentageDone, remaining: remainingTime });
-        })
-        .mergeToFile(newVideoPath, tempPath);
-    await promisifyFfmpegCommand(mergeCommand);
+        });
+
+        return clipPath;
+    }));
+
+    await concatVideoPathsToNewPath(clipsPath, newVideoPath, (progress: any) => {
+        secondsByCommand[cuts.length] = extractNumberOfSecondsFromTimeMark(progress.timemark);
+        const totalSeconds = secondsByCommand.reduce((acc, val) => acc + val, 0);
+        const percentageDone = Math.round(totalSeconds / totalDuration * 100);
+
+        const elapsedTime = Date.now() - startTime;
+        const remainingTime = Math.round(elapsedTime / percentageDone * (100 - percentageDone) / 1000);
+
+        event.reply('videos_progress', { percentage: percentageDone, remaining: remainingTime });
+    });
 
     clipsPath.forEach(clipPath => removeFile(clipPath));
     removeFile(videoPath);
@@ -251,6 +218,36 @@ export async function cutVideoGame(event: IpcMainEvent, videoPath: string, cuts:
 
     return newVideoPath;
 }
+
+const cutVideoPathToNewPath = async (videoPath: string, outputPath: string, begin: number, end: number, onProgress: (progress: any) => void): Promise<void> => {
+    const clipDuration = end - begin;
+
+    const command = FluentFFMPEG(videoPath)
+        .setStartTime(begin).setDuration(clipDuration)
+        .outputOptions('-c', 'copy')
+        .on('progress', onProgress)
+        .save(outputPath);
+
+    currentFfmpegExecutions.push({ command, outputPath });
+    await promisifyFfmpegCommand(command);
+};
+
+const concatVideoPathsToNewPath = async (videoPaths: string[], outputPath: string, onProgress: (progress: any) => void): Promise<void> => {
+    const concatFileContent = videoPaths.map(videoPath => `file '${videoPath}'`).join('\n');
+    const concatFilePath = path.join(tempPath, `${path.basename(outputPath)}-concat.txt`);
+    fs.writeFileSync(concatFilePath, concatFileContent);
+
+    const command = FluentFFMPEG()
+        .input(concatFilePath).inputFormat('concat').inputOptions('-safe', '0')
+        .audioCodec('copy').videoCodec('copy')
+        .on('progress', onProgress)
+        .save(outputPath);
+
+    currentFfmpegExecutions.push({ command, outputPath });
+    await promisifyFfmpegCommand(command);
+
+    removeFile(concatFilePath);
+};
 
 export const generateNewVideoPath = (gameNumber: string, videoName: string): string =>
     path.join(workPath, gameNumber, videoName);
