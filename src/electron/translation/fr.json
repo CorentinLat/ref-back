@@ -131,5 +131,6 @@
   "DIALOG_UPDATE_MESSAGE": "La nouvelle version de l'application est téléchargée. Voulez-vous redémarrer pour l'installer maintenant ?",
   "DIALOG_UPDATE_BUTTON_RESTART": "Redémarrer",
   "DIALOG_UPDATE_BUTTON_LATER": "Plus tard",
-  "DIALOG_APP_UPDATED_TITLE": "Nouvelle mise à jour installée !"
+  "DIALOG_APP_UPDATED_TITLE": "Nouvelle mise à jour installée !",
+  "CHANGELOG_410": "Nouvelle version 4.1.0\nAmélioration de l'affichage lors de l'analyse d'un match entre arbitre et conseiller\nAmélioration des performances lors des traitements vidéo"
 }
