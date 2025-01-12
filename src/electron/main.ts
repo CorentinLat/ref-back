@@ -6,6 +6,7 @@ import createWindow from './window';
 import logger from './utils/logger';
 import { checkMandatoryFolderExists } from './utils/path';
 import { checkUpdatesAtStart } from './utils/update';
+import { checkNewVersionInstalled } from './utils/version';
 
 checkMandatoryFolderExists();
 router(ipcMain);
@@ -28,6 +29,7 @@ try {
             });
 
             setTimeout(() => window = createWindow(), 400);
+            setTimeout(() => checkNewVersionInstalled(), 1000);
 
             app.on('activate', () => {
                 if (window === null) {
