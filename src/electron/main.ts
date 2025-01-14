@@ -28,14 +28,20 @@ try {
                 callback({ path });
             });
 
-            setTimeout(() => window = createWindow(), 400);
-            setTimeout(() => checkNewVersionInstalled(), 1000);
+            setTimeout(() => createWindowAndCheckVersion(), 400);
 
             app.on('activate', () => {
                 if (window === null) {
-                    window = createWindow();
+                    createWindowAndCheckVersion();
                 }
             });
         })
         .catch(logger.error);
 } catch (e) {}
+
+const createWindowAndCheckVersion = () => {
+    const newWindow = createWindow();
+
+    window = newWindow;
+    setTimeout(() => checkNewVersionInstalled(newWindow), 1000);
+};
