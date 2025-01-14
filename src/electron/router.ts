@@ -30,6 +30,7 @@ import {
 import logger from './utils/logger';
 import { throwIfGameFolderExists, getExistingGameFolders, createGameFolder } from './utils/path';
 import { generateSummary } from './utils/summaryGenerator';
+import { checkNewVersionInstalled } from './utils/version';
 import {
     cancelCurrentVideoCommands,
     copyGameVideoToPath,
@@ -68,6 +69,8 @@ const onInitAppListener = async (event: IpcMainEvent) => {
     const appVersion = app.getVersion();
     const gameNumbers = await getExistingGameFolders();
     const games = getGamesInformation(gameNumbers);
+
+    setTimeout(checkNewVersionInstalled, 2000);
 
     event.reply('init_app_succeeded', { appVersion, games });
 };
