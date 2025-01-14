@@ -132,5 +132,6 @@
   "DIALOG_UPDATE_BUTTON_RESTART": "Redémarrer",
   "DIALOG_UPDATE_BUTTON_LATER": "Plus tard",
   "DIALOG_APP_UPDATED_TITLE": "Nouvelle mise à jour installée !",
-  "CHANGELOG_410": "Nouvelle version 4.1.0\nAmélioration de l'affichage lors de l'analyse d'un match entre arbitre et conseiller\nAmélioration des performances lors des traitements vidéo"
+  "CHANGELOG_410": "Version 4.1.0 :\n- Amélioration de l'affichage lors de l'analyse d'un match entre arbitre et conseiller\n- Amélioration des performances lors des traitements vidéo",
+  "CHANGELOG_411": "Version 4.1.1 :\n- Correction d'un bug lors du découpage d'une rencontre sur Windows"
 }

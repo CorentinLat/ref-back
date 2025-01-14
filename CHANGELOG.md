@@ -8,6 +8,10 @@ et ce projet suit la [Gestion sémantique de version](https://semver.org/spec/v2
 - Pouvoir se connecter à l'application
 - Pouvoir récupérer automatiquement les données de la rencontre
 
+## [4.1.1] - 2025-01-14
+### Correction
+- Découpage de la vidéo impossible sur Windows
+
 ## [4.1.0] - 2025-01-12
 ### Amélioration
 - Affichage lors de l'analyse d'un match entre arbitre et conseiller
