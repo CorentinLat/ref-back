@@ -9,9 +9,20 @@ export function copyFileToPath(filePath: string, newFilePath: string): void {
 }
 
 export function removeFile(filePath: string): void {
-    if (fs.existsSync(filePath)) {
-        fs.rmSync(filePath, { force: true });
-        logger.info(`File removed: ${filePath}`);
+    try {
+        if (fs.existsSync(filePath)) {
+            fs.rmSync(filePath, { force: true });
+            logger.info(`File removed: ${filePath}`);
+        }
+    } catch {
+        setTimeout(() => {
+            try {
+                fs.rmSync(filePath, { force: true });
+                logger.info(`File removed: ${filePath}`);
+            } catch {
+                logger.error(`Failed to remove file: ${filePath}`);
+            }
+        }, 10000);
     }
 }
 
