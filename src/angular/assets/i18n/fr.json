@@ -196,6 +196,8 @@
         "COMMENT": "Commentaire(s)",
         "ACTION": {
           "TYPE": {
+            "ADVANTAGE": "Avantage",
+            "ADVANTAGE_SHORT": "Avant.",
             "PLAY_ON": "Jeu",
             "PLAY_ON_SHORT": "Jeu",
             "TOUCH": "Touche",

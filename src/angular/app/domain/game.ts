@@ -1,6 +1,6 @@
 export type ActionSector = 'SCRUM' | 'FOUL_PLAY' | 'SPACE' | 'TACKLE-RUCK' | 'LINE_OUT-MAUL' | 'ADVANTAGE';
 
-export const actionTypes = ['PLAY_ON', 'TOUCH', 'SCRUM', 'FREE_KICK', 'PENALTY', 'RETURNED_PENALTY', 'PENALTY_TRY', 'TRY', 'NO_TRY', 'RESTART_KICK'];
+export const actionTypes = ['PLAY_ON', 'TOUCH', 'SCRUM', 'FREE_KICK', 'PENALTY', 'ADVANTAGE', 'RETURNED_PENALTY', 'PENALTY_TRY', 'TRY', 'NO_TRY', 'RESTART_KICK'];
 export const actionCardTypes = ['PENALTY', 'RETURNED_PENALTY', 'PENALTY_TRY', 'TRY', 'NO_TRY'];
 export const actionCards = ['WARNING', 'WHITE', 'YELLOW', 'RED'];
 export const actionAgainsts = ['LOCAL', 'VISITOR'];
