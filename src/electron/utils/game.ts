@@ -63,7 +63,8 @@ export function getGamesInformation(gameNumbers: string[]): GameInformation[] {
         const game = getGame(gameNumber);
 
         return game ? [...games, game.information] : games;
-    }, []);
+    }, [])
+        .sort((a, b) => b.date.localeCompare(a.date));
 }
 
 export function updateGameComment(gameNumber: string, comment: string, key: AllEditableGameComment): boolean {
