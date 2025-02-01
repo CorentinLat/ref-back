@@ -85,3 +85,23 @@ export type ImportGameCommandArgs = {
     isOverriding?: boolean;
     gameNumberToUse?: string;
 };
+
+export const getAnnotationsSortedByTime = (annotations: Annotation[]): Annotation[] =>
+    annotations.sort((a, b) => a.second - b.second);
+
+export const getActionsBySectors = (annotations: Annotation[]): { [key: string]: Action[] } => {
+    const uniqueSectors = annotations
+        .reduce<Set<string>>((sectors, annotation) => {
+            if (isAction(annotation)) sectors.add(annotation.sector);
+            return sectors;
+        }, new Set());
+
+    return Array.from(uniqueSectors)
+        .sort((a, b) => a.localeCompare(b))
+        .reduce<{ [key: string]: Action[] }>((actionsBySectors, sector) => {
+            const actionsForSector = annotations.filter(isAction).filter(action => action.sector === sector);
+            if (actionsForSector.length) actionsBySectors[sector] = actionsForSector;
+
+            return actionsBySectors;
+        }, {});
+};

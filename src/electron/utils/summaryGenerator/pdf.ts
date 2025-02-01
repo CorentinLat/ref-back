@@ -2,7 +2,14 @@ import fs from 'fs';
 import { join } from 'path';
 import PDFDocument from 'pdfkit';
 
-import { Action, Annotation, Game, isAction } from '../../../../type/refBack';
+import {
+    Action,
+    Annotation,
+    Game,
+    getAnnotationsSortedByTime,
+    getActionsBySectors,
+    isAction,
+} from '../../../../type/refBack';
 
 import { convertSecondsToMMSS, getLongDateString } from '../date';
 import { assetsPath } from '../path';
@@ -75,13 +82,8 @@ export function generatePdfSummary(game: Game, savePath: string): void {
     addAnnotationsTable(doc, 'ALL_ACTIONS', ACTIONS_COLUMNS, annotations);
 
     const columnsBySector = ACTIONS_COLUMNS.filter(({ key }) => key !== 'sector');
-    getSectorsWithAtLeastOneAction(annotations).forEach(sector => {
-        const sectorDecisions = annotations.filter(annotation =>
-            isAction(annotation) && annotation.sector === sector
-        );
-
-        addAnnotationsTable(doc, sector, columnsBySector, sectorDecisions);
-    });
+    Object.entries(getActionsBySectors(annotations))
+        .forEach(([sector, actions]) => addAnnotationsTable(doc, sector, columnsBySector, actions));
 
     doc.end();
 }
@@ -580,20 +582,4 @@ function getIconForCard(action: Action): `${typeof ICON_PREFIX}${Icon}${typeof I
     else icon = 'warning';
 
     return `${ICON_PREFIX}${icon}${ICON_SUFFIX}`;
-}
-
-function getAnnotationsSortedByTime(annotations: Annotation[]): Annotation[] {
-    return annotations.sort((a, b) => a.second - b.second);
-}
-
-function getSectorsWithAtLeastOneAction(annotations: Annotation[]): string[] {
-    const uniqueSectors = annotations
-        .reduce<Set<string>>((sectors, annotation) => {
-            if (isAction(annotation)) sectors.add(annotation.sector);
-            return sectors;
-        }, new Set());
-
-    return Array
-        .from(uniqueSectors)
-        .sort((a, b) => a.localeCompare(b));
 }
