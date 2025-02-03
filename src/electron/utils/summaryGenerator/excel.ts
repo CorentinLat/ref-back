@@ -24,44 +24,46 @@ import translate from '../../translation';
     [242, 68, 5],
 ];*/
 
-type ActionColumnStructure = { key: keyof Action | 'role'; colSpan?: number };
-type AnnotationColumnStructure = { key: keyof Annotation | 'role'; colSpan?: number };
+type CommonColumnStructure = { key: 'role' | 'second'; colSpan?: number; alignment?: 'center' | 'left' };
+type ActionColumnStructure = { key: keyof Action | 'role'; colSpan?: number; alignment?: 'center' | 'left' };
+type AnnotationColumnStructure = { key: keyof Annotation | 'role'; colSpan?: number; alignment?: 'center' | 'left' };
+const COMMON_COLUMNS: CommonColumnStructure[] = [
+    { key: 'role', alignment: 'center' },
+    { key: 'second', alignment: 'center' },
+];
 const GLOBAL_COLUMNS: ActionColumnStructure[] = [
-    { key: 'role' },
-    { key: 'second' },
+    ...COMMON_COLUMNS,
     { key: 'type' },
-    { key: 'against' },
+    { key: 'against', alignment: 'center' },
     { key: 'sector' },
     { key: 'fault' },
-    { key: 'precise' },
-    { key: 'comment', colSpan: 5 },
-];
-const BY_SECTOR_COLUMNS: ActionColumnStructure[] = [
-    { key: 'role' },
-    { key: 'second' },
-    { key: 'type' },
-    { key: 'against' },
-    { key: 'fault', colSpan: 2 },
-    { key: 'precise' },
+    { key: 'precise', alignment: 'center' },
     { key: 'comment', colSpan: 5 },
 ];
 const ANNOTATIONS_COLUMNS: AnnotationColumnStructure[] = [
-    { key: 'role' },
-    { key: 'second' },
+    ...COMMON_COLUMNS,
     { key: 'comment', colSpan: 4 },
     { key: 'commentFromAdviser', colSpan: 6 },
 ];
 
-const centerAlignementStyle: Style = { alignment: { horizontal: 'center', vertical: 'center', wrapText: true } };
-const rightAlignementStyle: Style = { alignment: { horizontal: 'right', vertical: 'center', wrapText: true } };
-const leftAlignementStyle: Style = { alignment: { horizontal: 'left', vertical: 'center', wrapText: true } };
+const centerAlignmentStyle: Style = { alignment: { horizontal: 'center', vertical: 'center', wrapText: true } };
+const rightAlignmentStyle: Style = { alignment: { horizontal: 'right', vertical: 'center', wrapText: true } };
+const leftAlignmentStyle: Style = { alignment: { horizontal: 'left', vertical: 'center', wrapText: true } };
 
-const primaryTitleFontSizeStyle: Style = { font: { bold: true, size: 14 } };
-const secondaryTitleFontSizeStyle: Style = { font: { size: 14 } };
-const primarySubtitleFontSizeStyle: Style = { font: { bold: true, size: 12 } };
-const secondarySubtitleFontSizeStyle: Style = { font: { size: 12 } };
+const DEFAULT_FONT_SIZE = 14;
+const primaryTitleFontSizeStyle: Style = { font: { bold: true, size: 20 } };
+const secondaryTitleFontSizeStyle: Style = { font: { size: 20 } };
+const primarySubtitleFontSizeStyle: Style = { font: { bold: true, size: 17 } };
+const secondarySubtitleFontSizeStyle: Style = { font: { size: 17, underline: true } };
 
-const tableCellStyle: Style = { border: { top: { style: 'thin' }, bottom: { style: 'thin' }, left: { style: 'thin' }, right: { style: 'thin' } } };
+const tableCellStyle: Style = {
+    border: {
+        top: { style: 'thin' },
+        bottom: { style: 'thin' },
+        left: { style: 'thin' },
+        right: { style: 'thin' },
+    },
+};
 
 const COLUMN_WIDTHS = [4, 8, 18, 8, 20, 30, 8, 16, 16, 16, 16, 16];
 const columnsCount = COLUMN_WIDTHS.length;
@@ -70,29 +72,39 @@ let currentRow = 0;
 export function generateExcelSummary(game: Game, savePath: string): void {
     const { information: { date, gameNumber, score, teams } } = game;
 
-    const wb = new xl.Workbook({ defaultFont: { name: 'Helvetica', size: 10 } });
-    const ws = wb.addWorksheet(translate('RECAP'), { sheetView: { showGridLines: false } });
+    const wb = new xl.Workbook({ defaultFont: { name: 'Helvetica', size: DEFAULT_FONT_SIZE } });
+    const ws = wb.addWorksheet(translate('RECAP'), {
+        pageSetup: { fitToWidth: 1, fitToHeight: 20, paperSize: 'A4_PAPER' },
+        sheetView: { showGridLines: false },
+    });
 
+    currentRow = 0;
     COLUMN_WIDTHS.forEach((width, index) => ws.column(index + 1).setWidth(width));
 
     addDoubleRow(ws,
-        gameNumber, { ...leftAlignementStyle, ...secondaryTitleFontSizeStyle },
-        getLongDateString(date), { ...rightAlignementStyle, ...secondaryTitleFontSizeStyle }
+        gameNumber, { ...leftAlignmentStyle, ...secondaryTitleFontSizeStyle },
+        getLongDateString(date), { ...rightAlignmentStyle, ...secondaryTitleFontSizeStyle },
     );
-    addFullRow(ws, `${teams.local} - ${teams.visitor}`, { ...centerAlignementStyle, ...primaryTitleFontSizeStyle });
-    addFullRow(ws, `${score.local} - ${score.visitor}`, { ...centerAlignementStyle, ...secondaryTitleFontSizeStyle });
-    addFullRow(ws);
+    addFullRow(ws, `${teams.local} - ${teams.visitor}`, { ...centerAlignmentStyle, ...primaryTitleFontSizeStyle });
+    addFullRow(ws, `${score.local} - ${score.visitor}`, { ...centerAlignmentStyle, ...secondaryTitleFontSizeStyle });
+    addBlankRow(ws);
 
     addGameComment(ws, 'GAME_DESCRIPTION', game.gameDescription, game.gameDescriptionFromAdviser);
     addGameComment(ws, 'GLOBAL_PERFORMANCE', game.globalPerformance, game.globalPerformanceFromAdviser);
 
-    const annotations = getAnnotationsSortedByTime(game.actions);
+    if (game.actions.length) {
+        const annotations = getAnnotationsSortedByTime(game.actions);
 
-    addAnnotations(ws, 'ALL_ACTIONS', GLOBAL_COLUMNS, annotations);
+        addAnnotations(ws, 'ALL_ACTIONS', GLOBAL_COLUMNS, annotations);
 
-    Object.entries(getActionsBySectors(annotations))
-        .forEach(([sector, actions]) => addAnnotations(ws, sector, BY_SECTOR_COLUMNS, actions));
+        const bySectorColumns = GLOBAL_COLUMNS
+            .filter(({ key }) => key !== 'sector')
+            .map(column => column.key === 'fault' ? { ...column, colSpan: 2 } : column);
+        Object.entries(getActionsBySectors(annotations))
+            .forEach(([sector, actions]) => addAnnotations(ws, sector, bySectorColumns, actions));
+    }
 
+    ws.setPrintArea(1, 1, currentRow, columnsCount);
     wb.write(savePath);
 }
 
@@ -103,63 +115,77 @@ function addGameComment(ws: Worksheet, key: 'GAME_DESCRIPTION' | 'GLOBAL_PERFORM
 
     if (refereeComment && adviserComment) {
         addDoubleRow(ws,
-            'REFEREE', { ...leftAlignementStyle, ...secondarySubtitleFontSizeStyle },
-            'ADVISER', { ...leftAlignementStyle, ...secondarySubtitleFontSizeStyle }
+            'REFEREE', { ...leftAlignmentStyle, ...secondarySubtitleFontSizeStyle },
+            'ADVISER', { ...leftAlignmentStyle, ...secondarySubtitleFontSizeStyle },
         );
-        addDoubleRow(ws, refereeComment, leftAlignementStyle, adviserComment, leftAlignementStyle);
+        addDoubleRow(ws, refereeComment, leftAlignmentStyle, adviserComment, leftAlignmentStyle);
     } else if (refereeComment || adviserComment) {
         const commentKey: Role = refereeComment ? 'referee' : 'adviser';
         // @ts-ignore refereeComment or adviserComment is defined
         const comment: string = refereeComment || adviserComment;
 
-        addFullRow(ws, commentKey.toUpperCase(), { ...leftAlignementStyle, ...secondarySubtitleFontSizeStyle });
-        addFullRow(ws, comment, leftAlignementStyle);
+        addFullRow(ws, commentKey.toUpperCase(), { ...leftAlignmentStyle, ...secondarySubtitleFontSizeStyle });
+        addFullRow(ws, comment, leftAlignmentStyle);
     }
 
-    addFullRow(ws);
+    addBlankRow(ws);
 }
 
 function addAnnotations(ws: Worksheet, title: string, columns: ActionColumnStructure[], annotations: Annotation[]): void {
     if (!annotations.length) return;
 
-    addFullRow(ws, title, { ...leftAlignementStyle, ...primaryTitleFontSizeStyle });
+    addFullRow(ws, title, { ...leftAlignmentStyle, ...primaryTitleFontSizeStyle });
+    addBlankRow(ws, 10);
+
     addHeaderTableRow(ws, columns);
 
     annotations.forEach(annotation =>
         isAction(annotation)
             ? addActionTableRow(ws, annotation, columns)
-            : addAnnotationTableRow(ws, annotation)
+            : addAnnotationTableRow(ws, annotation),
     );
 
-    addFullRow(ws);
+    addBlankRow(ws);
 }
 
-function addFullRow(ws: Worksheet, text?: string, style?: Style): void {
-    ws.row(++currentRow).setHeight(20);
+function addBlankRow(ws: Worksheet, height?: number): void {
+    ws.row(++currentRow).setHeight(height || 18);
+}
 
-    const cell = ws.cell(currentRow, 1, currentRow, columnsCount, true);
-    if (text) cell.string(translate(text)); else cell.string('');
-    if (style) cell.style(style); else cell.style(leftAlignementStyle);
+function addFullRow(ws: Worksheet, text: string, style?: Style): void {
+    const translatedText = translate(text);
+
+    ws.row(++currentRow).setHeight(computeHeightForContent(1, columnsCount, translatedText, style));
+
+    ws.cell(currentRow, 1, currentRow, columnsCount, true)
+        .string(translatedText)
+        .style(style || leftAlignmentStyle);
 }
 
 function addDoubleRow(ws: Worksheet, leftText: string, leftStyle: Style, rightText: string, rightStyle: Style): void {
-    ws.row(++currentRow).setHeight(20);
+    const leftTranslated = translate(leftText);
+    const rightTranslated = translate(rightText);
 
-    ws.cell(currentRow, 1, currentRow, columnsCount / 2, true).string(translate(leftText)).style(leftStyle);
-    ws.cell(currentRow, columnsCount / 2 + 1, currentRow, columnsCount, true).string(translate(rightText)).style(rightStyle);
+    const leftHeight = computeHeightForContent(1, columnsCount / 2, leftTranslated, leftStyle);
+    const rightHeight = computeHeightForContent(columnsCount / 2 + 1, columnsCount, rightTranslated, rightStyle);
+    ws.row(++currentRow).setHeight(Math.max(leftHeight, rightHeight));
+
+    ws.cell(currentRow, 1, currentRow, columnsCount / 2, true).string(leftTranslated).style(leftStyle);
+    ws.cell(currentRow, columnsCount / 2 + 1, currentRow, columnsCount, true).string(rightTranslated).style(rightStyle);
 }
 
 function addHeaderTableRow(ws: Worksheet, columns: ActionColumnStructure[]): void {
     let currentColumn = 1;
 
     ws.row(++currentRow).setHeight(24);
-    columns.forEach(({ key, colSpan }, index) => {
+    columns.forEach(({ key, colSpan, alignment }, index) => {
         const span = colSpan || 1;
         const columnEnd = currentColumn + span - 1;
 
+        const alignmentStyle: Style = alignment === 'center' ? { ...centerAlignmentStyle } : { ...leftAlignmentStyle };
         const style: Style = index === 0
             ? { border: { bottom: { style: 'thin' }, right: { style: 'thin' } } }
-            : { ...primarySubtitleFontSizeStyle, ...leftAlignementStyle, ...tableCellStyle };
+            : { ...primarySubtitleFontSizeStyle, ...alignmentStyle, ...tableCellStyle };
 
         ws.cell(currentRow, currentColumn, currentRow, columnEnd, true)
             .string(translate(key))
@@ -170,21 +196,35 @@ function addHeaderTableRow(ws: Worksheet, columns: ActionColumnStructure[]): voi
 }
 
 function addActionTableRow(ws: Worksheet, action: Action, columns: ActionColumnStructure[]): void {
+    let maxHeight = 20;
+    let commentsContent = '';
     let currentColumn = 1;
+    ANNOTATIONS_COLUMNS.forEach(({ key, colSpan }) => {
+        if (key !== 'comment') {
+            currentColumn += colSpan || 1;
+            return;
+        }
 
-    ws.row(++currentRow).setHeight(20);
-    columns.forEach(({ key, colSpan }) => {
+        if (action.comment) commentsContent = `${translate('REFEREE')} : ${action.comment}`;
+        if (action.comment && action.commentFromAdviser) commentsContent += '\n';
+        if (action.commentFromAdviser) commentsContent += `${translate('ADVISER')} : ${action.commentFromAdviser}`;
+
+        const columnHeight = computeHeightForContent(currentColumn, currentColumn + (colSpan || 1) - 1, commentsContent);
+        currentColumn += colSpan || 1;
+        maxHeight = Math.max(maxHeight, columnHeight);
+    });
+
+    ws.row(++currentRow).setHeight(maxHeight);
+
+    currentColumn = 1;
+    columns.forEach(({ key, colSpan, alignment }) => {
         let content = '';
-        let color = 'black';
-
         if (key === 'role') {
             content = getEmojiForRole(action);
         } else if (key === 'second') {
             content = convertSecondsToMMSS(action.second);
         } else if (key === 'comment') {
-            if (action.comment) content = `${translate('REFEREE')} : ${action.comment}`;
-            if (action.comment && action.commentFromAdviser) content += '\n';
-            if (action.commentFromAdviser) content += `${translate('ADVISER')} : ${action.commentFromAdviser}`;
+            content = commentsContent;
         } else if (key === 'type') {
             const type = translate(action.type);
             const card = getEmojiForCard(action.card);
@@ -194,6 +234,7 @@ function addActionTableRow(ws: Worksheet, action: Action, columns: ActionColumnS
             content = translate(action[key]);
         }
 
+        let color = 'black';
         if (key === 'precise') {
             if (action.precise === 'YES') {
                 color = '#20c997';
@@ -206,19 +247,33 @@ function addActionTableRow(ws: Worksheet, action: Action, columns: ActionColumnS
 
         const span = colSpan || 1;
         const columnEnd = currentColumn + span - 1;
+        const alignmentStyle: Style = alignment === 'center' ? { ...centerAlignmentStyle } : { ...leftAlignmentStyle };
 
         ws.cell(currentRow, currentColumn, currentRow, columnEnd, true)
             .string(content)
-            .style({ ...leftAlignementStyle, ...tableCellStyle, font: { color } });
+            .style({ ...alignmentStyle, ...tableCellStyle, font: { color } });
 
         currentColumn += span;
     });
 }
 
 function addAnnotationTableRow(ws: Worksheet, annotation: Annotation): void {
+    let maxHeight = 20;
     let currentColumn = 1;
+    ANNOTATIONS_COLUMNS.forEach(({ key, colSpan }) => {
+        if (key !== 'comment' && key !== 'commentFromAdviser') {
+            currentColumn += colSpan || 1;
+            return;
+        }
 
-    ws.row(++currentRow).setHeight(20);
+        const columnHeight = computeHeightForContent(currentColumn, currentColumn + (colSpan || 1) - 1, annotation[key]);
+        currentColumn += colSpan || 1;
+        maxHeight = Math.max(maxHeight, columnHeight);
+    });
+
+    ws.row(++currentRow).setHeight(maxHeight);
+
+    currentColumn = 1;
     ANNOTATIONS_COLUMNS.forEach(({ key, colSpan }) => {
         let content = '';
         if (key === 'role') {
@@ -236,10 +291,30 @@ function addAnnotationTableRow(ws: Worksheet, annotation: Annotation): void {
 
         ws.cell(currentRow, currentColumn, currentRow, columnEnd, true)
             .string(content)
-            .style({ ...leftAlignementStyle, ...tableCellStyle });
+            .style({ ...leftAlignmentStyle, ...tableCellStyle });
 
         currentColumn += span;
     });
+}
+
+function computeHeightForContent(startColumn: number, endColumn: number, content?: string, style?: Style): number {
+    if (!content) return 0;
+
+    const fontSize = style?.font?.size || DEFAULT_FONT_SIZE;
+    const heightByLine = fontSize + 6;
+    const columns = COLUMN_WIDTHS
+        .slice(startColumn - 1, endColumn)
+        .reduce((acc, width) => acc + width, 0);
+    const widthAvailableForContent = columns * 8;
+
+    const linesNeeded = content.split('\n').reduce(
+        (count, line) => line.length
+            ? count + Math.ceil(line.length * 6 / widthAvailableForContent)
+            : count + 1,
+        0,
+    );
+
+    return linesNeeded * heightByLine;
 }
 
 function getEmojiForRole(annotation: Annotation): string {

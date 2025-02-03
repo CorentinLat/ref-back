@@ -31,6 +31,8 @@ declare module 'excel4node' {
          * Adds and image to the worksheet.
          */
         addImage(opt: AddImageOptions): void;
+
+        setPrintArea(startRow: number, startCol: number, endRow: number, endCol: number): void;
     }
     /**
      * An instance of the Workbook class contains all data and parameters for the Excel Workbook.
