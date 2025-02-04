@@ -269,7 +269,14 @@ function addCircularDiagramPlot(
     Object.values(decisionsBy).forEach((decisions, index) => {
         const decisionsCount = decisions.length;
         const currentAngle = decisionAngle * decisionsCount;
-        const endingAngle = startingAngle + currentAngle;
+        let endingAngle = startingAngle + currentAngle;
+        if (endingAngle % 360 === startingAngle) {
+            endingAngle--;
+            doc
+                .path(describeArc(plotCenterX, plotCenterY, plotRadius, endingAngle, startingAngle))
+                .strokeColor(COLORS[index])
+                .stroke();
+        }
 
         doc
             .path(describeArc(plotCenterX, plotCenterY, plotRadius, startingAngle, endingAngle))
