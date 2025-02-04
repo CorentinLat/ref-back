@@ -13,6 +13,7 @@ import {
 
 import { convertSecondsToMMSS, getLongDateString } from '../date';
 import { assetsPath } from '../path';
+
 import translate from '../../translation';
 
 type Key = 'role' | 'second' | 'type' | 'against' | 'sector' | 'fault' | 'precise' | 'comment' | 'commentFromAdviser';
@@ -88,6 +89,20 @@ export function generatePdfSummary(game: Game, savePath: string): void {
     doc.end();
 }
 
+export const generatePdfStatistics = (annotations: Annotation[], savePath: string): Promise<boolean> =>
+    new Promise(resolve => {
+        const doc = new PDFDocument({ margin: MARGIN, size: [A4_WIDTH, 220] });
+        const stream = fs.createWriteStream(savePath);
+        doc.pipe(stream);
+
+        currentYPosition = MARGIN;
+        const result = addStatistics(doc, annotations);
+
+        doc.end();
+
+        stream.on('finish', () => resolve(result));
+    });
+
 function addTwoColumnsLine(doc: typeof PDFDocument, left: string, right: string): void {
     doc.font('Helvetica-Bold').fontSize(12);
 
@@ -142,9 +157,7 @@ function addParagraph(doc: typeof PDFDocument, text: string): void {
     currentYPosition += doc.heightOfString(text, { align: 'justify' }) + MARGIN;
 }
 
-function addStatistics(doc: typeof PDFDocument, annotations: Annotation[]): void {
-    addSection(doc, 'STATISTICS');
-
+function addStatistics(doc: typeof PDFDocument, annotations: Annotation[]): boolean {
     const penalties = annotations.reduce<Action[]>((acc, annotation) =>
         isAction(annotation) && (annotation.type === 'PENALTY' || annotation.type === 'RETURNED_PENALTY')
             ? [...acc, annotation]
@@ -155,6 +168,10 @@ function addStatistics(doc: typeof PDFDocument, annotations: Annotation[]): void
             ? [...acc, annotation]
             : acc
     , []);
+    if (!penalties.length && !freeKicks.length) { return false; }
+
+    addSection(doc, 'STATISTICS');
+
     const penaltiesByTeam = getDecisionsBy('against', penalties);
     const freeKicksByTeam = getDecisionsBy('against', freeKicks);
     const penaltiesBySector = getDecisionsBy('sector', penalties);
@@ -200,6 +217,8 @@ function addStatistics(doc: typeof PDFDocument, annotations: Annotation[]): void
 
     heightAdded = Math.max(penaltiesBySectorHeight, freeKicksBySectorHeight) + MARGIN;
     currentYPosition += heightAdded;
+
+    return true;
 }
 
 function displayCircularDiagramForDecisions(

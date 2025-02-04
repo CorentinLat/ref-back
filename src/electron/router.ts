@@ -290,7 +290,7 @@ const onDownloadSummaryListener = async (event: IpcMainEvent, { exportType, game
     }
 
     try {
-        generateSummary(game, savePath, exportType);
+        await generateSummary(game, savePath, exportType);
         event.reply('download_summary_succeeded');
     } catch (error) {
         logger.error(`Error on download ${exportType} summary: ${error}`);

@@ -1,4 +1,5 @@
 import xl, { Style, Worksheet } from 'excel4node';
+import { join } from 'path';
 
 import {
     Action,
@@ -6,23 +7,18 @@ import {
     Game,
     getAnnotationsSortedByTime,
     getActionsBySectors,
-    Role, isAction,
+    isAction,
+    Role,
 } from '../../../../type/refBack';
 
+import { removeFile } from '../file';
+import { convertPdfToPng } from './image';
+import { generatePdfStatistics } from './pdf';
+
 import { convertSecondsToMMSS, getLongDateString } from '../date';
+import { tempPath } from '../path';
 
 import translate from '../../translation';
-
-// type DecisionsBy = { [key: string]: Action[] };
-
-/*const COLORS: [number, number, number][] = [
-    [52, 136, 136],
-    [34, 186, 187],
-    [158, 248, 238],
-    [255, 233, 154],
-    [250, 127, 8],
-    [242, 68, 5],
-];*/
 
 type CommonColumnStructure = { key: 'role' | 'second'; colSpan?: number; alignment?: 'center' | 'left' };
 type ActionColumnStructure = { key: keyof Action | 'role'; colSpan?: number; alignment?: 'center' | 'left' };
@@ -69,7 +65,7 @@ const COLUMN_WIDTHS = [4, 8, 18, 8, 20, 30, 8, 16, 16, 16, 16, 16];
 const columnsCount = COLUMN_WIDTHS.length;
 let currentRow = 0;
 
-export function generateExcelSummary(game: Game, savePath: string): void {
+export async function generateExcelSummary(game: Game, savePath: string): Promise<void> {
     const { information: { date, gameNumber, score, teams } } = game;
 
     const wb = new xl.Workbook({ defaultFont: { name: 'Helvetica', size: DEFAULT_FONT_SIZE } });
@@ -94,6 +90,8 @@ export function generateExcelSummary(game: Game, savePath: string): void {
 
     if (game.actions.length) {
         const annotations = getAnnotationsSortedByTime(game.actions);
+
+        await addStatistics(ws, annotations);
 
         addAnnotations(ws, 'ALL_ACTIONS', GLOBAL_COLUMNS, annotations);
 
@@ -129,6 +127,40 @@ function addGameComment(ws: Worksheet, key: 'GAME_DESCRIPTION' | 'GLOBAL_PERFORM
     }
 
     addBlankRow(ws);
+}
+
+async function addStatistics(ws: Worksheet, annotations: Annotation[]): Promise<void> {
+    const tmpPdfPath = join(tempPath, `${Date.now()}.pdf`);
+
+    const pdfGenerated = await generatePdfStatistics(annotations, tmpPdfPath);
+    if (!pdfGenerated) {
+        removeFile(tmpPdfPath);
+        return;
+    }
+
+    const tmpPngPath = await convertPdfToPng(tmpPdfPath);
+    if (!tmpPngPath) {
+        removeFile(tmpPdfPath);
+        return;
+    }
+
+    addBlankRow(ws);
+    ws.row(currentRow).setHeight(330);
+
+    ws.addImage({
+        path: tmpPngPath,
+        type: 'picture',
+        position: {
+            type: 'twoCellAnchor',
+            from: { col: 4, row: currentRow },
+            to: { col: columnsCount - 1, row: currentRow + 1 },
+        },
+    });
+
+    setTimeout(() => {
+        removeFile(tmpPdfPath);
+        removeFile(tmpPngPath);
+    }, 5000);
 }
 
 function addAnnotations(ws: Worksheet, title: string, columns: ActionColumnStructure[], annotations: Annotation[]): void {
@@ -218,7 +250,7 @@ function addActionTableRow(ws: Worksheet, action: Action, columns: ActionColumnS
 
     currentColumn = 1;
     columns.forEach(({ key, colSpan, alignment }) => {
-        let content = '';
+        let content;
         if (key === 'role') {
             content = getEmojiForRole(action);
         } else if (key === 'second') {

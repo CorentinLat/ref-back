@@ -5,7 +5,7 @@ import { Game } from '../../../../type/refBack';
 import { generateExcelSummary } from './excel';
 import { generatePdfSummary } from './pdf';
 
-export function generateSummary(game: Game, saveDirectory: string, exportType: SummaryExportType) {
+export async function generateSummary(game: Game, saveDirectory: string, exportType: SummaryExportType) {
     switch (exportType) {
         case 'excel':
             return generateExcelSummary(game, saveDirectory);
