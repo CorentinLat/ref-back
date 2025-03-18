@@ -14,9 +14,10 @@
     "role": "Editor"
   }],
   "mac": {
+    "artifactName": "${productName}-${version}-mac.${ext}",
     "target": {
       "target": "zip",
-      "arch": ["x64"]
+      "arch": ["universal"]
     },
     "category": "public.app-category.sports",
     "type": "distribution",
