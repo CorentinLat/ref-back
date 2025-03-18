@@ -73,6 +73,12 @@ export const extensionByExportType: Record<SummaryExportType, string> = {
     pdf: 'pdf',
 };
 
+export type InitAppListenerCommandOutput = {
+    appVersion: string;
+    games: GameInformation[];
+    isOpenedFromExportedGame: boolean;
+};
+
 export type ImportGameInitCommandOutput = {
     gameTitle: string;
     hasVideo: boolean;

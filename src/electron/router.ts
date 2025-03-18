@@ -57,6 +57,9 @@ type OnCutVideoListenerArgs = { videoPath: string; cuts: number[][]; editGame: b
 type OnExportGameListenerArgs = { gameNumber: string; withVideo: boolean };
 
 export default class Router {
+    private isFirstLaunch = true;
+
+    private exportedGamePathAtOpen: string|null = null;
     private lastGameExportedPathOpened: string|null = null;
 
     constructor(private readonly ipcMain: IpcMain) {
@@ -93,9 +96,20 @@ export default class Router {
         const gameNumbers = await getExistingGameFolders();
         const games = getGamesInformation(gameNumbers);
 
+        let isOpenedFromExportedGame = false;
+        if (this.isFirstLaunch) {
+            this.exportedGamePathAtOpen = process.argv.reduce<string|null>(
+                (path, arg) => !path && arg.endsWith('.ref') ? arg : path,
+                null
+            );
+
+            isOpenedFromExportedGame = !!this.exportedGamePathAtOpen;
+            this.isFirstLaunch = false;
+        }
+
         setTimeout(checkNewVersionInstalled, 2000);
 
-        event.reply('init_app_succeeded', { appVersion, games });
+        event.reply('init_app_succeeded', { appVersion, games, isOpenedFromExportedGame });
     };
 
     private onCreateNewGameListener = async (event: IpcMainEvent, { force, gameInformation }: OnCreateNewGameListenerArgs) => {
@@ -405,14 +419,18 @@ export default class Router {
     private onImportGameInitListener = async (event: IpcMainEvent)=> {
         logger.debug('OnImportGameInitListener');
 
-        const gameExportedPath = askOpenFile([{ name: 'RefBack Game Export', extensions: ['ref'] }]);
-        logger.debug(`Game path : ${gameExportedPath}`);
-
+        let gameExportedPath: string|null = this.exportedGamePathAtOpen || null;
         if (!gameExportedPath) {
-            logger.debug(`Select game closed`);
-            event.reply('import_game_init_failed', { closed: true });
-            return;
+            gameExportedPath = askOpenFile([{ name: 'RefBack Game Export', extensions: ['ref'] }]);
+            logger.debug(`Game path : ${gameExportedPath}`);
+
+            if (!gameExportedPath) {
+                logger.debug(`Select game closed`);
+                event.reply('import_game_init_failed', { closed: true });
+                return;
+            }
         }
+        this.exportedGamePathAtOpen = null;
 
         const verifiedGameImport = await verifyGameImport(gameExportedPath);
         if (verifiedGameImport) {

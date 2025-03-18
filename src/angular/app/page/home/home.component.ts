@@ -118,12 +118,16 @@ export class HomeComponent implements OnInit {
     ngOnInit() {
         this.electron
             .initApp()
-            .then(({ appVersion, games }) => {
+            .then(({ appVersion, games, isOpenedFromExportedGame }) => {
                 this.appVersion = appVersion;
                 this.games = games;
                 this.hasExistingGames = games.length > 0;
 
                 this.handleVideoSourceUpdated();
+
+                if (isOpenedFromExportedGame) {
+                    this.handleOpenImportGame();
+                }
             });
     }
 
@@ -194,9 +198,7 @@ export class HomeComponent implements OnInit {
                     this.games = [];
                     this.hasExistingGames = false;
                 } else {
-                    const { games } = await this.electron.initApp();
-                    this.games = games;
-                    this.hasExistingGames = games.length > 0;
+                    await this.refreshGames();
                 }
             });
     };
@@ -207,12 +209,7 @@ export class HomeComponent implements OnInit {
         const modal = this.modalService.open(ImportGameModalComponent, { backdrop: 'static', centered: true });
         modal.componentInstance.gameInformations = this.games;
 
-        modal.result.then(() => this.electron.initApp()
-            .then(({ games }) => {
-                this.games = games;
-                this.hasExistingGames = games.length > 0;
-            })
-        );
+        modal.result.then(this.refreshGames);
     };
 
     handleOpenUrlInBrowser = (url: string) => this.electron.openUrlInBrowser(url);
@@ -245,6 +242,12 @@ export class HomeComponent implements OnInit {
             this.videoVeoLinksArray.removeAt(1);
         }
     }
+
+    private refreshGames = () => this.electron.initApp()
+        .then(({ games }) => {
+            this.games = games;
+            this.hasExistingGames = games.length > 0;
+        });
 
     private handleProcessVideosFailed = (error: any) => {
         if (error?.alreadyExisting) {
