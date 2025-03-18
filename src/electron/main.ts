@@ -1,6 +1,6 @@
 import { BrowserWindow, app, ipcMain, protocol } from 'electron';
 
-import router from './router';
+import Router from './router';
 import createWindow from './window';
 
 import logger from './utils/logger';
@@ -8,7 +8,9 @@ import { checkMandatoryFolderExists } from './utils/path';
 import { checkUpdatesAtStart } from './utils/update';
 
 checkMandatoryFolderExists();
-router(ipcMain);
+
+new Router(ipcMain);
+
 app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {
         app.quit();
