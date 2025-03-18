@@ -33,7 +33,7 @@ export type NewGameInformation = Omit<GameInformation, 'videoPath'> & {
     video: {
         option: 'file' | 'veo';
         videoPaths?: string[];
-        veo?: string;
+        veoLinks?: string[];
     };
 };
 

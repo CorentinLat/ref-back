@@ -82,7 +82,7 @@ export class ElectronService {
         });
     }
 
-    getProcessVideoProgress(): Observable<{ percentage: number; remaining: number }> {
+    getProcessVideoProgress(): Observable<{ percentage: number; remaining: number; label?: string }> {
         return new Observable(observer => {
             this.ipcRenderer?.removeAllListeners('videos_progress');
 

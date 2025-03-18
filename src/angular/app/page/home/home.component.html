@@ -49,7 +49,7 @@
                 <div class="input-group">
                     <span class="input-group-text">{{ gameNumberPrefix }}</span>
                     <input
-                        [className]="exposeClassNameForFormControl(gameNumberControl)"
+                        [className]="exposeClassNameForInput(gameNumberControl)"
                         id="game-number"
                         formControlName="gameNumber"
                         type="text"
@@ -59,13 +59,13 @@
                 </div>
 
                 <article class="errors-container">
-                    <p class="error" *ngIf="exposeFormControlHasError(gameNumberControl, 'pattern')">
+                    <p class="error" *ngIf="gameNumberControl.touched && gameNumberControl.errors?.pattern">
                         {{ 'PAGE.HOME.ERROR.GAME_NUMBER.PATTERN' | translate }}
                     </p>
-                    <p class="error" *ngIf="exposeFormControlHasError(gameNumberControl, 'required')">
+                    <p class="error" *ngIf="gameNumberControl.touched && gameNumberControl.errors?.required">
                         {{ 'PAGE.HOME.ERROR.GAME_NUMBER.REQUIRED' | translate }}
                     </p>
-                    <p class="error" *ngIf="exposeFormControlHasError(gameNumberControl, 'alreadyExisting')">
+                    <p class="error" *ngIf="gameNumberControl.touched && gameNumberControl.errors?.alreadyExisting">
                         {{ 'PAGE.HOME.ERROR.GAME_NUMBER.EXISTING' | translate }}
                     </p>
                 </article>
@@ -77,14 +77,14 @@
                     <span class="text-danger">*</span>
                 </label>
                 <input
-                    [className]="exposeClassNameForFormControl(dateControl)"
+                    [className]="exposeClassNameForInput(dateControl)"
                     id="date"
                     formControlName="date"
                     type="date"
                 >
 
                 <article class="errors-container">
-                    <p class="error" *ngIf="exposeFormControlHasError(dateControl, 'required')">
+                    <p class="error" *ngIf="dateControl.touched && dateControl.errors?.required">
                         {{ 'PAGE.HOME.ERROR.DATE.REQUIRED' | translate }}
                     </p>
                 </article>
@@ -100,7 +100,7 @@
                 <div class="input-group">
                     <span class="input-group-text"><span class="bi bi-house"></span></span>
                     <input
-                        [className]="exposeClassNameForFormControl(localTeamControl)"
+                        [className]="exposeClassNameForInput(localTeamControl)"
                         id="local-team"
                         formControlName="local"
                         type="text"
@@ -117,7 +117,7 @@
                 <div class="input-group">
                     <span class="input-group-text"><span class="bi bi-airplane"></span></span>
                     <input
-                        [className]="exposeClassNameForFormControl(visitorTeamControl)"
+                        [className]="exposeClassNameForInput(visitorTeamControl)"
                         id="visitor-team"
                         formControlName="visitor"
                         type="text"
@@ -142,17 +142,19 @@
                 <div class="input-group">
                     <span class="input-group-text"><span class="bi bi-house"></span></span>
                     <input
-                        [className]="exposeClassNameForFormControl(localScoreControl)"
+                        [className]="exposeClassNameForInput(localScoreControl)"
                         id="local-score"
                         formControlName="local"
                         type="number"
+                        min="0"
                     >
                     <span class="input-group-text">-</span>
                     <input
-                        [className]="exposeClassNameForFormControl(visitorScoreControl)"
+                        [className]="exposeClassNameForInput(visitorScoreControl)"
                         id="visitor-score"
                         formControlName="visitor"
                         type="number"
+                        min="0"
                     >
                     <span class="input-group-text"><span class="bi bi-airplane"></span></span>
                 </div>
@@ -161,7 +163,7 @@
         </section>
 
         <section class="row video-inputs" formGroupName="video">
-            <article style="text-align: center">
+            <section class="d-flex align-items-center justify-content-center position-relative">
                 <article class="video-options-toggle btn-group">
                     <input
                         id="video-file"
@@ -187,63 +189,92 @@
                         {{ 'PAGE.HOME.FORM.LABEL.VIDEO_OPTION.VEO' | translate }}
                     </label>
                 </article>
-            </article>
+
+                <article
+                    *ngIf="videoOptionControl.value === 'veo'"
+                    class="form-check form-switch position-absolute"
+                    style="right: 0"
+                >
+                    <input
+                        id="flexSwitchCheckDefault"
+                        class="form-check-input"
+                        type="checkbox"
+                        role="switch"
+                        formControlName="veoSplit"
+                        (change)="handleVideoVeoSplitUpdated()"
+                    >
+                    <label
+                        class="form-check-label"
+                        for="flexSwitchCheckDefault"
+                    >
+                        {{ 'PAGE.HOME.FORM.LABEL.VEO_SPLIT.QUESTION' | translate }}
+                    </label>
+                </article>
+            </section>
 
             <article class="col-8 offset-2" *ngIf="videoOptionControl.value === 'file'">
                 <input
-                    [className]="exposeClassNameForFormControl(videoFileControl)"
+                    [className]="exposeClassNameForInput(videoFileControl)"
                     formControlName="file"
                     type="file"
                     multiple
                 >
-                <article class="errors-container">
-                    <p class="error" *ngIf="videoFileControl.errors?.invalidType">
-                        {{ 'PAGE.HOME.ERROR.VIDEO_FILE.IMPORT_INVALID' | translate }}
-                        <span *ngFor="let fileName of exposeErrorFileNames()">
-                        <br>{{ fileName }}
-                    </span>
-                    </p>
-                    <p class="error" *ngIf="videoFileControl.errors?.multipleVideoFormat">
-                        {{ 'PAGE.HOME.ERROR.VIDEO_FILE.MULTIPLE_FORMAT' | translate }}
-                    </p>
-                    <p class="error" *ngIf="videoFileControl.errors?.notEnoughSpace">
-                        {{ 'PAGE.HOME.ERROR.VIDEO_FILE.NOT_ENOUGH_SPACE' | translate }}
-                    </p>
-                    <p class="error" *ngIf="videoFileControl.errors?.processVideoFailed">
-                        {{ 'PAGE.HOME.ERROR.VIDEO_FILE.PROCESS_FAILED' | translate }}
-                    </p>
-                    <p class="error" *ngIf="videoGroup.dirty && videoGroup.errors?.required">
-                        {{ 'PAGE.HOME.ERROR.VIDEO_FILE.REQUIRED' | translate }}
-                    </p>
-                </article>
             </article>
 
             <section class="col-8 offset-2" *ngIf="videoOptionControl.value === 'veo'">
-                <article class="input-group">
-                    <span class="input-group-text"><span class="bi bi-link"></span></span>
+                <article class="input-group" formArrayName="veoLinks">
+                    <span class="input-group-text">
+                        <span class="bi bi-link" *ngIf="!videoVeoSplitControl.value"></span>
+                        <span *ngIf="videoVeoSplitControl.value">{{ 'PAGE.HOME.FORM.LABEL.VEO_SPLIT.FIRST_HALF' | translate }}</span>
+                    </span>
                     <input
-                        [className]="exposeClassNameForFormControl(videoVeoControl)"
+                        [className]="exposeClassNameForInput(videoVeoLinksArray.at(0))"
                         [placeholder]="veoUrlPrefix"
-                        formControlName="veo"
+                        [formControlName]="0"
                         type="url"
                     />
-                </article>
 
-                <article class="errors-container">
-                    <p class="error" *ngIf="videoVeoControl.errors?.invalidType || videoVeoControl.errors?.pattern">
-                        {{ 'PAGE.HOME.ERROR.VIDEO_VEO.IMPORT_INVALID' | translate }}
-                    </p>
-                    <p class="error" *ngIf="videoVeoControl.errors?.notEnoughSpace">
-                        {{ 'PAGE.HOME.ERROR.VIDEO_VEO.NOT_ENOUGH_SPACE' | translate }}
-                    </p>
-                    <p class="error" *ngIf="videoVeoControl.errors?.processVideoFailed">
-                        {{ 'PAGE.HOME.ERROR.VIDEO_VEO.PROCESS_FAILED' | translate }}
-                    </p>
-                    <p class="error" *ngIf="videoGroup.dirty && videoGroup.errors?.required">
-                        {{ 'PAGE.HOME.ERROR.VIDEO_VEO.REQUIRED' | translate }}
-                    </p>
+                    <span class="input-group-text" *ngIf="videoVeoSplitControl.value">
+                        {{ 'PAGE.HOME.FORM.LABEL.VEO_SPLIT.SECOND_HALF' | translate }}
+                    </span>
+                    <input
+                        [className]="exposeClassNameForInput(videoVeoLinksArray.at(1))"
+                        [placeholder]="veoUrlPrefix"
+                        [formControlName]="1"
+                        type="url"
+                        *ngIf="videoVeoSplitControl.value"
+                    />
                 </article>
             </section>
+
+            <article class="errors-container">
+                <p class="error" *ngIf="videoGroup.errors?.notEnoughSpace">
+                    {{ 'PAGE.HOME.ERROR.VIDEO.NOT_ENOUGH_SPACE' | translate }}
+                </p>
+                <p class="error" *ngIf="videoGroup.errors?.processVideoFailed">
+                    {{ 'PAGE.HOME.ERROR.VIDEO.PROCESS_FAILED' | translate }}
+                </p>
+
+                <p class="error" *ngIf="videoFileControl.touched && videoFileControl.errors?.required">
+                    {{ 'PAGE.HOME.ERROR.VIDEO.FILE_REQUIRED' | translate }}
+                </p>
+                <p class="error" *ngIf="videoFileControl.errors?.invalidType">
+                    {{ 'PAGE.HOME.ERROR.VIDEO.NOT_SUPPORTED' | translate }}
+                    <span *ngFor="let fileName of exposeErrorFileNames()">
+                        <br>{{ fileName }}
+                    </span>
+                </p>
+                <p class="error" *ngIf="videoFileControl.errors?.multipleVideoFormat">
+                    {{ 'PAGE.HOME.ERROR.VIDEO.MULTIPLE_FORMAT' | translate }}
+                </p>
+
+                <p class="error" *ngIf="exposeFormArrayHasError(videoVeoLinksArray, 'required')">
+                    {{ 'PAGE.HOME.ERROR.VIDEO.VEO_REQUIRED' | translate }}
+                </p>
+                <p class="error" *ngIf="exposeFormArrayHasError(videoVeoLinksArray, 'pattern')">
+                    {{ 'PAGE.HOME.ERROR.VIDEO.INVALID_URL' | translate }}
+                </p>
+            </article>
         </section>
 
         <article class="text-center">

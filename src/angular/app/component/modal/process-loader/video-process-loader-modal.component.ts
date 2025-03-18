@@ -7,6 +7,7 @@ import { ElectronService } from '../../../service/ElectronService';
 
 @Component({ templateUrl: './process-loader-modal.component.html' })
 export class VideoProcessLoaderModalComponent implements OnDestroy, OnInit {
+    label?: string;
     progress = 0;
     remainingTime = Infinity;
 
@@ -36,7 +37,8 @@ export class VideoProcessLoaderModalComponent implements OnDestroy, OnInit {
 
     protected setCurrentSubscription() {
         this.currentSubscription$ = this.electronService.getProcessVideoProgress()
-            .subscribe(({ percentage, remaining }) => this.zone.run(() => {
+            .subscribe(({ label, percentage, remaining }) => this.zone.run(() => {
+                this.label = label;
                 this.progress = Math.round(percentage);
                 this.remainingTime = remaining;
             }));

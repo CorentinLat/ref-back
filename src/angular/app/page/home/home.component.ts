@@ -1,5 +1,5 @@
 import { Component, HostListener, OnInit, ViewEncapsulation } from '@angular/core';
-import { AbstractControl, FormControl, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Observable, of, OperatorFunction } from 'rxjs';
@@ -30,6 +30,7 @@ export class HomeComponent implements OnInit {
     readonly gameNumberSuffix = 'RCT';
 
     readonly veoUrlPrefix = 'https://app.veo.co/';
+    readonly veoUrlRegex = new RegExp(`^${this.veoUrlPrefix.replace(/([.?*+^$[\]\\(){}|-])/g, '\\$1')}.+$`);
 
     appVersion = '';
     hasExistingGames = false;
@@ -46,25 +47,12 @@ export class HomeComponent implements OnInit {
             local: new FormControl(0, [Validators.required, Validators.pattern('^\\d{1,3}$')]),
             visitor: new FormControl(0, [Validators.required, Validators.pattern('^\\d{1,3}$')]),
         }),
-        video: new FormGroup(
-            {
-                option: new FormControl('file', Validators.required),
-                file: new FormControl(null),
-                veo: new FormControl(null, Validators.pattern(new RegExp(`^${this.veoUrlPrefix.replace(/([.?*+^$[\]\\(){}|-])/g, '\\$1')}.+$`))),
-            },
-            {
-                validators: (group: AbstractControl) => {
-                    const { option, file, veo } = group.value;
-                    if (option === 'file' && !file) {
-                        return { required: true };
-                    }
-                    if (option === 'veo' && !veo) {
-                        return { required: true };
-                    }
-                    return null;
-                },
-            },
-        ),
+        video: new FormGroup({
+            option: new FormControl('file'),
+            file: new FormControl(),
+            veoSplit: new FormControl(false),
+            veoLinks: new FormArray([]),
+        }),
     });
 
     files: File[] = [];
@@ -93,7 +81,8 @@ export class HomeComponent implements OnInit {
     get videoGroup(): FormGroup { return this.gameForm.get('video') as FormGroup; }
     get videoOptionControl(): FormControl { return this.videoGroup.get('option') as FormControl; }
     get videoFileControl(): FormControl { return this.videoGroup.get('file') as FormControl; }
-    get videoVeoControl(): FormControl { return this.videoGroup.get('veo') as FormControl; }
+    get videoVeoSplitControl(): FormControl { return this.videoGroup.get('veoSplit') as FormControl; }
+    get videoVeoLinksArray(): FormArray { return this.videoGroup.get('veoLinks') as FormArray; }
 
     @HostListener('change', ['$event.target.files'])
     emitFiles(files: FileList) {
@@ -133,17 +122,27 @@ export class HomeComponent implements OnInit {
                 this.appVersion = appVersion;
                 this.games = games;
                 this.hasExistingGames = games.length > 0;
+
+                this.handleVideoSourceUpdated();
             });
     }
 
-    exposeClassNameForFormControl(formControl: FormControl): string {
-        return !formControl || formControl.pristine || formControl.valid
+    exposeClassNameForInput(control: AbstractControl): string {
+        return !control || control.untouched || control.valid
             ? 'form-control'
             : 'form-control is-invalid';
     }
 
-    exposeFormControlHasError(formControl: FormControl, error: string): boolean {
-        return formControl.dirty && formControl.hasError(error);
+    exposeFormGroupIsInvalid(formGroup: FormGroup): boolean {
+        return Object.values(formGroup.controls).some(control => control.touched && control.invalid);
+    }
+
+    exposeFormArrayHasError(formArray: FormArray, error: string): boolean {
+        return formArray.controls.some(control => control.touched && control.hasError(error));
+    }
+
+    exposeErrorFileNames(): string[] {
+        return this.notSupportedFiles.map(({ name }) => name);
     }
 
     searchTeams: OperatorFunction<string, readonly string[]> = (text$: Observable<string>) =>
@@ -157,21 +156,12 @@ export class HomeComponent implements OnInit {
             ),
         );
 
-    exposeFormGroupIsInvalid(formGroup: FormGroup): boolean {
-        const isFormGroupDirty = Object.values(formGroup.controls).every(control => control.dirty);
-        return isFormGroupDirty && formGroup.invalid;
-    }
-
-    exposeErrorFileNames(): string[] {
-        return this.notSupportedFiles.map(({ name }) => name);
-    }
-
     async submit(force: boolean = false) {
         if (this.gameForm.invalid) {
             return;
         }
 
-        const { video: { option, veo }, ...gameInformation } = this.gameForm.value;
+        const { video: { option, veoLinks }, ...gameInformation } = this.gameForm.value;
         const videoPaths = this.files.map(({ path }) => path);
 
         this.isProcessingVideos = true;
@@ -182,7 +172,7 @@ export class HomeComponent implements OnInit {
                 {
                     ...gameInformation,
                     gameNumber: this.getGameNumber(),
-                    video: { option, videoPaths, veo },
+                    video: { option, videoPaths, veoLinks },
                 },
             );
 
@@ -228,10 +218,32 @@ export class HomeComponent implements OnInit {
     handleOpenUrlInBrowser = (url: string) => this.electron.openUrlInBrowser(url);
 
     handleVideoSourceUpdated() {
-        this.videoFileControl.reset();
-        this.videoVeoControl.reset();
+        this.videoGroup.setErrors(null);
 
+        this.videoFileControl.clearValidators();
+        this.videoFileControl.setErrors(null);
+        this.videoFileControl.reset();
         this.files = [];
+
+        this.videoVeoLinksArray.clearValidators();
+        this.videoVeoLinksArray.setErrors(null);
+        this.videoVeoLinksArray.clear();
+
+        if (this.videoOptionControl.value === 'file') {
+            this.videoFileControl.addValidators(Validators.required);
+            this.videoFileControl.updateValueAndValidity();
+        } else if (this.videoOptionControl.value === 'veo') {
+            this.videoVeoSplitControl.setValue(false);
+            this.videoVeoLinksArray.push(new FormControl('', [Validators.required, Validators.pattern(this.veoUrlRegex)]));
+        }
+    }
+
+    handleVideoVeoSplitUpdated() {
+        if (this.videoVeoSplitControl.value) {
+            this.videoVeoLinksArray.push(new FormControl('', [Validators.required, Validators.pattern(this.veoUrlRegex)]));
+        } else if (this.videoVeoLinksArray.length > 1) {
+            this.videoVeoLinksArray.removeAt(1);
+        }
     }
 
     private handleProcessVideosFailed = (error: any) => {
@@ -252,21 +264,13 @@ export class HomeComponent implements OnInit {
         } else if (error?.notEnoughSpace) {
             this.modalService.open(NotEnoughRemainingSpaceModalComponent, { centered: true });
 
-            if (this.videoOptionControl.value === 'file') {
-                this.videoFileControl.setErrors({ notEnoughSpace: true });
-            } else if (this.videoOptionControl.value === 'veo') {
-                this.videoVeoControl.setErrors({ notEnoughSpace: true });
-            }
+            this.videoGroup.setErrors({ notEnoughSpace: true });
         } else if (error?.cancelled) {
             this.toastService.showInfo('TOAST.INFO.PROCESS_VIDEO_CANCELLED');
         } else {
             this.toastService.showError('TOAST.ERROR.PROCESS_VIDEO');
 
-            if (this.videoOptionControl.value === 'file') {
-                this.videoFileControl.setErrors({ processVideoFailed: true });
-            } else if (this.videoOptionControl.value === 'veo') {
-                this.videoVeoControl.setErrors({ processVideoFailed: true });
-            }
+            this.videoGroup.setErrors({ processVideoFailed: true });
         }
     };
 

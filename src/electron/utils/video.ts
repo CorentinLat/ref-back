@@ -15,7 +15,7 @@ import { getDefaultGameVideoFilename } from './game';
 import logger from './logger';
 import { ffmpegElectronPath, ffprobeElectronPath, tempPath, workPath } from './path';
 import throwIfNotEnoughRemainingSpaceForFilePaths from './storage';
-import { getVideoUrlFromVeo } from './veo';
+import { getVideoUrlsFromVeoLinks } from './veo';
 
 import translate from '../translation';
 
@@ -27,25 +27,23 @@ const SUPPORTED_HTML_VIDEO_EXTENSIONS = ['mp4', 'webm', 'ogg'];
 let currentFfmpegExecutions: { command: FluentFFMPEG.FfmpegCommand; outputPath: string }[] = [];
 
 export async function handleVideoImport(gameInformation: NewGameInformation, event: IpcMainEvent): Promise<string> {
-    const { gameNumber, video: { option, videoPaths, veo } } = gameInformation;
+    const { gameNumber, video: { option, videoPaths, veoLinks } } = gameInformation;
 
-    let videoPath;
     if (option === 'file' && videoPaths?.length) {
         await throwIfNotEnoughRemainingSpaceForFilePaths(videoPaths);
 
         if (videoPaths.length > 1) {
-            videoPath = await concatVideos(gameNumber, videoPaths, event);
+            return concatVideos(gameNumber, videoPaths, event);
         } else {
-            videoPath = await copyVideoToUserDataPath(gameNumber, videoPaths[0], event);
+            return copyVideoToUserDataPath(gameNumber, videoPaths[0], event);
         }
-    } else if (option === 'veo' && veo) {
-        const videoUrl = await getVideoUrlFromVeo(veo);
-        videoPath = await downloadVideoUrlToUserDataPath(gameNumber, videoUrl, event);
-    } else {
-        throw new NoVideoError();
+    } else if (option === 'veo' && veoLinks?.length) {
+        const videoUrls = await getVideoUrlsFromVeoLinks(veoLinks);
+
+        return downloadVideoUrlsToUserDataPath(gameNumber, videoUrls, event);
     }
 
-    return videoPath;
+    throw new NoVideoError();
 }
 
 export async function concatVideos(gameNumber: string, videoPaths: string[], event: IpcMainEvent): Promise<string> {
@@ -70,7 +68,7 @@ export async function concatVideos(gameNumber: string, videoPaths: string[], eve
         const elapsedTime = Date.now() - startTime;
         const remainingTime = Math.round(elapsedTime / percentageDone * (100 - percentageDone) / 1000);
 
-        event.reply('videos_progress', { percentage: percentageDone, remaining: remainingTime });
+        event.reply('videos_progress', { label: 'POST_PROCESSING', percentage: percentageDone, remaining: remainingTime });
     });
 
     currentFfmpegExecutions = [];
@@ -105,13 +103,34 @@ export async function copyVideoToUserDataPath(gameNumber: string, videoPath: str
     }
 }
 
-export async function downloadVideoUrlToUserDataPath(gameNumber: string, url: string, event: IpcMainEvent): Promise<string> {
-    const videoName = generateVideoName();
-    const outputFileName = path.join(workPath, gameNumber, videoName);
+export async function downloadVideoUrlsToUserDataPath(gameNumber: string, urls: string[], event: IpcMainEvent): Promise<string> {
+    if (!urls.length) {
+        throw new NoVideoError();
+    }
 
-    await downloadUrlToPath(url, outputFileName, event);
+    if (urls.length === 1) {
+        const videoName = generateVideoName();
+        const downloadVideoPath = path.join(workPath, gameNumber, videoName);
 
-    return outputFileName;
+        await downloadUrlToPath(urls[0], downloadVideoPath, event, 'DOWNLOAD_VEO_GAME');
+
+        return downloadVideoPath;
+    } else {
+        const downloadedPaths: string[] = [];
+        for (let halfTimeIndex = 0; halfTimeIndex < 2; halfTimeIndex++) {
+            const videoName = `${halfTimeIndex + 1}_${generateVideoName()}`;
+            const halfDownloadVideoPath = path.join(tempPath, gameNumber, videoName);
+            await downloadUrlToPath(urls[halfTimeIndex], halfDownloadVideoPath, event, `DOWNLOAD_VEO_${halfTimeIndex + 1}_HALF`);
+
+            downloadedPaths.push(halfDownloadVideoPath);
+        }
+
+        const downloadVideoPath = await concatVideos(gameNumber, downloadedPaths, event);
+
+        downloadedPaths.forEach(downloadedPath => removeFile(downloadedPath));
+
+        return downloadVideoPath;
+    }
 }
 
 export async function downloadAllVideosGame(game: Game, destDirectory: string, event: IpcMainEvent): Promise<void> {

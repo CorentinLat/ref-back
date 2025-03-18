@@ -54,6 +54,8 @@ export function getGame(gameNumber: string): Game|null {
         return JSON.parse(game);
     } catch (error) {
         logger.error(`error getGame: ${error}`);
+
+        removeGame(gameNumber);
         return null;
     }
 }
