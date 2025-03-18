@@ -89,20 +89,6 @@ export function generatePdfSummary(game: Game, savePath: string): void {
     doc.end();
 }
 
-export const generatePdfStatistics = (annotations: Annotation[], savePath: string): Promise<boolean> =>
-    new Promise(resolve => {
-        const doc = new PDFDocument({ margin: MARGIN, size: [A4_WIDTH, 220] });
-        const stream = fs.createWriteStream(savePath);
-        doc.pipe(stream);
-
-        currentYPosition = MARGIN;
-        const result = addStatistics(doc, annotations);
-
-        doc.end();
-
-        stream.on('finish', () => resolve(result));
-    });
-
 function addTwoColumnsLine(doc: typeof PDFDocument, left: string, right: string): void {
     doc.font('Helvetica-Bold').fontSize(12);
 

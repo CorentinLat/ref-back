@@ -270,7 +270,7 @@ const onDownloadAllVideosListener = async (event: IpcMainEvent, { gameNumber }: 
 };
 
 type DownloadSummaryListenerArgs = { exportType: SummaryExportType; gameNumber: string };
-const onDownloadSummaryListener = async (event: IpcMainEvent, { exportType, gameNumber }: DownloadSummaryListenerArgs) => {
+const onDownloadSummaryListener = (event: IpcMainEvent, { exportType, gameNumber }: DownloadSummaryListenerArgs) => {
     logger.debug('OnDownloadSummaryListener');
 
     const game = getGame(gameNumber);
@@ -290,7 +290,7 @@ const onDownloadSummaryListener = async (event: IpcMainEvent, { exportType, game
     }
 
     try {
-        await generateSummary(game, savePath, exportType);
+        generateSummary(game, savePath, exportType);
         event.reply('download_summary_succeeded');
     } catch (error) {
         logger.error(`Error on download ${exportType} summary: ${error}`);

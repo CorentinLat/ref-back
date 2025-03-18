@@ -1,5 +1,4 @@
 import xl, { Style, Worksheet } from 'excel4node';
-import { join } from 'path';
 
 import {
     Action,
@@ -11,12 +10,7 @@ import {
     Role,
 } from '../../../../type/refBack';
 
-import { removeFile } from '../file';
-import { convertPdfToPng } from './image';
-import { generatePdfStatistics } from './pdf';
-
 import { convertSecondsToMMSS, getLongDateString } from '../date';
-import { tempPath } from '../path';
 
 import translate from '../../translation';
 
@@ -65,7 +59,7 @@ const COLUMN_WIDTHS = [4, 8, 18, 8, 20, 30, 8, 16, 16, 16, 16, 16];
 const columnsCount = COLUMN_WIDTHS.length;
 let currentRow = 0;
 
-export async function generateExcelSummary(game: Game, savePath: string): Promise<void> {
+export function generateExcelSummary(game: Game, savePath: string): void {
     const { information: { date, gameNumber, score, teams } } = game;
 
     const wb = new xl.Workbook({ defaultFont: { name: 'Helvetica', size: DEFAULT_FONT_SIZE } });
@@ -90,8 +84,6 @@ export async function generateExcelSummary(game: Game, savePath: string): Promis
 
     if (game.actions.length) {
         const annotations = getAnnotationsSortedByTime(game.actions);
-
-        await addStatistics(ws, annotations);
 
         addAnnotations(ws, 'ALL_ACTIONS', GLOBAL_COLUMNS, annotations);
 
@@ -127,40 +119,6 @@ function addGameComment(ws: Worksheet, key: 'GAME_DESCRIPTION' | 'GLOBAL_PERFORM
     }
 
     addBlankRow(ws);
-}
-
-async function addStatistics(ws: Worksheet, annotations: Annotation[]): Promise<void> {
-    const tmpPdfPath = join(tempPath, `${Date.now()}.pdf`);
-
-    const pdfGenerated = await generatePdfStatistics(annotations, tmpPdfPath);
-    if (!pdfGenerated) {
-        removeFile(tmpPdfPath);
-        return;
-    }
-
-    const tmpPngPath = await convertPdfToPng(tmpPdfPath);
-    if (!tmpPngPath) {
-        removeFile(tmpPdfPath);
-        return;
-    }
-
-    addBlankRow(ws);
-    ws.row(currentRow).setHeight(330);
-
-    ws.addImage({
-        path: tmpPngPath,
-        type: 'picture',
-        position: {
-            type: 'twoCellAnchor',
-            from: { col: 4, row: currentRow },
-            to: { col: columnsCount - 1, row: currentRow + 1 },
-        },
-    });
-
-    setTimeout(() => {
-        removeFile(tmpPdfPath);
-        removeFile(tmpPngPath);
-    }, 5000);
 }
 
 function addAnnotations(ws: Worksheet, title: string, columns: ActionColumnStructure[], annotations: Annotation[]): void {
