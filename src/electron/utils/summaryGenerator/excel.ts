@@ -306,7 +306,7 @@ function addAnnotationTableRow(ws: Worksheet, annotation: Annotation): void {
     ws.row(++currentRow).setHeight(maxHeight);
 
     currentColumn = 1;
-    ANNOTATIONS_COLUMNS.forEach(({ key, colSpan }) => {
+    ANNOTATIONS_COLUMNS.forEach(({ key, colSpan, alignment }) => {
         let content = '';
         if (key === 'role') {
             content = getEmojiForRole(annotation);
@@ -320,10 +320,11 @@ function addAnnotationTableRow(ws: Worksheet, annotation: Annotation): void {
 
         const span = colSpan || 1;
         const columnEnd = currentColumn + span - 1;
+        const alignmentStyle: Style = alignment === 'center' ? { ...centerAlignmentStyle } : { ...leftAlignmentStyle };
 
         ws.cell(currentRow, currentColumn, currentRow, columnEnd, true)
             .string(content)
-            .style({ ...leftAlignmentStyle, ...tableCellStyle });
+            .style({ ...alignmentStyle, ...tableCellStyle });
 
         currentColumn += span;
     });
