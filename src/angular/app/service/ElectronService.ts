@@ -8,13 +8,12 @@ import {
     Annotation,
     Decision,
     Game,
-    GameInformation, ImportGameCommandArgs,
+    InitAppListenerCommandOutput,
+    ImportGameCommandArgs,
     ImportGameInitCommandOutput,
     NewGameInformation,
     SummaryExportType,
 } from '../../../../type/refBack';
-
-type InitAppPayload = { appVersion: string; games: GameInformation[] };
 
 @Injectable({ providedIn: 'root' })
 export class ElectronService {
@@ -56,12 +55,9 @@ export class ElectronService {
         this.ipcRenderer?.send('cancel_video_process');
     }
 
-    initApp(): Promise<InitAppPayload> {
+    initApp(): Promise<InitAppListenerCommandOutput> {
         return new Promise(resolve => {
-            this.ipcRenderer?.once(
-                'init_app_succeeded',
-                (_, { appVersion, games }: InitAppPayload) => resolve({ appVersion, games })
-            );
+            this.ipcRenderer?.once('init_app_succeeded', (_, output: InitAppListenerCommandOutput) => resolve(output));
 
             this.ipcRenderer?.send('init_app');
         });
@@ -82,7 +78,7 @@ export class ElectronService {
         });
     }
 
-    getProcessVideoProgress(): Observable<{ percentage: number; remaining: number }> {
+    getProcessVideoProgress(): Observable<{ percentage: number; remaining: number; label?: string }> {
         return new Observable(observer => {
             this.ipcRenderer?.removeAllListeners('videos_progress');
 

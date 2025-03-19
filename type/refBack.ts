@@ -7,7 +7,7 @@ export type Annotation = {
     clip?: { start: number; end: number };
 };
 export type Action = Annotation & {
-    type: 'PLAY_ON' | 'TOUCH' | 'SCRUM' | 'FREE_KICK' | 'PENALTY' | 'RETURNED_PENALTY' | 'PENALTY_TRY' | 'TRY' | 'NO_TRY' | 'RESTART_KICK';
+    type: 'PLAY_ON' | 'TOUCH' | 'SCRUM' | 'FREE_KICK' | 'PENALTY' | 'ADVANTAGE' | 'RETURNED_PENALTY' | 'PENALTY_TRY' | 'TRY' | 'NO_TRY' | 'RESTART_KICK';
     card?: 'WARNING' | 'RED' | 'YELLOW' | 'WHITE';
     against: 'LOCAL' | 'VISITOR';
     sector: 'SCRUM' | 'FOUL_PLAY' | 'SPACE' | 'RUCK-TACKLE' | 'LINE_OUT-MAUL' | 'ADVANTAGE';
@@ -33,7 +33,7 @@ export type NewGameInformation = Omit<GameInformation, 'videoPath'> & {
     video: {
         option: 'file' | 'veo';
         videoPaths?: string[];
-        veo?: string;
+        veoLinks?: string[];
     };
 };
 
@@ -58,7 +58,7 @@ export type Decision = {
     sector: 'SCRUM' | 'FOUL_PLAY' | 'SPACE' | 'RUCK-TACKLE' | 'LINE_OUT-MAUL' | 'ADVANTAGE';
     fault: string;
     precise: 'YES' | 'NO' | 'DOUBT';
-    type: 'PLAY_ON' | 'TOUCH' | 'SCRUM' | 'FREE_KICK' | 'PENALTY' | 'RETURNED_PENALTY' | 'PENALTY_TRY' | 'TRY' | 'NO_TRY' | 'RESTART_KICK';
+    type: 'PLAY_ON' | 'TOUCH' | 'SCRUM' | 'FREE_KICK' | 'PENALTY' | 'ADVANTAGE' | 'RETURNED_PENALTY' | 'PENALTY_TRY' | 'TRY' | 'NO_TRY' | 'RESTART_KICK';
     card?: 'WARNING' | 'RED' | 'YELLOW' | 'WHITE';
     comment?: string;
     commentFromAdviser?: string;
@@ -73,6 +73,12 @@ export const extensionByExportType: Record<SummaryExportType, string> = {
     pdf: 'pdf',
 };
 
+export type InitAppListenerCommandOutput = {
+    appVersion: string;
+    games: GameInformation[];
+    isOpenedFromExportedGame: boolean;
+};
+
 export type ImportGameInitCommandOutput = {
     gameTitle: string;
     hasVideo: boolean;
@@ -84,4 +90,24 @@ export type ImportGameCommandArgs = {
     isCreatingNewGame?: boolean;
     isOverriding?: boolean;
     gameNumberToUse?: string;
+};
+
+export const getAnnotationsSortedByTime = (annotations: Annotation[]): Annotation[] =>
+    annotations.sort((a, b) => a.second - b.second);
+
+export const getActionsBySectors = (annotations: Annotation[]): { [key: string]: Action[] } => {
+    const uniqueSectors = annotations
+        .reduce<Set<string>>((sectors, annotation) => {
+            if (isAction(annotation)) sectors.add(annotation.sector);
+            return sectors;
+        }, new Set());
+
+    return Array.from(uniqueSectors)
+        .sort((a, b) => a.localeCompare(b))
+        .reduce<{ [key: string]: Action[] }>((actionsBySectors, sector) => {
+            const actionsForSector = annotations.filter(isAction).filter(action => action.sector === sector);
+            if (actionsForSector.length) actionsBySectors[sector] = actionsForSector;
+
+            return actionsBySectors;
+        }, {});
 };

@@ -1,6 +1,6 @@
 {
   "name": "ref-back",
-  "version": "4.1.1",
+  "version": "4.2.0",
   "author": {
     "name": "Corentin LATAPPY",
     "email": "corentin.lat@gmail.com"
@@ -14,6 +14,7 @@
     "link-modules": "node -r ts-node/register ../../.erb/scripts/link-modules.ts"
   },
   "dependencies": {
+    "@hyzyla/pdfium": "^2.1.2",
     "check-disk-space": "^3.3.1",
     "electron-updater": "6.3.9",
     "excel4node": "^1.8.2",

@@ -4,6 +4,10 @@
     </article>
 
     <article class="modal-body text-center">
+            <p *ngIf="label">
+                {{ 'MODAL.PROCESS_LOADER.LABEL.' + label | translate }}
+            </p>
+
             <ngb-progressbar
                 class="w-100"
                 type="success"

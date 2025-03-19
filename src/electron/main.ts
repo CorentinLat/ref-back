@@ -1,15 +1,22 @@
 import { BrowserWindow, app, ipcMain, protocol } from 'electron';
 
-import router from './router';
+import Router from './router';
 import createWindow from './window';
 
 import logger from './utils/logger';
 import { checkMandatoryFolderExists } from './utils/path';
 import { checkUpdatesAtStart } from './utils/update';
-import { checkNewVersionInstalled } from './utils/version';
 
 checkMandatoryFolderExists();
-router(ipcMain);
+
+const router = new Router(ipcMain);
+
+app.on('open-file', (event, path) => {
+    event.preventDefault();
+
+    router.updateExportedGamePathAtOpen(path);
+});
+
 app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {
         app.quit();
@@ -28,20 +35,13 @@ try {
                 callback({ path });
             });
 
-            setTimeout(() => createWindowAndCheckVersion(), 400);
+            setTimeout(() => window = createWindow(), 400);
 
             app.on('activate', () => {
                 if (window === null) {
-                    createWindowAndCheckVersion();
+                    window = createWindow();
                 }
             });
         })
         .catch(logger.error);
 } catch (e) {}
-
-const createWindowAndCheckVersion = () => {
-    const newWindow = createWindow();
-
-    window = newWindow;
-    setTimeout(() => checkNewVersionInstalled(newWindow), 1000);
-};
