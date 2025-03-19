@@ -9,7 +9,13 @@ import { checkUpdatesAtStart } from './utils/update';
 
 checkMandatoryFolderExists();
 
-new Router(ipcMain);
+const router = new Router(ipcMain);
+
+app.on('open-file', (event, path) => {
+    event.preventDefault();
+
+    router.updateExportedGamePathAtOpen(path);
+});
 
 app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {

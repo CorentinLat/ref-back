@@ -66,6 +66,10 @@ export default class Router {
         this.initRouter();
     }
 
+    public updateExportedGamePathAtOpen = (exportedGamePathAtOpen: string) => {
+        this.exportedGamePathAtOpen = exportedGamePathAtOpen;
+    };
+
     private initRouter = () => {
         this.ipcMain.on('init_app', this.onInitAppListener);
         this.ipcMain.on('create_new_game', this.onCreateNewGameListener);
@@ -98,10 +102,12 @@ export default class Router {
 
         let isOpenedFromExportedGame = false;
         if (this.isFirstLaunch) {
-            this.exportedGamePathAtOpen = process.argv.reduce<string|null>(
-                (path, arg) => !path && arg.endsWith('.ref') ? arg : path,
-                null
-            );
+            if (!this.exportedGamePathAtOpen) {
+                this.exportedGamePathAtOpen = process.argv.reduce<string | null>(
+                    (path, arg) => !path && arg.endsWith('.ref') ? arg : path,
+                    null
+                );
+            }
 
             isOpenedFromExportedGame = !!this.exportedGamePathAtOpen;
             this.isFirstLaunch = false;
