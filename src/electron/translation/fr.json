@@ -134,5 +134,6 @@
   "DIALOG_UPDATE_BUTTON_LATER": "Plus tard",
   "DIALOG_APP_UPDATED_TITLE": "Nouvelle mise à jour installée !",
   "CHANGELOG_410": "Version 4.1.0 :\n- Amélioration de l'affichage lors de l'analyse d'un match entre arbitre et conseiller\n- Amélioration des performances lors des traitements vidéo",
-  "CHANGELOG_411": "Version 4.1.1 :\n- Correction d'un bug lors du découpage d'une rencontre sur Windows"
+  "CHANGELOG_411": "Version 4.1.1 :\n- Correction d'un bug lors du découpage d'une rencontre sur Windows",
+  "CHANGELOG_420": "Version 4.2.0 :\n- Possibilité d'exporter le résumé de la rencontre en Excel\n- Gestion de l'ouverture de Ref'Back depuis une rencontre exportée\n- Possibilité de mettre deux liens Veo pour chaque mi-temps\n- Possibilité de saisir Avantage comme une décision"
 }
