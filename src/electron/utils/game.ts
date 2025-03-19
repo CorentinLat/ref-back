@@ -54,6 +54,8 @@ export function getGame(gameNumber: string): Game|null {
         return JSON.parse(game);
     } catch (error) {
         logger.error(`error getGame: ${error}`);
+
+        removeGame(gameNumber);
         return null;
     }
 }
@@ -63,7 +65,8 @@ export function getGamesInformation(gameNumbers: string[]): GameInformation[] {
         const game = getGame(gameNumber);
 
         return game ? [...games, game.information] : games;
-    }, []);
+    }, [])
+        .sort((a, b) => b.date.localeCompare(a.date));
 }
 
 export function updateGameComment(gameNumber: string, comment: string, key: AllEditableGameComment): boolean {

@@ -60,7 +60,13 @@
     "PROCESS_LOADER": {
       "TITLE": "Traitement en cours",
       "REMAINING_TIME": "Temps restant estimé :",
-      "CANCEL": "Annuler"
+      "CANCEL": "Annuler",
+      "LABEL": {
+        "DOWNLOAD_VEO_1_HALF": "Téléchargement de la Première Mi-Temps",
+        "DOWNLOAD_VEO_2_HALF": "Téléchargement de la Seconde Mi-Temps",
+        "DOWNLOAD_VEO_GAME": "Téléchargement de la Vidéo",
+        "POST_PROCESSING": "Traitement des Vidéos"
+      }
     },
     "VIDEO_EDITOR": {
       "EDITION": {
@@ -142,6 +148,11 @@
           "VIDEO_OPTION": {
             "FILE": "Fichier",
             "VEO": "Lien Veo"
+          },
+          "VEO_SPLIT": {
+            "QUESTION": "Rencontre découpée en 2 mi-temps ?",
+            "FIRST_HALF": "1MT",
+            "SECOND_HALF": "2MT"
           }
         }
       },
@@ -160,18 +171,14 @@
         "SCORES": {
           "REQUIRED": "Le score de la rencontre doit être saisi."
         },
-        "VIDEO_FILE": {
-          "IMPORT_INVALID": "Les fichiers suivants ne sont pas supportés :",
+        "VIDEO": {
+          "NOT_ENOUGH_SPACE": "Stockage disponible insuffisant.",
+          "PROCESS_FAILED": "Une erreur est survenue lors du traitement.",
+          "FILE_REQUIRED": "Vous devez sélectionner au moins une vidéo.",
+          "NOT_SUPPORTED": "Les fichiers suivants ne sont pas supportés :",
           "MULTIPLE_FORMAT": "Les vidéos doivent être au même format.",
-          "NOT_ENOUGH_SPACE": "Stockage disponible insuffisant.",
-          "PROCESS_FAILED": "Une erreur est survenue lors du traitement.",
-          "REQUIRED": "Vous devez sélectionner au moins une vidéo."
-        },
-        "VIDEO_VEO": {
-          "IMPORT_INVALID": "Le lien Veo n'est pas valide.",
-          "NOT_ENOUGH_SPACE": "Stockage disponible insuffisant.",
-          "PROCESS_FAILED": "Une erreur est survenue lors du traitement.",
-          "REQUIRED": "Vous devez saisir un lien Veo."
+          "INVALID_URL": "Le lien Veo n'est pas valide.",
+          "VEO_REQUIRED": "Vous devez saisir un lien Veo."
         }
       }
     },
@@ -196,6 +203,8 @@
         "COMMENT": "Commentaire(s)",
         "ACTION": {
           "TYPE": {
+            "ADVANTAGE": "Avantage",
+            "ADVANTAGE_SHORT": "Avant.",
             "PLAY_ON": "Jeu",
             "PLAY_ON_SHORT": "Jeu",
             "TOUCH": "Touche",

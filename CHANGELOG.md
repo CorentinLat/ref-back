@@ -8,6 +8,14 @@ et ce projet suit la [Gestion sémantique de version](https://semver.org/spec/v2
 - Pouvoir se connecter à l'application
 - Pouvoir récupérer automatiquement les données de la rencontre
 
+## [4.2.0] - 2025-03-19
+### Ajouté
+- Possibilité d'exporter le résumé de la rencontre en Excel
+- Gestion de l'ouverture de Ref'Back depuis une rencontre exportée
+### Amélioration
+- Possibilité de mettre deux liens Veo pour chaque mi-temps
+- Possibilité de saisir Avantage comme une décision
+
 ## [4.1.1] - 2025-01-14
 ### Correction
 - Découpage de la vidéo impossible sur Windows
