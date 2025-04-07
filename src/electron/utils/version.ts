@@ -1,11 +1,10 @@
 import { app, dialog } from 'electron';
-import fs from 'fs';
 
+import { readJsonFile, updateJsonFile } from './json';
 import logger from './logger';
-import { workPath } from './path';
+import { versionFilePath } from './path';
 import translate from '../translation';
 
-const appConfigFilePath = `${workPath}/version.json`;
 type VersionFile = { lastVersion?: string };
 
 const VERSIONS = ['4.1.0', '4.1.1', '4.2.0', '4.2.1'];
@@ -22,23 +21,14 @@ export const checkNewVersionInstalled = () => {
     }
 };
 
-const getLastVersionOpened = () => {
-    try {
-        const versionFile: VersionFile = JSON.parse(fs.readFileSync(appConfigFilePath, 'utf8'));
-        return versionFile.lastVersion || null;
-    } catch {
-        return null;
-    }
+const getLastVersionOpened = (): string|null => {
+    const versionFileContent = readJsonFile<VersionFile>(versionFilePath);
+
+    return versionFileContent?.lastVersion || null;
 };
 
-const saveLastVersionOpened = (version: string) => {
-    try {
-        const versionFile: VersionFile = { lastVersion: version };
-        fs.writeFileSync(appConfigFilePath, JSON.stringify(versionFile), 'utf8');
-    } catch (e) {
-        logger.error('Error saving last version opened', e);
-    }
-};
+const saveLastVersionOpened = (version: string): void =>
+    updateJsonFile<VersionFile>(versionFilePath, { lastVersion: version });
 
 const displayNewVersionChangelog = (lastVersion: string|null) => {
     let lastVersionIndex = 0;

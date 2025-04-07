@@ -16,6 +16,8 @@ export const userDataPath = app.getPath('userData');
 export const logsPath = path.join(userDataPath, 'logs');
 export const workPath = path.join(userDataPath, app.isPackaged ? 'work' : 'work-dev');
 
+export const versionFilePath = path.join(workPath, 'version.json');
+
 export const ffmpegElectronPath = app.isPackaged
     ? ffmpegElectron.path.replace('app.asar', 'app.asar.unpacked')
     : ffmpegElectron.path;
