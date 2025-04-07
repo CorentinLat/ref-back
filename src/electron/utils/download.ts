@@ -1,9 +1,11 @@
 import { BrowserWindow, DownloadItem, IpcMainEvent } from 'electron';
 
 import { CancelVideoProcessingError } from '../domain/error/CancelVideoProcessingError';
+import { NotEnoughSpaceError } from '../domain/error/NotEnoughSpaceError';
 import { UnexpectedError } from '../domain/error/UnexpectedError';
 
 import logger from './logger';
+import { checkIfHasEnoughRemainingSpaceForFileSize } from './storage';
 
 let currentDownloadItem: DownloadItem | null = null;
 
@@ -14,10 +16,18 @@ export const downloadUrlToPath = async (url: string, destPath: string, electronE
             return reject(new UnexpectedError());
         }
 
-        window.webContents.session.on('will-download', (_, item) => {
+        window.webContents.session.on('will-download', async (_, item) => {
             currentDownloadItem = item;
 
             currentDownloadItem.setSavePath(destPath);
+
+            const hasRemainingSpace = await checkIfHasEnoughRemainingSpaceForFileSize(item.getTotalBytes());
+            if (!hasRemainingSpace) {
+                currentDownloadItem.cancel();
+                return reject(new NotEnoughSpaceError());
+            }
+
+            logger.info(`Starting download from ${url} to ${destPath}`);
 
             item.on('updated', () => {
                 if (currentDownloadItem) {
@@ -46,7 +56,6 @@ export const downloadUrlToPath = async (url: string, destPath: string, electronE
         });
 
         window.webContents.downloadURL(url);
-        logger.info(`Starting download from ${url} to ${destPath}`);
     });
 
 export const cancelCurrentDownload = (): void => currentDownloadItem?.cancel();
