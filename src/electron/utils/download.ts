@@ -21,7 +21,11 @@ export const downloadUrlToPath = async (url: string, destPath: string, electronE
 
             item.on('updated', () => {
                 if (currentDownloadItem) {
-                    electronEvent.reply('videos_progress', computePercentageAndRemainingTime(label));
+                    const progress = computePercentageAndRemainingTime(label);
+
+                    if (progress) {
+                        electronEvent.reply('videos_progress', progress);
+                    }
                 }
             });
 

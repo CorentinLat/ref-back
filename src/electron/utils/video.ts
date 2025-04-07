@@ -14,7 +14,7 @@ import { copyFileToPath, extractFileExtension, removeFile } from './file';
 import { getDefaultGameVideoFilename } from './game';
 import logger from './logger';
 import { ffmpegElectronPath, ffprobeElectronPath, tempPath, workPath } from './path';
-import throwIfNotEnoughRemainingSpaceForFilePaths from './storage';
+import { throwIfNotEnoughRemainingSpaceForFilePaths } from './storage';
 import { getVideoUrlsFromVeoLinks } from './veo';
 
 import translate from '../translation';
