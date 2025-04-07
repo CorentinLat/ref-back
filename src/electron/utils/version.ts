@@ -8,7 +8,7 @@ import translate from '../translation';
 const appConfigFilePath = `${workPath}/version.json`;
 type VersionFile = { lastVersion?: string };
 
-const VERSIONS = ['4.1.0', '4.1.1', '4.2.0'];
+const VERSIONS = ['4.1.0', '4.1.1', '4.2.0', '4.2.1'];
 
 export const checkNewVersionInstalled = () => {
     logger.info('Checking new version installed');

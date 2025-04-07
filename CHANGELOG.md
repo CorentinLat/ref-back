@@ -8,6 +8,10 @@ et ce projet suit la [Gestion sémantique de version](https://semver.org/spec/v2
 - Pouvoir se connecter à l'application
 - Pouvoir récupérer automatiquement les données de la rencontre
 
+## [4.2.1] - 2025-04-08
+### Amélioration
+- Vérification de l'espace disque restant avant de télécharger une vidéo depuis Veo
+
 ## [4.2.0] - 2025-03-19
 ### Ajouté
 - Possibilité d'exporter le résumé de la rencontre en Excel
