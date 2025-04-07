@@ -1,5 +1,6 @@
 import { app, dialog, BrowserWindow, Menu, MenuItemConstructorOptions, shell } from 'electron';
 
+import { updateGamesPath } from './utils/config';
 import { logsPath } from './utils/path';
 import { checkUpdates } from './utils/update';
 
@@ -52,6 +53,11 @@ export default class MenuBuilder {
                 {
                     label: 'À propos de Ref\'Back',
                     click: () => this.displayAboutDialog(),
+                },
+                { type: 'separator' },
+                {
+                    label: 'Changer le répertoire des rencontres',
+                    click: () => updateGamesPath(),
                 },
                 { type: 'separator' },
                 {
@@ -213,6 +219,10 @@ export default class MenuBuilder {
             {
                 label: '&Fichier',
                 submenu: [
+                    {
+                        label: 'Changer le répertoire des rencontres',
+                        click: () => updateGamesPath(),
+                    },
                     {
                         label: '&Fermer',
                         accelerator: 'Ctrl+W',
