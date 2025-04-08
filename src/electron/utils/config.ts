@@ -1,4 +1,4 @@
-import { dialog } from 'electron';
+import { app, dialog } from 'electron';
 
 import { readJsonFile, updateJsonFile } from './json';
 import logger from './logger';
@@ -8,16 +8,25 @@ import translate from '../translation';
 type ConfigFile = { gamesPath?: string };
 
 export const updateGamesPath = () => {
-    logger.info('Asking to update games path');
+    logger.info('Confirming to update games path');
+
+    const buttons = [translate('BUTTON_CANCEL'), translate('BUTTON_OK')];
+    let message = translate('DIALOG_CONFIRM_UPDATE_GAMES_PATH_MESSAGE');
+    const currentGamesPath = getConfigGamesPath();
+    if (currentGamesPath) {
+        buttons.push(translate('BUTTON_RESET'));
+        message += translate('DIALOG_RESET_GAMES_PATH_MESSAGE');
+    }
 
     const result = dialog.showMessageBoxSync({
         title: translate('DIALOG_CONFIRM_UPDATE_GAMES_PATH_TITLE'),
-        message: translate('DIALOG_CONFIRM_UPDATE_GAMES_PATH_MESSAGE'),
+        message,
         type: 'warning',
-        buttons: [translate('BUTTON_OK'), translate('BUTTON_CANCEL')],
+        buttons,
+        defaultId: 1,
     });
 
-    if (result === 0) {
+    if (result === 1) {
         logger.info('User confirmed to update games path');
 
         const path = dialog.showOpenDialogSync({
@@ -29,12 +38,12 @@ export const updateGamesPath = () => {
             const newPath = path[0];
             logger.info(`User selected new games path: ${newPath}`);
 
-            updateJsonFile<ConfigFile>(configFilePath, { gamesPath: newPath });
-            // TODO: Move all games to the new path
-            // TODO: Update all video paths in the game files
+            setConfigGamesPath(newPath);
         }
-    } else {
-        logger.info('User cancelled to update games path');
+    } else if (result === 2) {
+        logger.info('User confirmed to reset games path');
+
+        setConfigGamesPath();
     }
 };
 
@@ -42,4 +51,11 @@ export const getConfigGamesPath = (): string|null => {
     const configFileContent = readJsonFile<ConfigFile>(configFilePath);
 
     return configFileContent?.gamesPath || null;
+};
+
+const setConfigGamesPath = (gamesPath?: string) => {
+    updateJsonFile<ConfigFile>(configFilePath, { gamesPath });
+
+    app.relaunch();
+    app.exit();
 };

@@ -11,14 +11,14 @@ import { getConfigGamesPath } from './config';
 import logger from './logger';
 
 const GAME_FILE = 'game.json';
+const CUSTOM_VIDEOS_FOLDER_NAME = 'videos';
 
 export const assetsPath = path.join(__dirname, '..', '..', '..', 'assets');
 export const downloadPath = app.getPath('downloads');
 export const tempPath = app.getPath('temp');
 export const userDataPath = app.getPath('userData');
 export const logsPath = path.join(userDataPath, 'logs');
-const workFolder = app.isPackaged ? 'work' : 'work-dev';
-const workPath = path.join(userDataPath, workFolder);
+const workPath = path.join(userDataPath, app.isPackaged ? 'work' : 'work-dev');
 
 export const configFilePath = path.join(workPath, 'config.json');
 export const versionFilePath = path.join(workPath, 'version.json');
@@ -96,5 +96,5 @@ export const getGamePath = (gameNumber: string): string => path.join(getGamesPat
 export const getGamesPath = (): string => {
     const configGamesPath = getConfigGamesPath();
 
-    return configGamesPath ? path.join(configGamesPath, workFolder) : workPath;
+    return configGamesPath ? path.join(configGamesPath, CUSTOM_VIDEOS_FOLDER_NAME) : workPath;
 };
