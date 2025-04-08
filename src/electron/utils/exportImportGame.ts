@@ -9,7 +9,7 @@ import { extractFileExtension, removeFile } from './file';
 import { addNewAnnotationsToGame, createGameFromImport } from './game';
 import logger from './logger';
 import { tempPath } from './path';
-import { generateNewVideoPath, generateVideoName } from './video';
+import { generateNewVideoPath } from './video';
 
 const GAME_INFORMATION_FILENAME = 'gameInformation.json';
 const GAME_VIDEO_FILENAME = 'gameVideo';
@@ -129,7 +129,7 @@ export const importGame = async (gameExportPath: string, args: ImportGameCommand
                 return false;
             }
 
-            const videoPath = generateNewVideoPath(gameNumberToCreate, generateVideoName(extension));
+            const videoPath = generateNewVideoPath(gameNumberToCreate, extension);
             const isCreated = createGameFromImport({
                 ...game,
                 information: { ...game.information, gameNumber: gameNumberToCreate, videoPath }

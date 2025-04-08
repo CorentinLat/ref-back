@@ -7,14 +7,18 @@ import ffprobeElectron from 'ffprobe-static-electron';
 
 import { GameAlreadyExistsError } from '../domain/error/GameAlreadyExistsError';
 
+import { getConfigGamesPath } from './config';
 import logger from './logger';
+
+const GAME_FILE = 'game.json';
 
 export const assetsPath = path.join(__dirname, '..', '..', '..', 'assets');
 export const downloadPath = app.getPath('downloads');
 export const tempPath = app.getPath('temp');
 export const userDataPath = app.getPath('userData');
 export const logsPath = path.join(userDataPath, 'logs');
-export const workPath = path.join(userDataPath, app.isPackaged ? 'work' : 'work-dev');
+const workFolder = app.isPackaged ? 'work' : 'work-dev';
+const workPath = path.join(userDataPath, workFolder);
 
 export const configFilePath = path.join(workPath, 'config.json');
 export const versionFilePath = path.join(workPath, 'version.json');
@@ -35,10 +39,18 @@ export function checkMandatoryFolderExists() {
             logger.info(`Mandatory folder created: ${folder}`);
         }
     });
+
+    const gamesPath = getGamesPath();
+    if (gamesPath !== workPath) {
+        if (!fs.existsSync(gamesPath)) {
+            fs.mkdirSync(gamesPath, { recursive: true });
+            logger.info(`Games folder created: ${gamesPath}`);
+        }
+    }
 }
 
 export function throwIfGameFolderExists(gameNumber: string, force?: boolean) {
-    const gameFolderPath = path.join(workPath, gameNumber);
+    const gameFolderPath = getGamePath(gameNumber);
 
     if (fs.existsSync(gameFolderPath)) {
         if (!force) {
@@ -51,7 +63,7 @@ export function throwIfGameFolderExists(gameNumber: string, force?: boolean) {
 }
 
 export function createGameFolder(gameNumber: string): void {
-    const gameFolderPath = path.join(workPath, gameNumber);
+    const gameFolderPath = getGamePath(gameNumber);
 
     fs.mkdirSync(gameFolderPath, { recursive: true });
     logger.info(`Game folder created: ${gameFolderPath}`);
@@ -66,7 +78,7 @@ export function removeGameFolder(gameFolderPath: string): void {
 
 export async function getExistingGameFolders(): Promise<string[]> {
     const gameFolders = await new Promise<string[]>(resolve => {
-        fs.readdir(workPath, (_, files) => {
+        fs.readdir(getGamesPath(), (_, files) => {
             const filteredFiles = files.filter(file => file.endsWith('RCT'));
             resolve(filteredFiles);
         });
@@ -77,3 +89,12 @@ export async function getExistingGameFolders(): Promise<string[]> {
     }
     return gameFolders;
 }
+
+export const getGameFile = (gameNumber: string): string => path.join(getGamePath(gameNumber), GAME_FILE);
+export const getGamePath = (gameNumber: string): string => path.join(getGamesPath(), gameNumber);
+
+export const getGamesPath = (): string => {
+    const configGamesPath = getConfigGamesPath();
+
+    return configGamesPath ? path.join(configGamesPath, workFolder) : workPath;
+};

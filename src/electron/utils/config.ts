@@ -38,7 +38,7 @@ export const updateGamesPath = () => {
     }
 };
 
-export const getGamesPath = (): string|null => {
+export const getConfigGamesPath = (): string|null => {
     const configFileContent = readJsonFile<ConfigFile>(configFilePath);
 
     return configFileContent?.gamesPath || null;

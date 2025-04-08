@@ -7,7 +7,6 @@ export const readJsonFile = <T>(filePath: string): T | null => {
         const data = fs.readFileSync(filePath, 'utf8');
         return JSON.parse(data);
     } catch (error) {
-        logger.error(`Error reading JSON file at ${filePath}:`, error);
         return null;
     }
 };
