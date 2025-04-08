@@ -13,7 +13,7 @@ import { cancelCurrentDownload, downloadUrlToPath } from './download';
 import { copyFileToPath, extractFileExtension, removeFile } from './file';
 import { getDefaultGameVideoFilename } from './game';
 import logger from './logger';
-import { ffmpegElectronPath, ffprobeElectronPath, tempPath, workPath } from './path';
+import { ffmpegElectronPath, ffprobeElectronPath, getGamePath, tempPath } from './path';
 import { throwIfNotEnoughRemainingSpaceForFilePaths } from './storage';
 import { getVideoUrlsFromVeoLinks } from './veo';
 
@@ -55,8 +55,7 @@ export async function concatVideos(gameNumber: string, videoPaths: string[], eve
         throw new UnexpectedError();
     }
 
-    const videoName: string = generateVideoName();
-    const outputFileName = generateNewVideoPath(gameNumber, videoName);
+    const outputFileName = generateNewVideoPath(gameNumber);
 
     const totalDuration = await computeTotalDurationOfVideos(videoPaths);
     const startTime = Date.now();
@@ -92,8 +91,7 @@ export async function copyVideoToUserDataPath(gameNumber: string, videoPath: str
     const currentVideoExtension = extractFileExtension(videoPath);
 
     if (SUPPORTED_HTML_VIDEO_EXTENSIONS.includes(currentVideoExtension)) {
-        const videoName: string = generateVideoName(currentVideoExtension);
-        const outputFileName = generateNewVideoPath(gameNumber, videoName);
+        const outputFileName = generateNewVideoPath(gameNumber, currentVideoExtension);
 
         copyFileToPath(videoPath, outputFileName);
         return Promise.resolve(outputFileName);
@@ -109,8 +107,7 @@ export async function downloadVideoUrlsToUserDataPath(gameNumber: string, urls: 
     }
 
     if (urls.length === 1) {
-        const videoName = generateVideoName();
-        const downloadVideoPath = path.join(workPath, gameNumber, videoName);
+        const downloadVideoPath = generateNewVideoPath(gameNumber);
 
         await downloadUrlToPath(urls[0], downloadVideoPath, event, 'DOWNLOAD_VEO_GAME');
 
@@ -268,10 +265,10 @@ const concatVideoPathsToNewPath = async (videoPaths: string[], outputPath: strin
     removeFile(concatFilePath);
 };
 
-export const generateNewVideoPath = (gameNumber: string, videoName: string): string =>
-    path.join(workPath, gameNumber, videoName);
+export const generateNewVideoPath = (gameNumber: string, extension?: string): string =>
+    path.join(getGamePath(gameNumber), generateVideoName(extension));
 
-export const generateVideoName = (extension: string = 'mp4'): string =>
+const generateVideoName = (extension: string = 'mp4'): string =>
     `${Date.now().toString(10)}.${extension}`;
 
 const generateNewVideoPathInSameDirectory = (videoPath: string): string =>

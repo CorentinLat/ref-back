@@ -133,8 +133,16 @@
   "DIALOG_UPDATE_BUTTON_RESTART": "Redémarrer",
   "DIALOG_UPDATE_BUTTON_LATER": "Plus tard",
   "DIALOG_APP_UPDATED_TITLE": "Nouvelle mise à jour installée !",
+  "DIALOG_CONFIRM_UPDATE_GAMES_PATH_TITLE": "Attention !",
+  "DIALOG_CONFIRM_UPDATE_GAMES_PATH_MESSAGE": "N'effectuez pas cette opération si vous n'êtes pas sûr de ce que vous faites !\n\nLe répertoire des rencontres sera modifié et elles ne seront pas récupérées.\n\nSouhaitez-vous continuer ?",
+  "DIALOG_RESET_GAMES_PATH_MESSAGE": "\n\nVous pouvez également choisir de rétablir le répertoire par défaut.",
+  "DIALOG_SELECT_GAMES_PATH_TITLE": "Sélectionnez le nouveau répertoire des rencontres",
+  "BUTTON_CANCEL": "Annuler",
+  "BUTTON_OK": "Valider",
+  "BUTTON_RESET": "Réinitialiser",
   "CHANGELOG_410": "Version 4.1.0 :\n- Amélioration de l'affichage lors de l'analyse d'un match entre arbitre et conseiller\n- Amélioration des performances lors des traitements vidéo",
   "CHANGELOG_411": "Version 4.1.1 :\n- Correction d'un bug lors du découpage d'une rencontre sur Windows",
   "CHANGELOG_420": "Version 4.2.0 :\n- Possibilité d'exporter le résumé de la rencontre en Excel\n- Gestion de l'ouverture de Ref'Back depuis une rencontre exportée\n- Possibilité de mettre deux liens Veo pour chaque mi-temps\n- Possibilité de saisir Avantage comme une décision",
-  "CHANGELOG_421": "Version 4.2.1 :\n- Vérification de l'espace disque restant avant de télécharger une vidéo depuis Veo"
+  "CHANGELOG_421": "Version 4.2.1 :\n- Vérification de l'espace disque restant avant de télécharger une vidéo depuis Veo",
+  "CHANGELOG_422": "Version 4.2.2 :\n- Possibilité de spécifier un répertoire personnalisé pour le stockage des rencontres"
 }

@@ -13,10 +13,10 @@ import {
 } from '../../../type/refBack';
 
 import logger from './logger';
-import { createGameFolder, removeGameFolder, workPath } from './path';
+import { createGameFolder, getGameFile, getGamePath, removeGameFolder } from './path';
 
 export function createNewGameFile(gameInformation: GameInformation): void {
-    const gameFile = path.join(workPath, gameInformation.gameNumber, 'game.json');
+    const gameFile = getGameFile(gameInformation.gameNumber);
 
     const game: Game = {
         actions: [],
@@ -39,7 +39,7 @@ export function createGameFromImport(game: Game, isOverriding?: boolean): boolea
 
     createGameFolder(gameNumber);
 
-    const gameFile = path.join(workPath, game.information.gameNumber, 'game.json');
+    const gameFile = getGameFile(game.information.gameNumber);
 
     fs.writeFileSync(gameFile, JSON.stringify(game));
 
@@ -47,7 +47,7 @@ export function createGameFromImport(game: Game, isOverriding?: boolean): boolea
 }
 
 export function getGame(gameNumber: string): Game|null {
-    const gameFile = path.join(workPath, gameNumber, 'game.json');
+    const gameFile = getGameFile(gameNumber);
 
     try {
         const game = fs.readFileSync(gameFile, 'utf8');
@@ -73,7 +73,7 @@ export function updateGameComment(gameNumber: string, comment: string, key: AllE
     const game = getGame(gameNumber);
     if (!game) { return false; }
 
-    const gameFile = path.join(workPath, gameNumber, 'game.json');
+    const gameFile = getGameFile(gameNumber);
     try {
         game[key] = comment.trim();
         fs.writeFileSync(gameFile, JSON.stringify(game));
@@ -86,7 +86,7 @@ export function updateGameComment(gameNumber: string, comment: string, key: AllE
 }
 
 export function removeGame(gameNumber: string): boolean {
-    const gameFolderPath = path.join(workPath, gameNumber);
+    const gameFolderPath = getGamePath(gameNumber);
     try {
         removeGameFolder(gameFolderPath);
         return true;
@@ -100,7 +100,7 @@ export function addNewAnnotationToGame(gameNumber: string, newAnnotation: NewAct
     const game = getGame(gameNumber);
     if (!game) { return null; }
 
-    const gameFile = path.join(workPath, gameNumber, 'game.json');
+    const gameFile = getGameFile(gameNumber);
     try {
         const action: Action|Annotation = { ...newAnnotation, id: uuidv4() };
         game.actions.push(action);
@@ -117,7 +117,7 @@ export function editAnnotationFromGame(gameNumber: string, annotationToEdit: Act
     const game = getGame(gameNumber);
     if (!game) { return null; }
 
-    const gameFile = path.join(workPath, gameNumber, 'game.json');
+    const gameFile = getGameFile(gameNumber);
     try {
         game.actions = game.actions.map(action => (action.id === annotationToEdit.id ? annotationToEdit : action));
         fs.writeFileSync(gameFile, JSON.stringify(game));
@@ -133,7 +133,7 @@ export function addNewAnnotationsToGame(gameNumber: string, annotations: (Action
     const game = getGame(gameNumber);
     if (!game) return false;
 
-    const gameFile = path.join(workPath, gameNumber, 'game.json');
+    const gameFile = getGameFile(gameNumber);
     try {
         game.actions = overrides ? [...annotations] : [...game.actions, ...annotations];
 
@@ -150,7 +150,7 @@ export function editGameVideoPath(videoPath: string) {
     const game = getGame(gameNumber);
     if (!game) return false;
 
-    const gameFile = path.join(workPath, gameNumber, 'game.json');
+    const gameFile = getGameFile(gameNumber);
     try {
         game.information.videoPath = videoPath;
         fs.writeFileSync(gameFile, JSON.stringify(game));
@@ -166,7 +166,7 @@ export function removeAnnotationFromGame(gameNumber: string, annotationId: strin
     const game = getGame(gameNumber);
     if (!game) { return false; }
 
-    const gameFile = path.join(workPath, gameNumber, 'game.json');
+    const gameFile = getGameFile(gameNumber);
     try {
         game.actions = game.actions.filter(annotation => annotation.id !== annotationId);
         fs.writeFileSync(gameFile, JSON.stringify(game));

@@ -3,12 +3,12 @@ import fs from 'fs';
 
 import { NotEnoughSpaceError } from '../domain/error/NotEnoughSpaceError';
 
-import { workPath } from './path';
+import { getGamesPath } from './path';
 
 const safeRemainingSpace = 5 * 1024 * 1024 * 1024;
 
 export async function checkIfHasEnoughRemainingSpaceForFileSize(size: number): Promise<boolean> {
-    const diskSpace = await checkDiskSpace(workPath);
+    const diskSpace = await checkDiskSpace(getGamesPath());
 
     return diskSpace.free - size > safeRemainingSpace;
 }
