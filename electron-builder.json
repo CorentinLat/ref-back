@@ -14,10 +14,10 @@
     "role": "Editor"
   }],
   "mac": {
-    "artifactName": "${productName}-${version}-mac.${ext}",
+    "artifactName": "${productName}-${arch}-mac.${ext}",
     "target": {
       "target": "zip",
-      "arch": ["universal"]
+      "arch": ["x64", "universal"]
     },
     "category": "public.app-category.sports",
     "type": "distribution",
@@ -27,7 +27,7 @@
     "gatekeeperAssess": false
   },
   "win": {
-    "artifactName": "${productName}-Setup-${version}.${ext}",
+    "artifactName": "${productName}-Setup.${ext}",
     "target": {
       "target": "nsis",
       "arch": ["x64"]
@@ -38,6 +38,7 @@
     "perMachine": true
   },
   "linux": {
+    "artifactName": "${productName}.${ext}",
     "target": "AppImage",
     "category": "Development"
   },
