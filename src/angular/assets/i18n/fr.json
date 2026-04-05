@@ -319,6 +319,7 @@
             "BAD_RETURN": "Retour erroné",
             "DEAD_BALL": "Ballon mort",
             "NOT_PLAYED": "Ballon non joué",
+            "MARK": "Marque",
             "OTHER": "Autre faute"
           },
           "PRECISE": {
