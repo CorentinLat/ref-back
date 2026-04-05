@@ -357,7 +357,7 @@ export default class MenuBuilder {
     private displayAboutDialog() {
         dialog.showMessageBox(this.mainWindow, {
             message: 'Ref\'Back a pour but de vous aider à réaliser vos feedbacks de match.\n' +
-                'Copyright (C) 2025 Corentin Latappy\n' +
+                'Copyright (C) 2026 Corentin Latappy\n' +
                 '\n' +
                 'This program is free software: you can redistribute it and/or modify' +
                 ' it under the terms of the GNU General Public License as published by' +

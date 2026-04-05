@@ -1,5 +1,5 @@
 <section class="statistics-component">
-    <section class="d-flex py-4" *ngIf="penaltyNumbersByTeams.length || freeKickNumbersByTeams.length">
+    <section class="d-flex py-4" *ngIf="penaltyNumbersByTeams.length || penaltyNumbersBySectors.length">
         <article class="flex-grow-1 flex-basis-0">
             <ngx-charts-advanced-pie-chart
                 [results]="penaltyNumbersByTeams"
@@ -13,27 +13,27 @@
 
         <article class="flex-grow-1 flex-basis-0">
             <ngx-charts-advanced-pie-chart
-                [results]="freeKickNumbersByTeams"
-                [nameFormatting]="formatAgainst"
-                [animations]="true"
-                label="{{ 'PAGE.SUMMARY.STATISTICS.FREE_KICKS_NUMBER' | translate }}"
-                scheme="cool"
-                *ngIf="freeKickNumbersByTeams.length"
-            ></ngx-charts-advanced-pie-chart>
-        </article>
-    </section>
-
-    <hr *ngIf="penaltyNumbersBySectors.length || freeKickNumbersBySectors.length">
-
-    <section class="d-flex py-4" *ngIf="penaltyNumbersBySectors.length || freeKickNumbersBySectors.length">
-        <article class="flex-grow-1 flex-basis-0">
-            <ngx-charts-advanced-pie-chart
                 [results]="penaltyNumbersBySectors"
                 [nameFormatting]="formatSector"
                 [animations]="true"
                 label="{{ 'PAGE.SUMMARY.STATISTICS.PENALTIES_BY_SECTORS' | translate }}"
                 scheme="cool"
                 *ngIf="penaltyNumbersBySectors.length"
+            ></ngx-charts-advanced-pie-chart>
+        </article>
+    </section>
+
+    <hr *ngIf="freeKickNumbersByTeams.length || freeKickNumbersBySectors.length">
+
+    <section class="d-flex py-4" *ngIf="freeKickNumbersByTeams.length || freeKickNumbersBySectors.length">
+        <article class="flex-grow-1 flex-basis-0">
+            <ngx-charts-advanced-pie-chart
+                [results]="freeKickNumbersByTeams"
+                [nameFormatting]="formatAgainst"
+                [animations]="true"
+                label="{{ 'PAGE.SUMMARY.STATISTICS.FREE_KICKS_NUMBER' | translate }}"
+                scheme="cool"
+                *ngIf="freeKickNumbersByTeams.length"
             ></ngx-charts-advanced-pie-chart>
         </article>
 
@@ -45,6 +45,32 @@
                 label="{{ 'PAGE.SUMMARY.STATISTICS.FREE_KICKS_BY_SECTORS' | translate }}"
                 scheme="cool"
                 *ngIf="freeKickNumbersBySectors.length"
+            ></ngx-charts-advanced-pie-chart>
+        </article>
+    </section>
+
+    <hr *ngIf="scrumNumbersByTeams.length || lineoutNumbersByTeams.length">
+
+    <section class="d-flex py-4" *ngIf="scrumNumbersByTeams.length || lineoutNumbersByTeams.length">
+        <article class="flex-grow-1 flex-basis-0">
+            <ngx-charts-advanced-pie-chart
+                [results]="scrumNumbersByTeams"
+                [nameFormatting]="formatAgainst"
+                [animations]="true"
+                label="{{ 'PAGE.SUMMARY.STATISTICS.SCRUMS_NUMBER' | translate }}"
+                scheme="cool"
+                *ngIf="scrumNumbersByTeams.length"
+            ></ngx-charts-advanced-pie-chart>
+        </article>
+
+        <article class="flex-grow-1 flex-basis-0">
+            <ngx-charts-advanced-pie-chart
+                [results]="lineoutNumbersByTeams"
+                [nameFormatting]="formatAgainst"
+                [animations]="true"
+                label="{{ 'PAGE.SUMMARY.STATISTICS.LINEOUTS_NUMBER' | translate }}"
+                scheme="cool"
+                *ngIf="lineoutNumbersByTeams.length"
             ></ngx-charts-advanced-pie-chart>
         </article>
     </section>
