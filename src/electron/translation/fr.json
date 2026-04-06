@@ -97,6 +97,7 @@
   "BAD_RETURN": "Retour erroné",
   "DEAD_BALL": "Ballon mort",
   "NOT_PLAYED": "Ballon non joué",
+  "MARK": "Marque",
   "OTHER": "Autre faute",
   "YES": "Oui",
   "NO": "Non",
@@ -112,6 +113,8 @@
   "STATISTICS": "Statistiques",
   "PENALTIES_NUMBER": "Pénalités sifflées",
   "FREE_KICKS_NUMBER": "Coup francs sifflés",
+  "SCRUMS_NUMBER": "Mêlées ordonnées",
+  "LINEOUTS_NUMBER": "Alignements ordonnés",
   "PENALTIES_BY_SECTORS": "Nombre de pénalités par secteur",
   "FREE_KICKS_BY_SECTORS": "Nombre de coup francs par secteur",
   "AGAINST_LOCAL": "Contre les locaux",
@@ -144,5 +147,6 @@
   "CHANGELOG_411": "Version 4.1.1 :\n- Correction d'un bug lors du découpage d'une rencontre sur Windows",
   "CHANGELOG_420": "Version 4.2.0 :\n- Possibilité d'exporter le résumé de la rencontre en Excel\n- Gestion de l'ouverture de Ref'Back depuis une rencontre exportée\n- Possibilité de mettre deux liens Veo pour chaque mi-temps\n- Possibilité de saisir Avantage comme une décision",
   "CHANGELOG_421": "Version 4.2.1 :\n- Vérification de l'espace disque restant avant de télécharger une vidéo depuis Veo",
-  "CHANGELOG_422": "Version 4.2.2 :\n- Possibilité de spécifier un répertoire personnalisé pour le stockage des rencontres"
+  "CHANGELOG_422": "Version 4.2.2 :\n- Possibilité de spécifier un répertoire personnalisé pour le stockage des rencontres",
+  "CHANGELOG_430": "Version 4.3.0 :\n- Affichage des statistiques sur les mêlées et les alignements dans les récapitulatifs\n- Ajout de la décision du \"Marque\" dans le secteur \"Espace\""
 }

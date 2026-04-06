@@ -47,6 +47,7 @@ export const actionFaults = {
         'OBSTRUCTION',
         'TRY_SITUATION',
         'DEAD_BALL',
+        'MARK',
         'OTHER',
     ],
     'TACKLE-RUCK': [

@@ -10,17 +10,25 @@ export class StatisticsComponent implements OnInit {
     @Input() actions!: Action[];
 
     penaltyNumbersByTeams!: PieChartResults;
-    freeKickNumbersByTeams!: PieChartResults;
     penaltyNumbersBySectors!: PieChartResults;
+
+    freeKickNumbersByTeams!: PieChartResults;
     freeKickNumbersBySectors!: PieChartResults;
+
+    scrumNumbersByTeams!: PieChartResults;
+    lineoutNumbersByTeams!: PieChartResults;
 
     constructor(private translate: TranslateService) {}
 
     ngOnInit() {
         this.penaltyNumbersByTeams = this.computePenaltyNumbersByTeams();
-        this.freeKickNumbersByTeams = this.computeFreeKickNumbersByTeams();
         this.penaltyNumbersBySectors = this.computePenaltyNumbersBySectors();
+
+        this.freeKickNumbersByTeams = this.computeFreeKickNumbersByTeams();
         this.freeKickNumbersBySectors = this.computeFreeKickNumbersBySectors();
+
+        this.scrumNumbersByTeams = this.computeScrumNumbersByTeams();
+        this.lineoutNumbersByTeams = this.computeLineoutNumbersByTeams();
     }
 
     formatAgainst = (against: string): string => this.translate.instant(`PAGE.SUMMARY.STATISTICS.AGAINST.${against}`);
@@ -38,6 +46,18 @@ export class StatisticsComponent implements OnInit {
 
     private computeFreeKickNumbersByTeams(): PieChartResults {
         const count = this.countDecisionByTeams('FREE_KICK');
+
+        return Object.keys(count).map(team => ({ name: team, value: count[team] }));
+    }
+
+    private computeScrumNumbersByTeams(): PieChartResults {
+        const count = this.countDecisionByTeams('SCRUM');
+
+        return Object.keys(count).map(team => ({ name: team, value: count[team] }));
+    }
+
+    private computeLineoutNumbersByTeams(): PieChartResults {
+        const count = this.countDecisionByTeams('TOUCH');
 
         return Object.keys(count).map(team => ({ name: team, value: count[team] }));
     }
