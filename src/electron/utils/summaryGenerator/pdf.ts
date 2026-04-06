@@ -28,12 +28,12 @@ const PAGE_WIDTH = A4_WIDTH - 2 * MARGIN;
 const PAGE_HEIGHT = A4_HEIGHT - 2 * MARGIN;
 
 const COLORS: [number, number, number][] = [
-    [52, 136, 136],
-    [34, 186, 187],
-    [158, 248, 238],
-    [255, 233, 154],
-    [250, 127, 8],
-    [242, 68, 5],
+    [155, 64, 93],
+    [131, 162, 224],
+    [156, 127, 165],
+    [182, 225, 243],
+    [179, 204, 234],
+    [158, 93, 100],
 ];
 
 const ANNOTATIONS_COLUMNS: ColumnStructure[] = [
@@ -154,54 +154,87 @@ function addStatistics(doc: typeof PDFDocument, annotations: Annotation[]): bool
             ? [...acc, annotation]
             : acc
     , []);
-    if (!penalties.length && !freeKicks.length) { return false; }
+    const scrums = annotations.reduce<Action[]>((acc, annotation) =>
+        isAction(annotation) && annotation.type === 'SCRUM'
+            ? [...acc, annotation]
+            : acc
+    , []);
+    const lineouts = annotations.reduce<Action[]>((acc, annotation) =>
+        isAction(annotation) && annotation.type === 'TOUCH'
+            ? [...acc, annotation]
+            : acc
+    , []);
+    if (!penalties.length && !freeKicks.length && !scrums.length && !lineouts.length) { return false; }
 
     addSection(doc, 'STATISTICS');
 
     const penaltiesByTeam = getDecisionsBy('against', penalties);
-    const freeKicksByTeam = getDecisionsBy('against', freeKicks);
     const penaltiesBySector = getDecisionsBy('sector', penalties);
+    const freeKicksByTeam = getDecisionsBy('against', freeKicks);
     const freeKicksBySector = getDecisionsBy('sector', freeKicks);
+    const scrumsByTeam = getDecisionsBy('against', scrums);
+    const lineoutsByTeam = getDecisionsBy('against', lineouts);
 
     const diagramWidth = PAGE_WIDTH / 2;
 
-    let startingY = currentYPosition;
     const penaltiesByTeamHeight = displayCircularDiagramForDecisions(
         doc,
         penaltiesByTeam,
         'PENALTIES_NUMBER',
         0,
-        startingY,
+        currentYPosition,
         diagramWidth
     );
+    const penaltiesBySectorHeight = displayCircularDiagramForDecisions(
+        doc,
+        penaltiesBySector,
+        'PENALTIES_BY_SECTORS',
+        diagramWidth,
+        currentYPosition,
+        diagramWidth
+    );
+
+    let heightAdded = Math.max(penaltiesByTeamHeight, penaltiesBySectorHeight) + MARGIN;
+    currentYPosition += heightAdded;
+
     const freeKicksByTeamHeight = displayCircularDiagramForDecisions(
         doc,
         freeKicksByTeam,
         'FREE_KICKS_NUMBER',
-        diagramWidth,
-        startingY,
-        diagramWidth
-    );
-
-    let heightAdded = Math.max(penaltiesByTeamHeight, freeKicksByTeamHeight) + MARGIN;
-    currentYPosition += heightAdded;
-    startingY += heightAdded;
-    const penaltiesBySectorHeight = displayCircularDiagramForDecisions(doc,
-        penaltiesBySector,
-        'PENALTIES_BY_SECTORS',
         0,
-        startingY,
+        currentYPosition,
         diagramWidth
     );
-    const freeKicksBySectorHeight = displayCircularDiagramForDecisions(doc,
+    const freeKicksBySectorHeight = displayCircularDiagramForDecisions(
+        doc,
         freeKicksBySector,
         'FREE_KICKS_BY_SECTORS',
         diagramWidth,
-        startingY,
+        currentYPosition,
         diagramWidth
     );
 
-    heightAdded = Math.max(penaltiesBySectorHeight, freeKicksBySectorHeight) + MARGIN;
+    heightAdded = Math.max(freeKicksByTeamHeight, freeKicksBySectorHeight) + MARGIN;
+    currentYPosition += heightAdded;
+
+    const scrumsByTeamHeight = displayCircularDiagramForDecisions(
+        doc,
+        scrumsByTeam,
+        'SCRUMS_NUMBER',
+        0,
+        currentYPosition,
+        diagramWidth
+    );
+    const lineoutsByTeamHeight = displayCircularDiagramForDecisions(
+        doc,
+        lineoutsByTeam,
+        'LINEOUTS_NUMBER',
+        diagramWidth,
+        currentYPosition,
+        diagramWidth
+    );
+
+    heightAdded = Math.max(scrumsByTeamHeight, lineoutsByTeamHeight) + MARGIN;
     currentYPosition += heightAdded;
 
     return true;

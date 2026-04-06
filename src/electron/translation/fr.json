@@ -113,6 +113,8 @@
   "STATISTICS": "Statistiques",
   "PENALTIES_NUMBER": "Pénalités sifflées",
   "FREE_KICKS_NUMBER": "Coup francs sifflés",
+  "SCRUMS_NUMBER": "Mêlées ordonnées",
+  "LINEOUTS_NUMBER": "Alignements ordonnés",
   "PENALTIES_BY_SECTORS": "Nombre de pénalités par secteur",
   "FREE_KICKS_BY_SECTORS": "Nombre de coup francs par secteur",
   "AGAINST_LOCAL": "Contre les locaux",
