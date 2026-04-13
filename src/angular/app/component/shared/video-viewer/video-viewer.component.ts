@@ -117,9 +117,11 @@ export class VideoViewerComponent implements OnInit, OnDestroy {
     };
 
     private handleVideoTimeChange = (event: KeyboardEvent | WheelEvent, isForward = false): void => {
-        const delay = event.altKey ? 30
-            : event.shiftKey ? 10
-                : 1;
+        let delay = 1;
+        if (event.altKey) delay = 30;
+        else if (event.shiftKey) delay = 10;
+        else if (event.ctrlKey || event.metaKey) delay = 1/25;
+
         const multiplier = isForward ? 1 : -1;
 
         this.putVideoAtSecond(this.videoApiService.currentTime + delay * multiplier);

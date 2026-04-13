@@ -38,13 +38,18 @@ import { ImportGameModalComponent } from './component/modal/import-game-modal/im
 import { LoadGamesExistingModalComponent } from './component/modal/load-games-existing-modal/load-games-existing-modal.component';
 import { NotEnoughRemainingSpaceModalComponent } from './component/modal/not-enough-remaining-space-modal/not-enough-remaining-space-modal.component';
 import { VideoProcessLoaderModalComponent } from './component/modal/process-loader/video-process-loader-modal.component';
+import { VideoCommandHelperModalComponent } from './component/modal/video-command-helper/video-command-helper-modal.component';
 import { VideoEditorModalComponent } from './component/modal/video-editor-modal/video-editor-modal.component';
+
 import { AnnotationCommentDisplayComponent } from './component/shared/annotation-comment-display/annotation-comment-display.component';
 import { AnnotationCommentsDisplayComponent } from './component/shared/annotation-comments-display/annotation-comments-display.component';
 import { CardComponent } from './component/shared/card/card.component';
 import { GameInformationComponent } from './component/shared/game-information/game-information.component';
 import { VideoViewerComponent } from './component/shared/video-viewer/video-viewer.component';
+
 import { ToastsComponent } from './component/toasts/toasts.component';
+
+import { VgHelpComponent } from './component/videogular/vg-help/vg-help.component';
 import { VgNavigateComponent } from './component/videogular/vg-go-back/vg-navigate.component';
 
 import DirectivesModule from './directive/directives.module';
@@ -80,7 +85,9 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader => new Transla
         StatisticsComponent,
         SummaryComponent,
         ToastsComponent,
+        VgHelpComponent,
         VgNavigateComponent,
+        VideoCommandHelperModalComponent,
         VideoEditorModalComponent,
         VideoProcessLoaderModalComponent,
         VideoViewerComponent,
