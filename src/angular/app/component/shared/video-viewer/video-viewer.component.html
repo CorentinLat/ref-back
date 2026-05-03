@@ -1,7 +1,7 @@
 <vg-player class="video" (onPlayerReady)="onPlayerReady($event)">
     <vg-buffering></vg-buffering>
 
-    <vg-overlay-play></vg-overlay-play>
+    <vg-overlay-play [style.display]="isFrameStepping ? 'none' : ''"></vg-overlay-play>
 
     <vg-scrub-bar>
         <vg-scrub-bar-current-time></vg-scrub-bar-current-time>
