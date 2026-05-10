@@ -28,6 +28,7 @@ export class VideoViewerComponent implements OnInit, OnDestroy {
     @Output() videoTimeUpdated = new EventEmitter<number>();
 
     isHidingVideo = false;
+    isFrameStepping = false;
 
     videoApiService!: VgApiService;
     videoPathSafe!: SafeResourceUrl;
@@ -48,6 +49,12 @@ export class VideoViewerComponent implements OnInit, OnDestroy {
         }
         event.preventDefault();
 
+        // Masquer l'overlay dès l'appui sur Cmd (Meta) ou Ctrl seul
+        if (event.key === 'Meta' || event.key === 'Control') {
+            this.isFrameStepping = true;
+            return;
+        }
+
         if (event.code === 'Space') {
             this.toggleVideoPlayPause();
         } else if (event.code === 'ArrowLeft') {
@@ -58,6 +65,15 @@ export class VideoViewerComponent implements OnInit, OnDestroy {
             this.toggleFullscreen();
         } else if (event.key.toLowerCase() === 'm') {
             this.toggleVideoMute();
+        }
+    }
+
+    @HostListener('document:keyup', ['$event'])
+    handleKeyUpEvent(event: KeyboardEvent) {
+        // Réafficher l'overlay dès le relâchement de Cmd ou Ctrl
+        if (event.key === 'Meta' || event.key === 'Control') {
+            this.isFrameStepping = false;
+            this.cdr.detectChanges();
         }
     }
 
@@ -120,7 +136,7 @@ export class VideoViewerComponent implements OnInit, OnDestroy {
         let delay = 1;
         if (event.altKey) delay = 30;
         else if (event.shiftKey) delay = 10;
-        else if (event.ctrlKey || event.metaKey) delay = 1/25;
+        else if (event.ctrlKey || event.metaKey) delay = 1 / 25;
 
         const multiplier = isForward ? 1 : -1;
 
