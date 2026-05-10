@@ -8,6 +8,10 @@ et ce projet suit la [Gestion sémantique de version](https://semver.org/spec/v2
 - Pouvoir se connecter à l'application
 - Pouvoir récupérer automatiquement les données de la rencontre
 
+## [4.5.0] - 2026-05-10
+### Ajout
+- Raccourci pour masquer l'affichage en pause de la vidéo
+
 ## [4.4.0] - 2026-04-13
 ### Ajout
 - Commande pour avancer/reculer frame par frame dans la vidéo

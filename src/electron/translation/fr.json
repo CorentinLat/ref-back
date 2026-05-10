@@ -149,5 +149,6 @@
   "CHANGELOG_421": "Version 4.2.1 :\n- Vérification de l'espace disque restant avant de télécharger une vidéo depuis Veo",
   "CHANGELOG_422": "Version 4.2.2 :\n- Possibilité de spécifier un répertoire personnalisé pour le stockage des rencontres",
   "CHANGELOG_430": "Version 4.3.0 :\n- Affichage des statistiques sur les mêlées et les alignements dans les récapitulatifs\n- Ajout de la décision du \"Marque\" dans le secteur \"Espace\"",
-  "CHANGELOG_440": "Version 4.4.0 :\n- Commande pour avancer/reculer frame par frame dans la vidéo\n- Menu d'aide pour les contrôles de la vidéo"
+  "CHANGELOG_440": "Version 4.4.0 :\n- Commande pour avancer/reculer frame par frame dans la vidéo\n- Menu d'aide pour les contrôles de la vidéo",
+  "CHANGELOG_450": "Version 4.5.0 :\n- Commande pour masquer l'affichage en pause de la vidéo"
 }
