@@ -28,7 +28,7 @@ export class VideoViewerComponent implements OnInit, OnDestroy {
     @Output() videoTimeUpdated = new EventEmitter<number>();
 
     isHidingVideo = false;
-    isFrameStepping = false;
+    isHidingOverlayPlay = false;
 
     videoApiService!: VgApiService;
     videoPathSafe!: SafeResourceUrl;
@@ -49,12 +49,6 @@ export class VideoViewerComponent implements OnInit, OnDestroy {
         }
         event.preventDefault();
 
-        // Masquer l'overlay dès l'appui sur Cmd (Meta) ou Ctrl seul
-        if (event.key === 'Meta' || event.key === 'Control') {
-            this.isFrameStepping = true;
-            return;
-        }
-
         if (event.code === 'Space') {
             this.toggleVideoPlayPause();
         } else if (event.code === 'ArrowLeft') {
@@ -65,15 +59,8 @@ export class VideoViewerComponent implements OnInit, OnDestroy {
             this.toggleFullscreen();
         } else if (event.key.toLowerCase() === 'm') {
             this.toggleVideoMute();
-        }
-    }
-
-    @HostListener('document:keyup', ['$event'])
-    handleKeyUpEvent(event: KeyboardEvent) {
-        // Réafficher l'overlay dès le relâchement de Cmd ou Ctrl
-        if (event.key === 'Meta' || event.key === 'Control') {
-            this.isFrameStepping = false;
-            this.cdr.detectChanges();
+        } else if (event.key.toLowerCase() === 'h') {
+            this.toggleDisplayOverlayPlay();
         }
     }
 
@@ -149,6 +136,10 @@ export class VideoViewerComponent implements OnInit, OnDestroy {
 
     private toggleVideoMute = (): void => {
         this.videoApiService.volume = this.videoApiService.volume === 0 ? 1 : 0;
+    };
+
+    private toggleDisplayOverlayPlay = (): void => {
+        this.isHidingOverlayPlay = !this.isHidingOverlayPlay;
     };
 
     private putVideoAtSecond = (second: number = 0): void => {
