@@ -43,6 +43,18 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
                     </article>
                 </section>
             </section>
+
+            <section class="d-flex align-items-center justify-content-center flex-row">
+                <section class="d-flex flex-row gap-2">
+                    <article style="text-align: right">
+                        <p><span class="key">H</span></p>
+                    </article>
+
+                    <article style="text-align: left">
+                        <p>Afficher / Masquer Pause</p>
+                    </article>
+                </section>
+            </section>
         </section>
     `,
     styles: [`
