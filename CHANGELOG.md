@@ -8,6 +8,10 @@ et ce projet suit la [Gestion sémantique de version](https://semver.org/spec/v2
 - Pouvoir se connecter à l'application
 - Pouvoir récupérer automatiquement les données de la rencontre
 
+## [4.5.1] - 2026-11-12
+### Amélioration
+- Utilisation de l'API Veo pour récupérer le lien de la vidéo
+
 ## [4.5.0] - 2026-05-10
 ### Ajout
 - Raccourci pour masquer l'affichage en pause de la vidéo
