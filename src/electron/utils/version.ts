@@ -15,7 +15,9 @@ export const checkNewVersionInstalled = () => {
     const currentAppVersion = app.getVersion();
     const lastVersionOpened = getLastVersionOpened();
 
-    if (lastVersionOpened !== currentAppVersion) {
+    if (!lastVersionOpened) {
+        saveLastVersionOpened(currentAppVersion);
+    } else if (lastVersionOpened !== currentAppVersion) {
         saveLastVersionOpened(currentAppVersion);
         displayNewVersionChangelog(lastVersionOpened);
     }
