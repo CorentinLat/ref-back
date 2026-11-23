@@ -67,7 +67,11 @@ export async function concatVideos(gameNumber: string, videoPaths: string[], eve
         const elapsedTime = Date.now() - startTime;
         const remainingTime = Math.round(elapsedTime / percentageDone * (100 - percentageDone) / 1000);
 
-        event.reply('videos_progress', { label: 'POST_PROCESSING', percentage: percentageDone, remaining: remainingTime });
+        event.reply('videos_progress', {
+            label: 'POST_PROCESSING',
+            percentage: percentageDone,
+            remaining: remainingTime
+        });
     });
 
     currentFfmpegExecutions = [];
@@ -155,10 +159,13 @@ export async function generateGameClips(game: Game, destClipsDirectory: string, 
             return Promise.resolve();
         }
 
-        const clipName = isAction(action)
-            ? `#${index + 1} ${translate(action.fault)}.${videoExtension}`
-            : `#${index + 1} ${(action.comment || action.commentFromAdviser || '').slice(0, 20)}.${videoExtension}`;
-        const clipPath = path.join(destClipsDirectory, clipName);
+        const clipName = `#${index + 1} ${
+            isAction(action)
+                ? translate(action.fault)
+                : (action.comment || action.commentFromAdviser || '')
+        }`;
+        const clipFileName = sanitizeFileName(clipName, videoExtension);
+        const clipPath = path.join(destClipsDirectory, clipFileName);
         const clipDuration = clip.end - clip.start;
         const startTime = Date.now();
 
@@ -295,7 +302,7 @@ const promisifyFfmpegCommand = (command: FluentFFMPEG.FfmpegCommand): Promise<vo
 async function computeTotalDurationOfVideos(videoPaths: string[]): Promise<number> {
     const durations = await Promise.all(videoPaths.map(videoPath =>
         new Promise<number>((resolve, reject) => {
-            FluentFFMPEG.ffprobe(videoPath, function(err: Error, data: { format: { duration?: number } }) {
+            FluentFFMPEG.ffprobe(videoPath, function (err: Error, data: { format: { duration?: number } }) {
                 if (err) {
                     reject(err);
                 }
@@ -319,3 +326,16 @@ function extractNumberOfSecondsFromTimeMark(timeMark: string): number {
 
     return HH * 3600 + MM * 60 + SS + MS / 100;
 }
+
+const sanitizeFileName = (fileName: string, ext: string) => {
+    let fileNameSanitized = fileName
+        .normalize('NFC')
+        .replaceAll(':', ' -')
+        .replaceAll(/[<>"/\\|?*\u0000-\u001F]/g, '_')
+        .replaceAll(/\s+/g, ' ')
+        .replace(/^[\s.]+|[\s.]+$/g, '');
+
+    if (/^(CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9])(\..*)?$/i.test(fileNameSanitized)) fileNameSanitized = '_' + fileNameSanitized;
+
+    return (fileNameSanitized.slice(0, 200).replace(/[\s.]+$/, '') || 'clip') + `.${ext}`;
+};
