@@ -4,9 +4,9 @@ Toutes les modifications apportées à ce projet seront documentées dans ce fic
 Le format est basé sur [Tenez un Changelog](https://keepachangelog.com/en/1.0.0/),
 et ce projet suit la [Gestion sémantique de version](https://semver.org/spec/v2.0.0.html).
 
-## [À venir]
-- Pouvoir se connecter à l'application
-- Pouvoir récupérer automatiquement les données de la rencontre
+## [4.5.2] - 2026-11-23
+### Correction
+- Filtrage du nom d'export pour un clip
 
 ## [4.5.1] - 2026-11-12
 ### Amélioration
